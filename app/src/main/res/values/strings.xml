@@ -1,3 +1,26 @@
 <resources>
+
     <string name="app_name">My Application</string>
+
+    //First Activity
+    <string name="MainActivity_textView">This is First Activity!</string>
+    <string name="main_activity_button">to Second Activity</string>
+
+    //SecondActivity
+    <string name="MainActivity2_textView">This is Second Activity!</string>
+    <string name="MainActivity2_button">to First Activity</string>
+    <string name="MainActivity2_buttonFragment">to 1st Fragment</string>
+    <string name="MainActivity2_buttonFragment2">to 2nd Fragment</string>
+    <!-- TODO: Remove or change this placeholder text -->
+
+    //BlankFragment
+    <string name="blank_fragment">This is our blank fragment</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    //BlankFragment2
+    <string name="blank_fragment2">This is our 2 nd blank fragment</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment2">Hello blank fragment</string>
+
 </resources>
