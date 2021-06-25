@@ -42,10 +42,8 @@ class BlankFragment3 : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_blank3, container, false)
         val rv = view.findViewById<RecyclerView>(R.id.recycleRV)
-        layoutManager = LinearLayoutManager(context)
-        rv.layoutManager = layoutManager
-        adapter = RecyclerAdapter()
-        rv.adapter = adapter
+        rv.layoutManager = LinearLayoutManager(context)
+        rv.adapter = RecyclerAdapter()
         return view
     }
 
