@@ -11,6 +11,7 @@
     <string name="MainActivity2_button">to First Activity</string>
     <string name="MainActivity2_buttonFragment">to 1st Fragment</string>
     <string name="MainActivity2_buttonFragment2">to 2nd Fragment</string>
+    <string name="MainActivity2_buttonRecyclerView">To Recycler View</string>
     <!-- TODO: Remove or change this placeholder text -->
 
     //BlankFragment
