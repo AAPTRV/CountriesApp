@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.task1new
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,14 +7,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class RecyclerAdapter: RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+class RecyclerAdapter: RecyclerView.Adapter<RecyclerAdapter.ViewHolder>()  {
 
     private var titles = arrayOf("First heading", "Second heading", "Third heading", "Fourth heading", "Fifth heading",
-            "Sixth heading", "Seventh heading", "Eighth heading", "Ninth heading", "Tenth heading")
+        "Sixth heading", "Seventh heading", "Eighth heading", "Ninth heading", "Tenth heading")
     private val details = arrayOf("First description", "Second description", "The third description", "Fourth description",
-            "Fifth description", "Sixth description", "Seventh description", "Eighth description", "Ninth description", "Tenth description")
+        "Fifth description", "Sixth description", "Seventh description", "Eighth description", "Ninth description", "Tenth description")
     private var images = intArrayOf(R.drawable.icon, R.drawable.icon, R.drawable.icon, R.drawable.icon,
-            R.drawable.icon, R.drawable.icon, R.drawable.icon, R.drawable.icon, R.drawable.icon, R.drawable.icon)
+        R.drawable.icon, R.drawable.icon, R.drawable.icon, R.drawable.icon, R.drawable.icon, R.drawable.icon)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerAdapter.ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.row_layout, parent, false)
@@ -42,4 +42,5 @@ class RecyclerAdapter: RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
             itemDetail = itemView.findViewById(R.id.text_description)
         }
     }
+
 }
