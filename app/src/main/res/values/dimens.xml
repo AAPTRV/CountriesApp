@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="fragment_fr">130dp</dimen>
+
+
+    \\ Row Layout
+    <dimen name="row_layout_icon_size">130dp</dimen>
+
+
+    \\ Common
+    <dimen name="common_margin">10dp</dimen>
+
+    \\ Text
+    <dimen name="common_text_small">12sp</dimen>
+    <dimen name="common_text_medium">18sp</dimen>
+    <dimen name="common_text_large">24sp</dimen>
+
+</resources>
