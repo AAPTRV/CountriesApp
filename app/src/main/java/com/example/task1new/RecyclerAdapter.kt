@@ -42,5 +42,5 @@ class RecyclerAdapter: RecyclerView.Adapter<RecyclerAdapter.ViewHolder>()  {
             itemDetail = itemView.findViewById(R.id.text_description)
         }
     }
-
+//
 }
