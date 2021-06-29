@@ -39,6 +39,10 @@ def androidConstraintLayoutVersion = '2.0.4'
 def androidLegacySupportVersion = '1.0.0'
 def androidXNavigationFragmentVersion = '2.3.5'
 def androidXNavigationUIVersion = '2.3.5'
+def comSquareUpOkHTTP3Version = '3.12.1'
+def comSquareUpOkHTTP3fInterceptorVersion = '3.12.1'
+def comSquareUpRetrofit2Version = '2.4.0'
+def comSquareUpRetrofit2ConverterGSONVersion = '2.4.0'
 
 def junitVersion = '4.+'
 def androidXTestJUnitVersion = '1.1.2'
@@ -54,8 +58,16 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:' + androidLegacySupportVersion
     implementation 'androidx.navigation:navigation-fragment-ktx:' + androidXNavigationFragmentVersion
     implementation 'androidx.navigation:navigation-ui-ktx:' + androidXNavigationUIVersion
+    implementation 'com.squareup.okhttp3:okhttp:' + comSquareUpOkHTTP3Version
+    implementation 'com.squareup.okhttp3:logging-interceptor:' + comSquareUpOkHTTP3fInterceptorVersion
+    implementation 'com.squareup.retrofit2:retrofit:' + comSquareUpRetrofit2Version
+    implementation 'com.squareup.retrofit2:converter-gson:' + comSquareUpRetrofit2ConverterGSONVersion
 
     testImplementation 'junit:junit:4.+' + junitVersion
     androidTestImplementation 'androidx.test.ext:junit:' + androidXTestJUnitVersion
     androidTestImplementation 'androidx.test.espresso:espresso-core:' + androidXTestEspressoVersion
 }
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'

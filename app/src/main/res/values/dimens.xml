@@ -7,6 +7,12 @@
     \\ Row Layout
     <dimen name="row_layout_icon_size">130dp</dimen>
 
+    \\ RV fragment
+    <dimen name="inner_constraint_layout_height">60dp</dimen>
+    <dimen name="appcompat_switch_height">30dp</dimen>
+    <dimen name="appcompat_switch_start_margin">16dp</dimen>
+
+
 
     \\ Common
     <dimen name="common_margin">10dp</dimen>
