@@ -84,7 +84,6 @@ class BlankFragmentRV : Fragment() {
         val jsonPlaceHolderApi = retrofitBuilder.create(JsonPlaceHolderApi::class.java)
         val retrofitData = jsonPlaceHolderApi.getPosts()
 
-
         retrofitData.enqueue(object : retrofit2.Callback<List<Post>?> {
             override fun onFailure(call: Call<List<Post>?>, t: Throwable) {
                 Log.d(ContentValues.TAG, "On Failure: " + t.message)

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.task1new.ext.convertToCountryNameList
 
 class RecyclerAdapter(val dataList: List<Post>): RecyclerView.Adapter<RecyclerAdapter.ViewHolder>()  {
 
@@ -25,11 +26,22 @@ class RecyclerAdapter(val dataList: List<Post>): RecyclerView.Adapter<RecyclerAd
         return dataList.size
     }
 
+//    fun getLanguages(data: List<Languages>): String{
+//        val sb = StringBuilder()
+//        for (languages in data) {
+//            languages.toString()
+//            sb.append(languages)
+//            sb.append(", ")
+//        }
+//        return sb.toString()
+//    }
+
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerAdapter.ViewHolder, position: Int) {
         if(dataList[position].capital.isNotEmpty()){
             holder.itemTitle.text = "Name: ${dataList[position].capital}"
             holder.itemDetail.text = "Population: ${dataList[position].population}"
+            holder.languages.text = "Languages: ${dataList[position].languages.convertToCountryNameList()}"
             holder.itemImage.setImageResource(images)
         }
         Log.d(TAG, "ON BIND VIEW HOLDER STAGE")
@@ -39,11 +51,13 @@ class RecyclerAdapter(val dataList: List<Post>): RecyclerView.Adapter<RecyclerAd
         var itemImage: ImageView
         var itemTitle: TextView
         var itemDetail:TextView
+        var languages: TextView
 
         init {
             itemImage = itemView.findViewById(R.id.cardIcon)
             itemTitle = itemView.findViewById(R.id.text_title)
             itemDetail = itemView.findViewById(R.id.text_description)
+            languages = itemView.findViewById(R.id.text_languages)
         }
     }
 //
