@@ -26,16 +26,6 @@ class RecyclerAdapter(val dataList: List<Post>): RecyclerView.Adapter<RecyclerAd
         return dataList.size
     }
 
-//    fun getLanguages(data: List<Languages>): String{
-//        val sb = StringBuilder()
-//        for (languages in data) {
-//            languages.toString()
-//            sb.append(languages)
-//            sb.append(", ")
-//        }
-//        return sb.toString()
-//    }
-
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerAdapter.ViewHolder, position: Int) {
         if(dataList[position].capital.isNotEmpty()){
