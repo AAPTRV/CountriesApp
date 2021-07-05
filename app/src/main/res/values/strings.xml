@@ -18,6 +18,12 @@
     <string name="text_title">Text title</string>
     <string name="icon_content_description">Icon for recycle view</string>
 
+    //countries_menu
+    <string name="countries_menu_ascending_sort">Ascending sort</string>
+    <string name="countries_menu_descending_sort">Descending sort</string>
+    <string name="countries_menu_item3">Item 3</string>
+    <string name="countries_menu_item4">Item 4</string>
+
 
 
 </resources>

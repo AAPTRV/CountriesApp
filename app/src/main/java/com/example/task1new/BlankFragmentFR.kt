@@ -1,11 +1,10 @@
 package com.example.task1new
 
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toolbar
 import androidx.navigation.Navigation
 
 // TODO: Rename parameter arguments, choose names that match
@@ -40,10 +39,17 @@ class BlankFragmentFR : Fragment() {
         return inflater.inflate(R.layout.fragment_blank_f_r, container, false)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.countries_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val buttonRV = view.findViewById<Button>(R.id.fragmentFR_RCV)
+        setHasOptionsMenu(true)
         buttonRV.setOnClickListener { Navigation.findNavController(view).navigate(R.id.action_blankFragmentFR_to_blankFragmentRV) }
+
     }
 
 

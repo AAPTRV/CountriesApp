@@ -6,6 +6,8 @@
 
     \\ Row Layout
     <dimen name="row_layout_icon_size">130dp</dimen>
+    <dimen name="row_layout_textView_height">0dp</dimen>
+
 
     \\ RV fragment
     <dimen name="inner_constraint_layout_height">60dp</dimen>

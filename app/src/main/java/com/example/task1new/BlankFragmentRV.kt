@@ -3,10 +3,10 @@ package com.example.task1new
 import android.content.ContentValues
 import android.os.Bundle
 import android.util.Log
+import android.view.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_blank_r_v.*
@@ -35,6 +35,7 @@ class BlankFragmentRV : Fragment() {
     private var param2: String? = null
 
     lateinit var myAdapter: RecyclerAdapter
+    lateinit var responseBody: MutableList<Post>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +43,7 @@ class BlankFragmentRV : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
     }
 
     override fun onCreateView(
@@ -54,32 +56,44 @@ class BlankFragmentRV : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(true)
 
         recycleView.setHasFixedSize(true)
         recycleView.layoutManager = LinearLayoutManager(context)
-        getData(switch1.isChecked)
-
-        switch1.setOnCheckedChangeListener{ _, _ ->
-            getData(switch1.isChecked)
-        }
+        getData()
 
     }
-    private fun getData(setOn: Boolean){
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.countries_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.itemSortUp) {
+            getData(true)
+        } else if (item.itemId == R.id.itemSortDown) {
+            getData(false)
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun getData() {
 
         val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
 
         val okHttpClient = OkHttpClient.Builder()
-                .connectTimeout(NetConstants.SESSION_TIMEOUT, TimeUnit.MILLISECONDS)
-                .readTimeout(NetConstants.SESSION_TIMEOUT, TimeUnit.MILLISECONDS)
-                .addInterceptor(loggingInterceptor)
-                .build()
+            .connectTimeout(NetConstants.SESSION_TIMEOUT, TimeUnit.MILLISECONDS)
+            .readTimeout(NetConstants.SESSION_TIMEOUT, TimeUnit.MILLISECONDS)
+            .addInterceptor(loggingInterceptor)
+            .build()
 
         val retrofitBuilder = Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(NetConstants.SERVER_API_BASE_URL)
-                .client(okHttpClient)
-                .build()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(NetConstants.SERVER_API_BASE_URL)
+            .client(okHttpClient)
+            .build()
 
         val jsonPlaceHolderApi = retrofitBuilder.create(JsonPlaceHolderApi::class.java)
         val retrofitData = jsonPlaceHolderApi.getPosts()
@@ -91,10 +105,47 @@ class BlankFragmentRV : Fragment() {
 
             override fun onResponse(call: Call<List<Post>?>, response: Response<List<Post>?>) {
                 val responseBody: MutableList<Post> = response.body()!!.toMutableList()
-                responseBody.removeAll {it.capital == ""}
-                if (setOn){
-                    responseBody.sortBy{it.population}
-                } else {  responseBody.sortByDescending {it.population} }
+                responseBody.removeAll { it.capital == "" }
+                myAdapter = RecyclerAdapter(responseBody)
+                myAdapter.notifyDataSetChanged()
+                recycleView.adapter = myAdapter
+            }
+        })
+    }
+
+    private fun getData(setOn: Boolean) {
+
+        val loggingInterceptor = HttpLoggingInterceptor()
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+
+        val okHttpClient = OkHttpClient.Builder()
+            .connectTimeout(NetConstants.SESSION_TIMEOUT, TimeUnit.MILLISECONDS)
+            .readTimeout(NetConstants.SESSION_TIMEOUT, TimeUnit.MILLISECONDS)
+            .addInterceptor(loggingInterceptor)
+            .build()
+
+        val retrofitBuilder = Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(NetConstants.SERVER_API_BASE_URL)
+            .client(okHttpClient)
+            .build()
+
+        val jsonPlaceHolderApi = retrofitBuilder.create(JsonPlaceHolderApi::class.java)
+        val retrofitData = jsonPlaceHolderApi.getPosts()
+
+        retrofitData.enqueue(object : retrofit2.Callback<List<Post>?> {
+            override fun onFailure(call: Call<List<Post>?>, t: Throwable) {
+                Log.d(ContentValues.TAG, "On Failure: " + t.message)
+            }
+
+            override fun onResponse(call: Call<List<Post>?>, response: Response<List<Post>?>) {
+                val responseBody: MutableList<Post> = response.body()!!.toMutableList()
+                responseBody.removeAll { it.capital == "" }
+                if (setOn) {
+                    responseBody.sortBy { it.population }
+                } else {
+                    responseBody.sortByDescending { it.population }
+                }
                 myAdapter = RecyclerAdapter(responseBody)
                 myAdapter.notifyDataSetChanged()
                 recycleView.adapter = myAdapter
