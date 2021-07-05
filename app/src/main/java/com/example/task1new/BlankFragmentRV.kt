@@ -4,20 +4,11 @@ import android.content.ContentValues
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_blank_r_v.*
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.sql.Time
-import java.util.concurrent.TimeUnit
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -43,7 +34,6 @@ class BlankFragmentRV : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-
     }
 
     override fun onCreateView(
@@ -71,32 +61,18 @@ class BlankFragmentRV : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.itemSortUp) {
-            getData(true)
+            responseBody.sortByDescending { it.population }
+            myAdapter.notifyDataSetChanged()
         } else if (item.itemId == R.id.itemSortDown) {
-            getData(false)
+            responseBody.sortBy { it.population }
+            myAdapter.notifyDataSetChanged()
         }
         return super.onOptionsItemSelected(item)
     }
 
     private fun getData() {
 
-        val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-
-        val okHttpClient = OkHttpClient.Builder()
-            .connectTimeout(NetConstants.SESSION_TIMEOUT, TimeUnit.MILLISECONDS)
-            .readTimeout(NetConstants.SESSION_TIMEOUT, TimeUnit.MILLISECONDS)
-            .addInterceptor(loggingInterceptor)
-            .build()
-
-        val retrofitBuilder = Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(NetConstants.SERVER_API_BASE_URL)
-            .client(okHttpClient)
-            .build()
-
-        val jsonPlaceHolderApi = retrofitBuilder.create(JsonPlaceHolderApi::class.java)
-        val retrofitData = jsonPlaceHolderApi.getPosts()
+        val retrofitData = OkRetrofit.retrofitData
 
         retrofitData.enqueue(object : retrofit2.Callback<List<Post>?> {
             override fun onFailure(call: Call<List<Post>?>, t: Throwable) {
@@ -104,7 +80,7 @@ class BlankFragmentRV : Fragment() {
             }
 
             override fun onResponse(call: Call<List<Post>?>, response: Response<List<Post>?>) {
-                val responseBody: MutableList<Post> = response.body()!!.toMutableList()
+                responseBody = response.body()!!.toMutableList()
                 responseBody.removeAll { it.capital == "" }
                 myAdapter = RecyclerAdapter(responseBody)
                 myAdapter.notifyDataSetChanged()
@@ -113,45 +89,6 @@ class BlankFragmentRV : Fragment() {
         })
     }
 
-    private fun getData(setOn: Boolean) {
-
-        val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-
-        val okHttpClient = OkHttpClient.Builder()
-            .connectTimeout(NetConstants.SESSION_TIMEOUT, TimeUnit.MILLISECONDS)
-            .readTimeout(NetConstants.SESSION_TIMEOUT, TimeUnit.MILLISECONDS)
-            .addInterceptor(loggingInterceptor)
-            .build()
-
-        val retrofitBuilder = Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(NetConstants.SERVER_API_BASE_URL)
-            .client(okHttpClient)
-            .build()
-
-        val jsonPlaceHolderApi = retrofitBuilder.create(JsonPlaceHolderApi::class.java)
-        val retrofitData = jsonPlaceHolderApi.getPosts()
-
-        retrofitData.enqueue(object : retrofit2.Callback<List<Post>?> {
-            override fun onFailure(call: Call<List<Post>?>, t: Throwable) {
-                Log.d(ContentValues.TAG, "On Failure: " + t.message)
-            }
-
-            override fun onResponse(call: Call<List<Post>?>, response: Response<List<Post>?>) {
-                val responseBody: MutableList<Post> = response.body()!!.toMutableList()
-                responseBody.removeAll { it.capital == "" }
-                if (setOn) {
-                    responseBody.sortBy { it.population }
-                } else {
-                    responseBody.sortByDescending { it.population }
-                }
-                myAdapter = RecyclerAdapter(responseBody)
-                myAdapter.notifyDataSetChanged()
-                recycleView.adapter = myAdapter
-            }
-        })
-    }
 
     companion object {
         /**

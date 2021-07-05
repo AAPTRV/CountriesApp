@@ -11,7 +11,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.task1new.ext.convertToCountryNameList
 
-class RecyclerAdapter(val dataList: List<Post>): RecyclerView.Adapter<RecyclerAdapter.ViewHolder>()  {
+class RecyclerAdapter(val dataList: List<Post>) :
+    RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
     var images = R.drawable.icon
 
@@ -28,19 +29,19 @@ class RecyclerAdapter(val dataList: List<Post>): RecyclerView.Adapter<RecyclerAd
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerAdapter.ViewHolder, position: Int) {
-        if(dataList[position].capital.isNotEmpty()){
-            holder.itemTitle.text = "Name: ${dataList[position].capital}"
-            holder.itemDetail.text = "Population: ${dataList[position].population}"
-            holder.languages.text = "Languages: ${dataList[position].languages.convertToCountryNameList()}"
+        if (dataList[position].capital.isNotEmpty()) {
+            holder.itemTitle.text = holder.itemView.context.getString(R.string.adapter_capital) + dataList[position].capital
+            holder.itemDetail.text = holder.itemView.context.getString(R.string.adapter_population) + dataList[position].population
+            holder.languages.text = holder.itemView.context.getString(R.string.adapter_languages) + dataList[position].languages.convertToCountryNameList()
             holder.itemImage.setImageResource(images)
         }
         Log.d(TAG, "ON BIND VIEW HOLDER STAGE")
     }
 
-    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var itemImage: ImageView
         var itemTitle: TextView
-        var itemDetail:TextView
+        var itemDetail: TextView
         var languages: TextView
 
         init {

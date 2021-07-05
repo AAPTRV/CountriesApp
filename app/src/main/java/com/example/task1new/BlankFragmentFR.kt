@@ -48,7 +48,10 @@ class BlankFragmentFR : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val buttonRV = view.findViewById<Button>(R.id.fragmentFR_RCV)
         setHasOptionsMenu(true)
-        buttonRV.setOnClickListener { Navigation.findNavController(view).navigate(R.id.action_blankFragmentFR_to_blankFragmentRV) }
+        buttonRV.setOnClickListener {
+            Navigation.findNavController(view)
+                .navigate(R.id.action_blankFragmentFR_to_blankFragmentRV)
+        }
 
     }
 

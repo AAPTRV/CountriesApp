@@ -24,6 +24,10 @@
     <string name="countries_menu_item3">Item 3</string>
     <string name="countries_menu_item4">Item 4</string>
 
+    //adapter
+    <string name="adapter_capital">Capital: </string>
+    <string name="adapter_population">Population: </string>
+    <string name="adapter_languages">Languages: </string>
 
 
 </resources>
