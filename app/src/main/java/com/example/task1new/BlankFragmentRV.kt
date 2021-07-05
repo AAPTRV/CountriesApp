@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.fragment_blank_r_v.*
+import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Response
 
@@ -27,6 +27,7 @@ class BlankFragmentRV : Fragment() {
 
     lateinit var myAdapter: RecyclerAdapter
     lateinit var responseBody: MutableList<Post>
+    lateinit var recycleView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +48,7 @@ class BlankFragmentRV : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-
+        recycleView = view.findViewById(R.id.recycleView)
         recycleView.setHasFixedSize(true)
         recycleView.layoutManager = LinearLayoutManager(context)
         getData()
