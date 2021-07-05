@@ -22,7 +22,7 @@ object OkRetrofit {
     private val jsonPlaceHolderApi = retrofitBuilder.create(JsonPlaceHolderApi::class.java)
     val retrofitData = jsonPlaceHolderApi.getPosts()
 
-    init{
+    init {
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
     }
 }

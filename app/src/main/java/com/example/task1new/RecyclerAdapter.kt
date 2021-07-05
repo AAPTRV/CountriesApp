@@ -30,9 +30,12 @@ class RecyclerAdapter(val dataList: List<Post>) :
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerAdapter.ViewHolder, position: Int) {
         if (dataList[position].capital.isNotEmpty()) {
-            holder.itemTitle.text = holder.itemView.context.getString(R.string.adapter_capital) + dataList[position].capital
-            holder.itemDetail.text = holder.itemView.context.getString(R.string.adapter_population) + dataList[position].population
-            holder.languages.text = holder.itemView.context.getString(R.string.adapter_languages) + dataList[position].languages.convertToCountryNameList()
+            holder.itemTitle.text =
+                holder.itemView.context.getString(R.string.adapter_capital) + dataList[position].capital
+            holder.itemDetail.text =
+                holder.itemView.context.getString(R.string.adapter_population) + dataList[position].population
+            holder.languages.text =
+                holder.itemView.context.getString(R.string.adapter_languages) + dataList[position].languages.convertToCountryNameList()
             holder.itemImage.setImageResource(images)
         }
         Log.d(TAG, "ON BIND VIEW HOLDER STAGE")
