@@ -1,9 +1,12 @@
 package com.example.task1new
 
 import android.content.ContentValues
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +23,10 @@ private const val ARG_PARAM2 = "param2"
  * Use the [BlankFragmentRV.newInstance] factory method to
  * create an instance of this fragment.
  */
+
+private const val SHARED_PREFS: String = "sharedPrefs"
+private const val MENU_SORT_ICON_STATE = "menu sort icon state"
+
 class BlankFragmentRV : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -28,6 +35,8 @@ class BlankFragmentRV : Fragment() {
     lateinit var myAdapter: RecyclerAdapter
     lateinit var responseBody: MutableList<Post>
     lateinit var recycleView: RecyclerView
+
+    var sortIconClipped = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,22 +61,34 @@ class BlankFragmentRV : Fragment() {
         recycleView.setHasFixedSize(true)
         recycleView.layoutManager = LinearLayoutManager(context)
         getData()
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.countries_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
+        Log.d(ContentValues.TAG, "(LOG_ICON) ON_CREATE_OPTIONS_LOAD_MENU sortIconClipped = $sortIconClipped")
+        loadMenuSortIconState()
+        initialMenuSortIconSet(menu.findItem(R.id.menu_sort_button))
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
         if (item.itemId == R.id.itemSortUp) {
-            responseBody.sortByDescending { it.population }
-            myAdapter.notifyDataSetChanged()
-        } else if (item.itemId == R.id.itemSortDown) {
-            responseBody.sortBy { it.population }
-            myAdapter.notifyDataSetChanged()
+            sortDescending()
         }
+        if (item.itemId == R.id.itemSortDown) {
+            sortAscending()
+        }
+        if (item.itemId == R.id.menu_sort_button) {
+            updateMenuSortIconView(item)
+            saveMenuSortIconState()
+            if (sortIconClipped) {
+                sortAscending()
+            } else {
+                sortDescending()
+            }
+        }
+
         return super.onOptionsItemSelected(item)
     }
 
@@ -84,10 +105,68 @@ class BlankFragmentRV : Fragment() {
                 responseBody = response.body()!!.toMutableList()
                 responseBody.removeAll { it.capital == "" }
                 myAdapter = RecyclerAdapter(responseBody)
-                myAdapter.notifyDataSetChanged()
                 recycleView.adapter = myAdapter
+                if (sortIconClipped) {
+                    sortAscending()
+                } else {
+                    sortDescending()
+                }
             }
         })
+    }
+
+    private fun loadMenuSortIconState() {
+        Log.d(ContentValues.TAG, "(LOG_ICON) LOAD_MENU_SORT_ICON_STATE (BEFORE) sortIconClipped = $sortIconClipped")
+        val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
+            SHARED_PREFS,
+            AppCompatActivity.MODE_PRIVATE
+        )
+        sortIconClipped = sharedPreferences.getBoolean(MENU_SORT_ICON_STATE, false)
+        Log.d(ContentValues.TAG, "(LOG_ICON) LOAD_MENU_SORT_ICON_STATE (AFTER) sortIconClipped = $sortIconClipped")
+    }
+
+    private fun sortAscending() {
+        responseBody.sortBy { it.population }
+        myAdapter.notifyDataSetChanged()
+    }
+
+    private fun sortDescending() {
+        responseBody.sortByDescending { it.population }
+        myAdapter.notifyDataSetChanged()
+    }
+
+    private fun saveMenuSortIconState() {
+        Log.d(ContentValues.TAG, "(LOG_ICON) SAVE_MENU_ICON_STATE (BEFORE) sortIconClipped = $sortIconClipped")
+        val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
+            SHARED_PREFS, AppCompatActivity.MODE_PRIVATE
+        )
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putBoolean(MENU_SORT_ICON_STATE, sortIconClipped)
+        editor.apply()
+        Toast.makeText(this.requireActivity(), "Data Saved", Toast.LENGTH_SHORT).show()
+        Log.d(ContentValues.TAG, "(LOG_ICON) SAVE_MENU_ICON_STATE (AFTER) sortIconClipped = $sortIconClipped")
+    }
+
+    private fun initialMenuSortIconSet(item: MenuItem){
+        Log.d(ContentValues.TAG, "(LOG_ICON) INITIAL_MENU_SORT_ICON_SET (BEFORE) sortIconClipped = $sortIconClipped")
+        if (sortIconClipped) {
+            item.setIcon(R.drawable.ic_ascending_sort)
+        } else {
+            item.setIcon(R.drawable.ic_descending_sort)
+        }
+        Log.d(ContentValues.TAG, "(LOG_ICON) INITIAL_MENU_SORT_ICON_SET (AFTER) sortIconClipped = $sortIconClipped")
+    }
+
+    private fun updateMenuSortIconView(item: MenuItem) {
+        Log.d(ContentValues.TAG, "(LOG_ICON) UPDATE_MENU_ICON_STATE (BEFORE) sortIconClipped = $sortIconClipped")
+        if (!sortIconClipped) {
+            item.setIcon(R.drawable.ic_ascending_sort)
+            sortIconClipped = true
+        } else {
+            item.setIcon(R.drawable.ic_descending_sort)
+            sortIconClipped = false
+        }
+        Log.d(ContentValues.TAG, "(LOG_ICON) UPDATE_MENU_ICON_STATE (AFTER) sortIconClipped = $sortIconClipped")
     }
 
 
