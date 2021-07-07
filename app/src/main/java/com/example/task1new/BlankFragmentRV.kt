@@ -66,7 +66,10 @@ class BlankFragmentRV : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.countries_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
-        Log.d(ContentValues.TAG, "(LOG_ICON) ON_CREATE_OPTIONS_LOAD_MENU sortIconClipped = $sortIconClipped")
+        Log.d(
+            ContentValues.TAG,
+            "(LOG_ICON) ON_CREATE_OPTIONS_LOAD_MENU sortIconClipped = $sortIconClipped"
+        )
         loadMenuSortIconState()
         initialMenuSortIconSet(menu.findItem(R.id.menu_sort_button))
     }
@@ -116,13 +119,19 @@ class BlankFragmentRV : Fragment() {
     }
 
     private fun loadMenuSortIconState() {
-        Log.d(ContentValues.TAG, "(LOG_ICON) LOAD_MENU_SORT_ICON_STATE (BEFORE) sortIconClipped = $sortIconClipped")
+        Log.d(
+            ContentValues.TAG,
+            "(LOG_ICON) LOAD_MENU_SORT_ICON_STATE (BEFORE) sortIconClipped = $sortIconClipped"
+        )
         val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
             SHARED_PREFS,
             AppCompatActivity.MODE_PRIVATE
         )
         sortIconClipped = sharedPreferences.getBoolean(MENU_SORT_ICON_STATE, false)
-        Log.d(ContentValues.TAG, "(LOG_ICON) LOAD_MENU_SORT_ICON_STATE (AFTER) sortIconClipped = $sortIconClipped")
+        Log.d(
+            ContentValues.TAG,
+            "(LOG_ICON) LOAD_MENU_SORT_ICON_STATE (AFTER) sortIconClipped = $sortIconClipped"
+        )
     }
 
     private fun sortAscending() {
@@ -136,7 +145,10 @@ class BlankFragmentRV : Fragment() {
     }
 
     private fun saveMenuSortIconState() {
-        Log.d(ContentValues.TAG, "(LOG_ICON) SAVE_MENU_ICON_STATE (BEFORE) sortIconClipped = $sortIconClipped")
+        Log.d(
+            ContentValues.TAG,
+            "(LOG_ICON) SAVE_MENU_ICON_STATE (BEFORE) sortIconClipped = $sortIconClipped"
+        )
         val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
             SHARED_PREFS, AppCompatActivity.MODE_PRIVATE
         )
@@ -144,21 +156,33 @@ class BlankFragmentRV : Fragment() {
         editor.putBoolean(MENU_SORT_ICON_STATE, sortIconClipped)
         editor.apply()
         Toast.makeText(this.requireActivity(), "Data Saved", Toast.LENGTH_SHORT).show()
-        Log.d(ContentValues.TAG, "(LOG_ICON) SAVE_MENU_ICON_STATE (AFTER) sortIconClipped = $sortIconClipped")
+        Log.d(
+            ContentValues.TAG,
+            "(LOG_ICON) SAVE_MENU_ICON_STATE (AFTER) sortIconClipped = $sortIconClipped"
+        )
     }
 
-    private fun initialMenuSortIconSet(item: MenuItem){
-        Log.d(ContentValues.TAG, "(LOG_ICON) INITIAL_MENU_SORT_ICON_SET (BEFORE) sortIconClipped = $sortIconClipped")
+    private fun initialMenuSortIconSet(item: MenuItem) {
+        Log.d(
+            ContentValues.TAG,
+            "(LOG_ICON) INITIAL_MENU_SORT_ICON_SET (BEFORE) sortIconClipped = $sortIconClipped"
+        )
         if (sortIconClipped) {
             item.setIcon(R.drawable.ic_ascending_sort)
         } else {
             item.setIcon(R.drawable.ic_descending_sort)
         }
-        Log.d(ContentValues.TAG, "(LOG_ICON) INITIAL_MENU_SORT_ICON_SET (AFTER) sortIconClipped = $sortIconClipped")
+        Log.d(
+            ContentValues.TAG,
+            "(LOG_ICON) INITIAL_MENU_SORT_ICON_SET (AFTER) sortIconClipped = $sortIconClipped"
+        )
     }
 
     private fun updateMenuSortIconView(item: MenuItem) {
-        Log.d(ContentValues.TAG, "(LOG_ICON) UPDATE_MENU_ICON_STATE (BEFORE) sortIconClipped = $sortIconClipped")
+        Log.d(
+            ContentValues.TAG,
+            "(LOG_ICON) UPDATE_MENU_ICON_STATE (BEFORE) sortIconClipped = $sortIconClipped"
+        )
         if (!sortIconClipped) {
             item.setIcon(R.drawable.ic_ascending_sort)
             sortIconClipped = true
@@ -166,7 +190,10 @@ class BlankFragmentRV : Fragment() {
             item.setIcon(R.drawable.ic_descending_sort)
             sortIconClipped = false
         }
-        Log.d(ContentValues.TAG, "(LOG_ICON) UPDATE_MENU_ICON_STATE (AFTER) sortIconClipped = $sortIconClipped")
+        Log.d(
+            ContentValues.TAG,
+            "(LOG_ICON) UPDATE_MENU_ICON_STATE (AFTER) sortIconClipped = $sortIconClipped"
+        )
     }
 
 
