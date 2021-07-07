@@ -1,10 +1,8 @@
 package com.example.task1new
 
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import androidx.navigation.Navigation
 
@@ -18,6 +16,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [BlankFragmentFR.newInstance] factory method to
  * create an instance of this fragment.
  */
+
 class BlankFragmentFR : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -39,10 +38,20 @@ class BlankFragmentFR : Fragment() {
         return inflater.inflate(R.layout.fragment_blank_f_r, container, false)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.countries_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val buttonRV = view.findViewById<Button>(R.id.fragmentFR_RCV)
-        buttonRV.setOnClickListener { Navigation.findNavController(view).navigate(R.id.action_blankFragmentFR_to_blankFragmentRV) }
+        setHasOptionsMenu(true)
+        buttonRV.setOnClickListener {
+            Navigation.findNavController(view)
+                .navigate(R.id.action_blankFragmentFR_to_blankFragmentRV)
+        }
+
     }
 
 

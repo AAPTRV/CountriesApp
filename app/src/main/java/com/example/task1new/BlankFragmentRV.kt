@@ -1,12 +1,14 @@
 package com.example.task1new
 
+import android.content.ContentValues
 import android.os.Bundle
+import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import retrofit2.Call
+import retrofit2.Response
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,6 +24,10 @@ class BlankFragmentRV : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    lateinit var myAdapter: RecyclerAdapter
+    lateinit var responseBody: MutableList<Post>
+    lateinit var recycleView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,10 +47,49 @@ class BlankFragmentRV : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val rv = view.findViewById<RecyclerView>(R.id.recycleView)
-        rv.layoutManager =LinearLayoutManager(context)
-        rv.adapter = RecyclerAdapter()
+        setHasOptionsMenu(true)
+        recycleView = view.findViewById(R.id.recycleView)
+        recycleView.setHasFixedSize(true)
+        recycleView.layoutManager = LinearLayoutManager(context)
+        getData()
+
     }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.countries_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.itemSortUp) {
+            responseBody.sortByDescending { it.population }
+            myAdapter.notifyDataSetChanged()
+        } else if (item.itemId == R.id.itemSortDown) {
+            responseBody.sortBy { it.population }
+            myAdapter.notifyDataSetChanged()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun getData() {
+
+        val retrofitData = OkRetrofit.retrofitData
+
+        retrofitData.enqueue(object : retrofit2.Callback<List<Post>?> {
+            override fun onFailure(call: Call<List<Post>?>, t: Throwable) {
+                Log.d(ContentValues.TAG, "On Failure: " + t.message)
+            }
+
+            override fun onResponse(call: Call<List<Post>?>, response: Response<List<Post>?>) {
+                responseBody = response.body()!!.toMutableList()
+                responseBody.removeAll { it.capital == "" }
+                myAdapter = RecyclerAdapter(responseBody)
+                myAdapter.notifyDataSetChanged()
+                recycleView.adapter = myAdapter
+            }
+        })
+    }
+
 
     companion object {
         /**
