@@ -12,6 +12,9 @@ class CountryDatabaseCommonInfoEntity(
     val name: String,
 
     @ColumnInfo
+    val capital: String,
+
+    @ColumnInfo
     val population: Int,
 
     @ColumnInfo

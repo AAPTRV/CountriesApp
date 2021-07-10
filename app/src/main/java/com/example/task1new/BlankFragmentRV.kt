@@ -10,11 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
 import com.example.task1new.ext.convertToCountryNameList
+
 import com.example.task1new.model.PostCountryItem
-import com.example.task1new.room.CountryCommonInfoDAO
-import com.example.task1new.room.CountryDatabaseCommonInfoEntity
-import com.example.task1new.room.DBInfo
+import com.example.task1new.room.*
+import com.example.task1new.transformer.DaoEntityToAPITransformer
 import retrofit2.Call
 import retrofit2.Response
 
@@ -71,8 +72,9 @@ class BlankFragmentRV : Fragment() {
 
         mDatabase = context?.let { DBInfo.init(it) }
         val daoCountryInfo = mDatabase?.getCountryCommonInfoDAO()
+        val daoLanguageInfo = mDatabase?.getLanguageCommonInfoDAO()
 
-        getData(daoCountryInfo)
+        getData(daoCountryInfo, daoLanguageInfo)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -107,7 +109,7 @@ class BlankFragmentRV : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun getData(dao: CountryCommonInfoDAO?) {
+    private fun getData(countryDao: CountryCommonInfoDAO?, languageDao: CountryLanguageDAO?) {
 
         val retrofitData = OkRetrofit.retrofitData
 
@@ -120,8 +122,35 @@ class BlankFragmentRV : Fragment() {
                 call: Call<List<PostCountryItem>?>,
                 response: Response<List<PostCountryItem>?>
             ) {
-                responseBody = response.body()!!.toMutableList()
-                responseBody.removeAll { it.capital == "" }
+                //BD reading data (initializing variables for entities)
+                val mCountriesLanguageEntities = mutableListOf<CountryDatabaseLanguageInfoEntity>()
+                val mCountriesInfoEntities = mutableListOf<CountryDatabaseCommonInfoEntity>()
+                val mPostCountriesData = mutableListOf<PostCountryItem>()
+
+                // Filling mCountriesInfoEntities list with items from DB
+                countryDao?.getAllInfo()?.forEach { entity ->
+                    mCountriesInfoEntities.add(entity)
+                }
+
+                // Filling mCountriesLanguageEntities with items from DB
+                mCountriesInfoEntities.forEach { entity ->
+                    mCountriesLanguageEntities.add(languageDao?.getLanguageInfoByCountry(entity.name)!!)
+                }
+
+                // Filling mPost Countries Data through transformer, using info and languages entities
+                mCountriesInfoEntities.forEachIndexed { index, infoEntity ->
+                    mPostCountriesData.add(
+                        DaoEntityToAPITransformer.daoEntityToApiTransformer(
+                            infoEntity,
+                            mCountriesLanguageEntities[index]
+                        )
+                    )
+                }
+
+                Log.d(ContentValues.TAG, "DB TEST mPostCountryData.size = ${mPostCountriesData.size}")
+
+                // Filling adapter with first 20 items from DB
+                responseBody = mPostCountriesData
                 myAdapter = RecyclerAdapter(responseBody)
                 recycleView.adapter = myAdapter
                 if (sortIconClipped) {
@@ -130,19 +159,40 @@ class BlankFragmentRV : Fragment() {
                     sortDescending()
                 }
 
+                //Filling adapter with retrofit
+//                responseBody = response.body()!!.toMutableList()
+//                responseBody.removeAll { it.capital == "" }
+//                myAdapter = RecyclerAdapter(responseBody)
+//                recycleView.adapter = myAdapter
+//                if (sortIconClipped) {
+//                    sortAscending()
+//                } else {
+//                    sortDescending()
+//                }
+
                 // DB inserting data
-                val mCountriesInfoFromAPI = responseBody
+                val mCountriesInfoFromAPI = response.body()!!.toMutableList()
                 val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
 
-                mCountriesInfoFromAPI.slice(1..20).forEach{item ->
-                        mCountriesInfoToDB.add(
-                            CountryDatabaseCommonInfoEntity(
-                                item.name,
-                                item.population,
-                                item.languages.convertToCountryNameList()
-                            )
+                val mLanguagesFromApiToDB = mutableListOf<CountryDatabaseLanguageInfoEntity>()
+                mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+                    mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
+                }
+                languageDao?.deleteAll(mLanguagesFromApiToDB)
+                languageDao?.addAll(mLanguagesFromApiToDB)
+
+
+                mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+                    mCountriesInfoToDB.add(
+                        CountryDatabaseCommonInfoEntity(
+                            item.name,
+                            item.capital,
+                            item.population,
+                            item.languages.convertToCountryNameList()
                         )
-                    dao?.addAll(mCountriesInfoToDB)
+                    )
+                    countryDao?.deleteAll(mCountriesInfoToDB)
+                    countryDao?.addAll(mCountriesInfoToDB)
                 }
             }
         })

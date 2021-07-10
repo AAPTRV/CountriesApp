@@ -8,6 +8,9 @@ interface CountryCommonInfoDAO {
     @Query("SELECT * FROM countries_data_base_table_info")
     fun getAllInfo(): List<CountryDatabaseCommonInfoEntity>
 
+//    @Query("SELECT * , TOP (20) FROM countries_data_base_table_info")
+//    fun getTop20Countries(): List<CountryDatabaseCommonInfoEntity>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun add(entity: CountryDatabaseCommonInfoEntity)
 
@@ -21,6 +24,6 @@ interface CountryCommonInfoDAO {
     fun deleteAll(list: List<CountryDatabaseCommonInfoEntity>)
 
     @Delete
-    fun delete(enitiy: CountryDatabaseCommonInfoEntity)
+    fun delete(entity: CountryDatabaseCommonInfoEntity)
 
 }

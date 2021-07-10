@@ -49,6 +49,11 @@ def junitVersion = '4.+'
 def androidXTestJUnitVersion = '1.1.2'
 def androidXTestEspressoVersion = '3.3.0'
 
+def androidRoomRuntimeVersion = '2.3.0'
+def androidRoomKtxVersion = '2.3.0'
+def androidRoomTestingVersion = '2.3.0'
+def androidRoomCompilerVersion = '2.3.0'
+
 dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -69,10 +74,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:' + androidXTestEspressoVersion
 
     // Room components
-    implementation "androidx.room:room-runtime:2.3.0"
-    implementation "androidx.room:room-ktx:2.3.0"
-    androidTestImplementation "androidx.room:room-testing:2.3.0"
-    kapt 'androidx.room:room-compiler:2.3.0'
+    implementation "androidx.room:room-runtime:" + androidRoomRuntimeVersion
+    implementation "androidx.room:room-ktx:" + androidRoomKtxVersion
+    androidTestImplementation "androidx.room:room-testing:" + androidRoomTestingVersion
+    kapt 'androidx.room:room-compiler:' + androidRoomCompilerVersion
 }
 
 apply plugin: 'com.android.application'

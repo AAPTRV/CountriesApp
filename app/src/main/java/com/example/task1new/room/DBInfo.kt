@@ -5,15 +5,17 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [CountryDatabaseCommonInfoEntity::class], version = 1)
+@Database(entities = [CountryDatabaseCommonInfoEntity::class, CountryDatabaseLanguageInfoEntity::class], version = 3)
 abstract class DBInfo: RoomDatabase() {
 
     abstract fun getCountryCommonInfoDAO(): CountryCommonInfoDAO
+    abstract fun getLanguageCommonInfoDAO(): CountryLanguageDAO
 
     companion object{
         fun init(context: Context) =
             Room.databaseBuilder(context, DBInfo::class.java, "DB")
                 .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
                 .build()
     }
 }
