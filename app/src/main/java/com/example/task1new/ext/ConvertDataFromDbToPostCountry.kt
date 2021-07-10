@@ -18,8 +18,15 @@ fun CountryDatabaseLanguageInfoEntity.convertToLanguages(): MutableList<Language
 
     val size = mName.size
 
-    for (range in 1..size){
-        mListOfLanguages.add(Languages(iso_639_1[range - 1], iso_639_2[range - 1], mName[range - 1], mNativeName[range - 1]))
+    for (range in 1..size) {
+        mListOfLanguages.add(
+            Languages(
+                iso_639_1[range - 1],
+                iso_639_2[range - 1],
+                mName[range - 1],
+                mNativeName[range - 1]
+            )
+        )
     }
     return mListOfLanguages
 }

@@ -147,7 +147,10 @@ class BlankFragmentRV : Fragment() {
                     )
                 }
 
-                Log.d(ContentValues.TAG, "DB TEST mPostCountryData.size = ${mPostCountriesData.size}")
+                Log.d(
+                    ContentValues.TAG,
+                    "DB TEST mPostCountryData.size = ${mPostCountriesData.size}"
+                )
 
                 // Filling adapter with first 20 items from DB
                 responseBody = mPostCountriesData

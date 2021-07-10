@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 
 @Entity(tableName = "countries_data_base_languages_info")
-class CountryDatabaseLanguageInfoEntity (
+class CountryDatabaseLanguageInfoEntity(
     @PrimaryKey
     @ColumnInfo val mCountryname: String,
     @ColumnInfo val iso639_1: String,

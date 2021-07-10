@@ -8,8 +8,8 @@ fun PostCountryItem.convertLanguagesAPIDataToDBItem(): CountryDatabaseLanguageIn
 
     fun MutableList<String>.convertListToString(): String {
         val sb = StringBuilder()
-        this.forEachIndexed{index, item ->
-            if (this.size > 1 && index != this.size - 1){  // Тут нужно в норму привести - без велосипеда
+        this.forEachIndexed { index, item ->
+            if (this.size > 1 && index != this.size - 1) {  // Тут нужно в норму привести - без велосипеда
                 sb.append(item)
                 sb.append(",")
             } else {
