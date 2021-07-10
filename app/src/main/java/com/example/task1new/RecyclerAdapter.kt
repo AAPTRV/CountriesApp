@@ -10,8 +10,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.task1new.ext.convertToCountryNameList
+import com.example.task1new.model.PostCountryItem
 
-class RecyclerAdapter(val dataList: List<Post>) :
+class RecyclerAdapter(val dataList: List<PostCountryItem>) :
     RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
     var images = R.drawable.icon

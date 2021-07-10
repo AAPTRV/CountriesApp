@@ -1,6 +1,8 @@
-package com.example.task1new
+package com.example.task1new.model
 
-data class Post (
+import com.example.task1new.model.Languages
+
+data class PostCountryItem (
     val name: String,
     val capital: String,
     val population: Int,

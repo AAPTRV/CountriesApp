@@ -1,4 +1,4 @@
-package com.example.task1new
+package com.example.task1new.model
 
 data class Languages(
     val iso639_1: String,

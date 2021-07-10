@@ -1,5 +1,7 @@
 package com.example.task1new
 
+import com.example.task1new.network.JsonPlaceHolderApi
+import com.example.task1new.utils.NetConstants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
