@@ -177,11 +177,7 @@ class BlankFragmentRV : Fragment() {
                 responseBody.removeAll { it.capital == "" }
                 myAdapter = RecyclerAdapter(responseBody)
                 recycleView.adapter = myAdapter
-                if (sortIconClipped) {
-                    sortAscending()
-                } else {
-                    sortDescending()
-                }
+
 
                 // DB inserting data
                 val mCountriesInfoFromAPI = response.body()!!.toMutableList()
@@ -191,7 +187,7 @@ class BlankFragmentRV : Fragment() {
                 mCountriesInfoFromAPI.slice(1..20).forEach { item ->
                     mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
                 }
-                languageDao?.deleteAll(mLanguagesFromApiToDB)
+                languageDao?.deleteAll(mLanguagesFromApiToDB) // for testing purposes
                 languageDao?.addAll(mLanguagesFromApiToDB)
 
 
@@ -204,7 +200,7 @@ class BlankFragmentRV : Fragment() {
                             item.languages.convertToCountryNameList()
                         )
                     )
-                    countryDao?.deleteAll(mCountriesInfoToDB)
+                    countryDao?.deleteAll(mCountriesInfoToDB) // for testing purposes
                     countryDao?.addAll(mCountriesInfoToDB)
                 }
             }
