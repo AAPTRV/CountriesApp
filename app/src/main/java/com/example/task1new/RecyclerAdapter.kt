@@ -12,9 +12,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.task1new.ext.convertToCountryNameList
 import com.example.task1new.model.PostCountryItem
 
-class RecyclerAdapter(val dataList: List<PostCountryItem>) :
+class RecyclerAdapter(var dataList: MutableList<PostCountryItem>) :
     RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
+    var dataListInAdapter = dataList
     var images = R.drawable.icon
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerAdapter.ViewHolder {
@@ -26,6 +27,21 @@ class RecyclerAdapter(val dataList: List<PostCountryItem>) :
     override fun getItemCount(): Int {
         Log.d(TAG, "GET ITEM COUNT STAGE")
         return dataList.size
+    }
+
+    fun addNewUniqueItems(newItems: List<PostCountryItem>){
+        for(newItem in newItems){
+            var newItemIsInDataList = false
+            for(oldItem in dataList){
+                if(newItem.name == oldItem.name){
+                    newItemIsInDataList = true
+                    break
+                }
+            }
+            if(!newItemIsInDataList){
+                dataList.add(newItem)
+            }
+        }
     }
 
     @SuppressLint("SetTextI18n")

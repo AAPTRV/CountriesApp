@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.task1new.ext.addNewItemsToResponseBody
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
 import com.example.task1new.ext.convertToCountryNameList
 
@@ -71,9 +72,11 @@ class BlankFragmentRV : Fragment() {
         recycleView.layoutManager = LinearLayoutManager(context)
 
         mDatabase = context?.let { DBInfo.init(it) }
+
         val daoCountryInfo = mDatabase?.getCountryCommonInfoDAO()
         val daoLanguageInfo = mDatabase?.getLanguageCommonInfoDAO()
 
+        getInitialDataFromDB(daoCountryInfo, daoLanguageInfo)
         getData(daoCountryInfo, daoLanguageInfo)
     }
 
@@ -109,9 +112,56 @@ class BlankFragmentRV : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun getInitialDataFromDB(
+        countryDao: CountryCommonInfoDAO?,
+        languageDao: CountryLanguageDAO?
+    ) {
+
+        //BD reading data (initializing variables for entities)
+        val mCountriesLanguageEntities = mutableListOf<CountryDatabaseLanguageInfoEntity>()
+        val mCountriesInfoEntities = mutableListOf<CountryDatabaseCommonInfoEntity>()
+        val mPostCountriesData = mutableListOf<PostCountryItem>()
+
+        // Filling mCountriesInfoEntities list with items from DB
+        countryDao?.getAllInfo()?.forEach { entity ->
+            mCountriesInfoEntities.add(entity)
+        }
+
+        // Filling mCountriesLanguageEntities with items from DB
+        mCountriesInfoEntities.forEach { entity ->
+            mCountriesLanguageEntities.add(languageDao?.getLanguageInfoByCountry(entity.name)!!)
+        }
+
+        // Filling mPost Countries Data through transformer, using info and languages entities
+        mCountriesInfoEntities.forEachIndexed { index, infoEntity ->
+            mPostCountriesData.add(
+                DaoEntityToAPITransformer.daoEntityToApiTransformer(
+                    infoEntity,
+                    mCountriesLanguageEntities[index]
+                )
+            )
+        }
+
+        Log.d(
+            ContentValues.TAG,
+            "DB TEST mPostCountryData.size = ${mPostCountriesData.size}"
+        )
+
+        // Filling adapter with first 20 items from DB
+        responseBody = mPostCountriesData
+        myAdapter = RecyclerAdapter(responseBody)
+        recycleView.adapter = myAdapter
+        if (sortIconClipped) {
+            sortAscending()
+        } else {
+            sortDescending()
+        }
+    }
+
     private fun getData(countryDao: CountryCommonInfoDAO?, languageDao: CountryLanguageDAO?) {
 
         val retrofitData = OkRetrofit.retrofitData
+
 
         retrofitData.enqueue(object : retrofit2.Callback<List<PostCountryItem>?> {
             override fun onFailure(call: Call<List<PostCountryItem>?>, t: Throwable) {
@@ -122,38 +172,9 @@ class BlankFragmentRV : Fragment() {
                 call: Call<List<PostCountryItem>?>,
                 response: Response<List<PostCountryItem>?>
             ) {
-                //BD reading data (initializing variables for entities)
-                val mCountriesLanguageEntities = mutableListOf<CountryDatabaseLanguageInfoEntity>()
-                val mCountriesInfoEntities = mutableListOf<CountryDatabaseCommonInfoEntity>()
-                val mPostCountriesData = mutableListOf<PostCountryItem>()
 
-                // Filling mCountriesInfoEntities list with items from DB
-                countryDao?.getAllInfo()?.forEach { entity ->
-                    mCountriesInfoEntities.add(entity)
-                }
-
-                // Filling mCountriesLanguageEntities with items from DB
-                mCountriesInfoEntities.forEach { entity ->
-                    mCountriesLanguageEntities.add(languageDao?.getLanguageInfoByCountry(entity.name)!!)
-                }
-
-                // Filling mPost Countries Data through transformer, using info and languages entities
-                mCountriesInfoEntities.forEachIndexed { index, infoEntity ->
-                    mPostCountriesData.add(
-                        DaoEntityToAPITransformer.daoEntityToApiTransformer(
-                            infoEntity,
-                            mCountriesLanguageEntities[index]
-                        )
-                    )
-                }
-
-                Log.d(
-                    ContentValues.TAG,
-                    "DB TEST mPostCountryData.size = ${mPostCountriesData.size}"
-                )
-
-                // Filling adapter with first 20 items from DB
-                responseBody = mPostCountriesData
+                responseBody.addNewItemsToResponseBody(response.body()!!.toMutableList())
+                responseBody.removeAll { it.capital == "" }
                 myAdapter = RecyclerAdapter(responseBody)
                 recycleView.adapter = myAdapter
                 if (sortIconClipped) {
@@ -161,17 +182,6 @@ class BlankFragmentRV : Fragment() {
                 } else {
                     sortDescending()
                 }
-
-                //Filling adapter with retrofit
-//                responseBody = response.body()!!.toMutableList()
-//                responseBody.removeAll { it.capital == "" }
-//                myAdapter = RecyclerAdapter(responseBody)
-//                recycleView.adapter = myAdapter
-//                if (sortIconClipped) {
-//                    sortAscending()
-//                } else {
-//                    sortDescending()
-//                }
 
                 // DB inserting data
                 val mCountriesInfoFromAPI = response.body()!!.toMutableList()

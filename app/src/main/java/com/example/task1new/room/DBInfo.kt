@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [CountryDatabaseCommonInfoEntity::class, CountryDatabaseLanguageInfoEntity::class],
-    version = 3
+    version = DBInfo.LATEST_VERSION
 )
 abstract class DBInfo : RoomDatabase() {
 
@@ -15,6 +15,9 @@ abstract class DBInfo : RoomDatabase() {
     abstract fun getLanguageCommonInfoDAO(): CountryLanguageDAO
 
     companion object {
+
+        const val LATEST_VERSION = 3
+
         fun init(context: Context) =
             Room.databaseBuilder(context, DBInfo::class.java, "DB")
                 .allowMainThreadQueries()
