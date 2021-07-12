@@ -8,5 +8,13 @@
     <item android:id="@+id/itemSortDown"
         android:title="@string/countries_menu_descending_sort" />
 
+    <item
+        android:id="@+id/menu_sort_button"
+        android:orderInCategory="10"
+        android:title="Sort"
+        android:icon="@drawable/ic_ascending_sort"
+        app:showAsAction="always">
+    </item>
+
 
 </menu>
