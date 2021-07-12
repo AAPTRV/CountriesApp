@@ -25,6 +25,7 @@
     <string name="countries_menu_item4">Item 4</string>
 
     //adapter
+    <string name="adapter_name">Name: %1$s</string>
     <string name="adapter_capital">Capital: %1$s</string>
     <string name="adapter_population">Population: %1$d </string>
     <string name="adapter_languages">Languages: %1$s</string>
