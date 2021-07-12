@@ -10,11 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.task1new.ext.addNewItemsToResponseBody
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
 import com.example.task1new.ext.convertToCountryNameList
 
-import com.example.task1new.model.PostCountryItem
+import com.example.task1new.dto.PostCountryItemDto
 import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToAPITransformer
 import retrofit2.Call
@@ -41,7 +40,7 @@ class BlankFragmentRV : Fragment() {
     private var param2: String? = null
 
     lateinit var myAdapter: RecyclerAdapter
-    lateinit var responseBody: MutableList<PostCountryItem>
+
     lateinit var recycleView: RecyclerView
 
     private var mDatabase: DBInfo? = null
@@ -67,10 +66,6 @@ class BlankFragmentRV : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        recycleView = view.findViewById(R.id.recycleView)
-        recycleView.setHasFixedSize(true)
-        recycleView.layoutManager = LinearLayoutManager(context)
-
         mDatabase = context?.let { DBInfo.init(it) }
 
         val daoCountryInfo = mDatabase?.getCountryCommonInfoDAO()
@@ -78,6 +73,11 @@ class BlankFragmentRV : Fragment() {
 
         getInitialDataFromDB(daoCountryInfo, daoLanguageInfo)
         getData(daoCountryInfo, daoLanguageInfo)
+
+        recycleView = view.findViewById(R.id.recycleView)
+        recycleView.setHasFixedSize(true)
+        recycleView.adapter = myAdapter
+        recycleView.layoutManager = LinearLayoutManager(context)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -94,18 +94,18 @@ class BlankFragmentRV : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         if (item.itemId == R.id.itemSortUp) {
-            sortDescending()
+            myAdapter.sortDescendingDataListInAdapter()
         }
         if (item.itemId == R.id.itemSortDown) {
-            sortAscending()
+            myAdapter.sortAscendingDataListInAdapter()
         }
         if (item.itemId == R.id.menu_sort_button) {
             updateMenuSortIconView(item)
             saveMenuSortIconState()
             if (sortIconClipped) {
-                sortAscending()
+                myAdapter.sortAscendingDataListInAdapter()
             } else {
-                sortDescending()
+                myAdapter.sortDescendingDataListInAdapter()
             }
         }
 
@@ -120,7 +120,7 @@ class BlankFragmentRV : Fragment() {
         //BD reading data (initializing variables for entities)
         val mCountriesLanguageEntities = mutableListOf<CountryDatabaseLanguageInfoEntity>()
         val mCountriesInfoEntities = mutableListOf<CountryDatabaseCommonInfoEntity>()
-        val mPostCountriesData = mutableListOf<PostCountryItem>()
+        val mPostCountriesData = mutableListOf<PostCountryItemDto>()
 
         // Filling mCountriesInfoEntities list with items from DB
         countryDao?.getAllInfo()?.forEach { entity ->
@@ -148,13 +148,12 @@ class BlankFragmentRV : Fragment() {
         )
 
         // Filling adapter with first 20 items from DB
-        responseBody = mPostCountriesData
-        myAdapter = RecyclerAdapter(responseBody)
-        recycleView.adapter = myAdapter
+        myAdapter = RecyclerAdapter()
+        myAdapter.addInitialItemsToDataListInAdapter(mPostCountriesData)
         if (sortIconClipped) {
-            sortAscending()
+            myAdapter.sortAscendingDataListInAdapter()
         } else {
-            sortDescending()
+            myAdapter.sortDescendingDataListInAdapter()
         }
     }
 
@@ -163,20 +162,18 @@ class BlankFragmentRV : Fragment() {
         val retrofitData = OkRetrofit.retrofitData
 
 
-        retrofitData.enqueue(object : retrofit2.Callback<List<PostCountryItem>?> {
-            override fun onFailure(call: Call<List<PostCountryItem>?>, t: Throwable) {
+        retrofitData.enqueue(object : retrofit2.Callback<List<PostCountryItemDto>?> {
+            override fun onFailure(call: Call<List<PostCountryItemDto>?>, t: Throwable) {
                 Log.d(ContentValues.TAG, "On Failure: " + t.message)
             }
 
             override fun onResponse(
-                call: Call<List<PostCountryItem>?>,
-                response: Response<List<PostCountryItem>?>
+                call: Call<List<PostCountryItemDto>?>,
+                response: Response<List<PostCountryItemDto>?>
             ) {
+                val responseBody = response.body() ?: emptyList()
 
-                responseBody.addNewItemsToResponseBody(response.body()!!.toMutableList())
-                responseBody.removeAll { it.capital == "" }
-                myAdapter = RecyclerAdapter(responseBody)
-                recycleView.adapter = myAdapter
+                myAdapter.addNewUniqueItems(responseBody)
 
 
                 // DB inserting data
@@ -223,15 +220,6 @@ class BlankFragmentRV : Fragment() {
         )
     }
 
-    private fun sortAscending() {
-        responseBody.sortBy { it.population }
-        myAdapter.notifyDataSetChanged()
-    }
-
-    private fun sortDescending() {
-        responseBody.sortByDescending { it.population }
-        myAdapter.notifyDataSetChanged()
-    }
 
     private fun saveMenuSortIconState() {
         Log.d(

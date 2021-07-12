@@ -1,8 +1,8 @@
 package com.example.task1new.transformer
 
 import com.example.task1new.ext.convertToLanguages
-import com.example.task1new.model.Languages
-import com.example.task1new.model.PostCountryItem
+import com.example.task1new.dto.LanguagesDto
+import com.example.task1new.dto.PostCountryItemDto
 import com.example.task1new.room.CountryDatabaseCommonInfoEntity
 import com.example.task1new.room.CountryDatabaseLanguageInfoEntity
 
@@ -12,15 +12,15 @@ class DaoEntityToAPITransformer {
             countryEntity: CountryDatabaseCommonInfoEntity,
             languageEntity: CountryDatabaseLanguageInfoEntity
 
-        ): PostCountryItem {
+        ): PostCountryItemDto {
 
             // Поля, которые нужно передать в конструктор для создания объекта PostCountryItem
             val mPostName: String = countryEntity.name
             val mPostCapital: String = countryEntity.capital
             val mPostPopulation: Int = countryEntity.population
-            val mPostLanguages: List<Languages> = languageEntity.convertToLanguages()
+            val mPostLanguages: List<LanguagesDto> = languageEntity.convertToLanguages()
 
-            return PostCountryItem(mPostName, mPostCapital, mPostPopulation, mPostLanguages)
+            return PostCountryItemDto(mPostName, mPostCapital, mPostPopulation, mPostLanguages)
         }
     }
 }

@@ -1,10 +1,10 @@
 package com.example.task1new.ext
 
-import com.example.task1new.model.PostCountryItem
+import com.example.task1new.dto.PostCountryItemDto
 import com.example.task1new.room.CountryDatabaseLanguageInfoEntity
 import java.lang.StringBuilder
 
-fun PostCountryItem.convertLanguagesAPIDataToDBItem(): CountryDatabaseLanguageInfoEntity {
+fun PostCountryItemDto.convertLanguagesAPIDataToDBItem(): CountryDatabaseLanguageInfoEntity {
 
     fun MutableList<String>.convertListToString(): String {
         val sb = StringBuilder()
