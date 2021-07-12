@@ -148,8 +148,7 @@ class BlankFragmentRV : Fragment() {
         )
 
         // Filling adapter with first 20 items from DB
-        myAdapter = RecyclerAdapter()
-        myAdapter.addInitialItemsToDataListInAdapter(mPostCountriesData)
+        myAdapter = RecyclerAdapter(mPostCountriesData)
         if (sortIconClipped) {
             myAdapter.sortAscendingDataListInAdapter()
         } else {

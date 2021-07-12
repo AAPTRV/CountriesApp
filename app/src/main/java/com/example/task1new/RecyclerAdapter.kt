@@ -15,10 +15,9 @@ import com.example.task1new.ext.addNewItemsToCountryListDto
 
 //var dataList: MutableList<PostCountryItemDto>
 
-class RecyclerAdapter() :
+class RecyclerAdapter(private val dataListInAdapter: MutableList<PostCountryItemDto>) :
     RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
-    var dataListInAdapter = mutableListOf<PostCountryItemDto>()
     var images = R.drawable.icon
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerAdapter.ViewHolder {
