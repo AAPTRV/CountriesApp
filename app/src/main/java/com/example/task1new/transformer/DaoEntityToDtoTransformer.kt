@@ -1,14 +1,15 @@
 package com.example.task1new.transformer
 
-import com.example.task1new.ext.convertToLanguages
-import com.example.task1new.dto.LanguagesDto
+import com.example.task1new.ext.convertToLanguagesDto
+import com.example.task1new.dto.LanguageDto
 import com.example.task1new.dto.PostCountryItemDto
+import com.example.task1new.dto.convertLanguagesDtoToString
 import com.example.task1new.room.CountryDatabaseCommonInfoEntity
 import com.example.task1new.room.CountryDatabaseLanguageInfoEntity
 
-class DaoEntityToAPITransformer {
+class DaoEntityToDtoTransformer {
     companion object {
-        fun daoEntityToApiTransformer(
+        fun daoEntityToDtoTransformer(
             countryEntity: CountryDatabaseCommonInfoEntity,
             languageEntity: CountryDatabaseLanguageInfoEntity
 
@@ -18,9 +19,14 @@ class DaoEntityToAPITransformer {
             val mPostName: String = countryEntity.name
             val mPostCapital: String = countryEntity.capital
             val mPostPopulation: Int = countryEntity.population
-            val mPostLanguages: List<LanguagesDto> = languageEntity.convertToLanguages()
+            val mPostLanguages: List<LanguageDto> = languageEntity.convertToLanguagesDto()
 
-            return PostCountryItemDto(mPostName, mPostCapital, mPostPopulation, mPostLanguages)
+            return PostCountryItemDto(
+                mPostName,
+                mPostCapital,
+                mPostPopulation,
+                mPostLanguages.convertLanguagesDtoToString()
+            )
         }
     }
 }

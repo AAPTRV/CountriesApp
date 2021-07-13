@@ -1,11 +1,12 @@
 package com.example.task1new.ext
 
-import com.example.task1new.dto.LanguagesDto
+import com.example.task1new.dto.LanguageDto
 import com.example.task1new.room.CountryDatabaseLanguageInfoEntity
 
-fun CountryDatabaseLanguageInfoEntity.convertToLanguages(): MutableList<LanguagesDto> {
+fun CountryDatabaseLanguageInfoEntity.convertToLanguagesDto(): MutableList<LanguageDto> {
 
-    val mListOfLanguages = mutableListOf<LanguagesDto>()
+
+    val mListOfLanguages = mutableListOf<LanguageDto>()
 
     // Создаём списки параметров для создания множества объектов Language из Entity
 
@@ -18,7 +19,7 @@ fun CountryDatabaseLanguageInfoEntity.convertToLanguages(): MutableList<Language
 
     for (range in 1..size) {
         mListOfLanguages.add(
-            LanguagesDto(
+            LanguageDto(
                 iso_639_1[range - 1],
                 iso_639_2[range - 1],
                 mName[range - 1],

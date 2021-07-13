@@ -1,9 +1,10 @@
 package com.example.task1new.ext
 
-import com.example.task1new.dto.LanguagesDto
+import com.example.task1new.dto.LanguageDto
+import com.example.task1new.model.LanguageModel
 import java.lang.StringBuilder
 
-fun List<LanguagesDto>.convertToCountryNameList(): String {
+fun List<LanguageModel>.convertToCountryNameList(): String {
     val sb = StringBuilder()
     this.forEachIndexed { index, language ->
         sb.append(language.toString())
@@ -12,3 +13,4 @@ fun List<LanguagesDto>.convertToCountryNameList(): String {
     }
     return sb.toString()
 }
+

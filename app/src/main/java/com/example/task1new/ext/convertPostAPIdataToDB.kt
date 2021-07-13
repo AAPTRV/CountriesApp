@@ -1,15 +1,38 @@
 package com.example.task1new.ext
 
-import com.example.task1new.dto.PostCountryItemDto
+import com.example.task1new.model.PostCountryItemModel
+import com.example.task1new.room.CountryDatabaseCommonInfoEntity
 import com.example.task1new.room.CountryDatabaseLanguageInfoEntity
 import java.lang.StringBuilder
 
-fun PostCountryItemDto.convertLanguagesAPIDataToDBItem(): CountryDatabaseLanguageInfoEntity {
+fun PostCountryItemModel.convertCommonInfoAPIDatatoDBItem(): CountryDatabaseCommonInfoEntity{
+
+    var mEntityName = "No name"
+    var mEntityCapital = "No capital"
+    var mEntityPopulation = 0
+    var mEntityLanguages = "No languages"
+
+    if(!this.name.isNullOrEmpty()){
+        mEntityName = this.name
+    }
+    if(!this.capital.isNullOrEmpty()){
+        mEntityCapital = this.capital
+    }
+    if(this.population != null){
+        mEntityPopulation = this.population
+    }
+    if(!this.languages.isEmpty()){
+        mEntityLanguages = this.languages.convertToCountryNameList()
+    }
+    return CountryDatabaseCommonInfoEntity(mEntityName, mEntityCapital, mEntityPopulation, mEntityLanguages)
+}
+
+fun PostCountryItemModel.convertLanguagesAPIDataToDBItem(): CountryDatabaseLanguageInfoEntity {
 
     fun MutableList<String>.convertListToString(): String {
         val sb = StringBuilder()
         this.forEachIndexed { index, item ->
-            if (this.size > 1 && index != this.size - 1) {  // Тут нужно в норму привести - без велосипеда
+            if (this.size > 1 && index != this.size - 1) {
                 sb.append(item)
                 sb.append(",")
             } else {
@@ -19,21 +42,34 @@ fun PostCountryItemDto.convertLanguagesAPIDataToDBItem(): CountryDatabaseLanguag
         return sb.toString()
     }
 
-    val countryName = this.name
-    val iso6391 = mutableListOf<String>()
-    val iso6392 = mutableListOf<String>()
-    val name = mutableListOf<String>()
-    val nativeName = mutableListOf<String>()
+    var mEntityCountryName = "No name"
+    val mEntityIso6391 = mutableListOf<String>()
+    val mEntityIso6392 = mutableListOf<String>()
+    val mEntityName = mutableListOf<String>()
+    val mEntityNativeName = mutableListOf<String>()
 
-    for (Language in this.languages) {
-        iso6391.add(Language.iso639_1)
-        iso6392.add(Language.iso639_2)
-        name.add(Language.name)
-        nativeName.add(Language.nativeName)
+    if(!this.name.isNullOrEmpty()){
+        mEntityCountryName = this.name
+    }
+
+
+    for (LanguageModel in this.languages) {
+        if(!LanguageModel.iso639_1.isNullOrEmpty()){
+            mEntityIso6391.add(LanguageModel.iso639_1)
+        }
+        if(!LanguageModel.iso639_2.isNullOrEmpty()){
+            mEntityIso6392.add(LanguageModel.iso639_2)
+        }
+        if(!LanguageModel.name.isNullOrEmpty()){
+            mEntityName.add(LanguageModel.name)
+        }
+        if(!LanguageModel.nativeName.isNullOrEmpty()){
+            mEntityNativeName.add(LanguageModel.nativeName)
+        }
     }
 
     return CountryDatabaseLanguageInfoEntity(
-        countryName, iso6391.convertListToString(),
-        iso6392.convertListToString(), name.convertListToString(), nativeName.convertListToString()
+        mEntityCountryName, mEntityIso6391.convertListToString(),
+        mEntityIso6392.convertListToString(), mEntityName.convertListToString(), mEntityNativeName.convertListToString()
     )
 }

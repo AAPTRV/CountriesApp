@@ -9,9 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.task1new.ext.convertToCountryNameList
 import com.example.task1new.dto.PostCountryItemDto
-import com.example.task1new.ext.addNewItemsToCountryListDto
 
 //var dataList: MutableList<PostCountryItemDto>
 
@@ -42,7 +40,20 @@ class RecyclerAdapter(private val dataListInAdapter: MutableList<PostCountryItem
     }
 
     fun addNewUniqueItems(newItemsDto: List<PostCountryItemDto>) {
-        dataListInAdapter.addNewItemsToCountryListDto(newItemsDto.toMutableList())
+        val uniqueItems = mutableListOf<PostCountryItemDto>()
+        for (newDto in newItemsDto) {
+            var itemIsUnique = true
+            for (oldDto in dataListInAdapter) {
+                if (newDto.name == oldDto.name) {
+                    itemIsUnique = false
+                    break
+                }
+            }
+            if (itemIsUnique) {
+                uniqueItems.add(newDto)
+            }
+        }
+        dataListInAdapter.addAll(uniqueItems)
         notifyDataSetChanged()
     }
 
@@ -77,7 +88,7 @@ class RecyclerAdapter(private val dataListInAdapter: MutableList<PostCountryItem
         holder.languages.text =
             holder.itemView.context.getString(
                 R.string.adapter_languages,
-                dataListInAdapter[position].languages.convertToCountryNameList()
+                dataListInAdapter[position].languages
             )
         holder.itemImage.setImageResource(images)
 

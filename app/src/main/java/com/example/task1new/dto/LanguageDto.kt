@@ -1,6 +1,6 @@
 package com.example.task1new.dto
 
-data class LanguagesDto(
+data class LanguageDto(
     val iso639_1: String,
     val iso639_2: String,
     val name: String,
