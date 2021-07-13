@@ -21,8 +21,7 @@ object OkRetrofit {
         .baseUrl(NetConstants.SERVER_API_BASE_URL)
         .client(okHttpClient)
         .build()
-    private val jsonPlaceHolderApi = retrofitBuilder.create(JsonPlaceHolderApi::class.java)
-    val retrofitData = jsonPlaceHolderApi.getPosts()
+    val jsonPlaceHolderApi: JsonPlaceHolderApi = retrofitBuilder.create(JsonPlaceHolderApi::class.java)
 
     init {
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY

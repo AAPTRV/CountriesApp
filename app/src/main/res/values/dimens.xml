@@ -6,7 +6,7 @@
 
     \\ Row Layout
     <dimen name="row_layout_icon_size">130dp</dimen>
-    <dimen name="row_layout_textView_height">0dp</dimen>
+    <dimen name="zero_size">0dp</dimen>
 
 
     \\ RV fragment
@@ -23,5 +23,8 @@
     <dimen name="common_text_small">12sp</dimen>
     <dimen name="common_text_medium">18sp</dimen>
     <dimen name="common_text_large">24sp</dimen>
+	<dimen name="country_flag_image_size">100dp</dimen>
+	<dimen name="country_details_map_view_height">200dp</dimen>
+	<dimen name="dp20">20dp</dimen>
 
 </resources>

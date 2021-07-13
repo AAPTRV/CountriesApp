@@ -9,7 +9,7 @@ data class LanguageModel(
     val nativeName: String?
 ) {
     override fun toString(): String {
-        return name!!
+        return name ?: ""
     }
 
     fun convertToDto(): LanguageDto {
@@ -19,8 +19,8 @@ data class LanguageModel(
         var mDtoName = "no name"
         var mDtoNativeName = "No native name"
 
-        if (!this.iso639_1.isNullOrEmpty()) {
-            mDtoIso6391 = this.iso639_1
+        this.iso639_1?.let {
+            mDtoIso6391 = it
         }
         if (!this.iso639_2.isNullOrEmpty()) {
             mDtoIso6392 = this.iso639_2

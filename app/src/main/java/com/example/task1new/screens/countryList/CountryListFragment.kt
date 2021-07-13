@@ -1,4 +1,4 @@
-package com.example.task1new
+package com.example.task1new.screens.countryList
 
 import android.content.ContentValues
 import android.content.SharedPreferences
@@ -8,8 +8,12 @@ import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
+import com.example.task1new.OkRetrofit
+import com.example.task1new.R
 import com.example.task1new.dto.PostCountryItemDto
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
@@ -77,6 +81,11 @@ class BlankFragmentRV : Fragment() {
 
         recycleView = view.findViewById(R.id.recycleView)
         recycleView.setHasFixedSize(true)
+        myAdapter.setItemClick {
+            val bundle = Bundle()
+            bundle.putString(COUNTRY_NAME_BUNDLE_KEY, it.name)
+            findNavController().navigate(R.id.action_blankFragmentRV_to_countryDetailsFragment, bundle)
+        }
         recycleView.adapter = myAdapter
         recycleView.layoutManager = LinearLayoutManager(context)
     }
@@ -149,7 +158,8 @@ class BlankFragmentRV : Fragment() {
         )
 
         // Filling adapter with first 20 items from DB
-        myAdapter = RecyclerAdapter(mPostCountriesData)
+        myAdapter = RecyclerAdapter()
+        myAdapter.addListOfItems(mPostCountriesData)
         if (sortIconClipped) {
             myAdapter.sortAscendingDataListInAdapter()
         } else {
@@ -158,11 +168,7 @@ class BlankFragmentRV : Fragment() {
     }
 
     private fun getData(countryDao: CountryCommonInfoDAO?, languageDao: CountryLanguageDAO?) {
-
-        val retrofitData = OkRetrofit.retrofitData
-
-
-        retrofitData.enqueue(object : retrofit2.Callback<List<PostCountryItemModel>?> {
+        OkRetrofit.jsonPlaceHolderApi.getPosts().enqueue(object : retrofit2.Callback<List<PostCountryItemModel>?> {
             override fun onFailure(call: Call<List<PostCountryItemModel>?>, t: Throwable) {
                 Log.d(ContentValues.TAG, "On Failure: " + t.message)
             }

@@ -53,6 +53,7 @@ def androidRoomRuntimeVersion = '2.3.0'
 def androidRoomKtxVersion = '2.3.0'
 def androidRoomTestingVersion = '2.3.0'
 def androidRoomCompilerVersion = '2.3.0'
+def mapViewVersion = '17.0.1'
 
 dependencies {
 
@@ -68,6 +69,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:' + comSquareUpOkHTTP3fInterceptorVersion
     implementation 'com.squareup.retrofit2:retrofit:' + comSquareUpRetrofit2Version
     implementation 'com.squareup.retrofit2:converter-gson:' + comSquareUpRetrofit2ConverterGSONVersion
+    implementation 'com.google.android.gms:play-services-maps:' + mapViewVersion
 
     testImplementation 'junit:junit:4.+' + junitVersion
     androidTestImplementation 'androidx.test.ext:junit:' + androidXTestJUnitVersion

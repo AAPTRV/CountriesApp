@@ -4,9 +4,9 @@ import com.example.task1new.dto.LanguageDto
 import com.example.task1new.dto.PostCountryItemDto
 import java.lang.StringBuilder
 
-fun List<PostCountryItemModel>.convertToDto(): List<PostCountryItemDto>{
+fun List<PostCountryItemModel>.convertToDto(): List<PostCountryItemDto> {
     val resultListDto = mutableListOf<PostCountryItemDto>()
-    for (model in this){
+    for (model in this) {
         resultListDto.add(model.convertToDto())
     }
     return resultListDto
@@ -31,27 +31,27 @@ data class PostCountryItemModel(
         return sb.toString()
     }
 
-    fun convertToDto(): PostCountryItemDto{
+    fun convertToDto(): PostCountryItemDto {
 
         var mDtoName = "No name"
         var mDtoCapital = "No capital"
         var mDtoPopulation = 0
         val mDtoLanguages: MutableList<LanguageDto> = mutableListOf()
 
-        if(!this.name.isNullOrEmpty()){
+        if (!this.name.isNullOrEmpty()) {
             mDtoName = this.name
         }
-        if(!this.capital.isNullOrEmpty()){
+        if (!this.capital.isNullOrEmpty()) {
             mDtoCapital = this.capital
         }
-        if(this.population != null){
+        if (this.population != null) {
             mDtoPopulation = this.population
         }
-        for(Language in this.languages){
+        for (Language in this.languages) {
             mDtoLanguages.add(Language.convertToDto())
         }
 
-        return PostCountryItemDto(mDtoName,mDtoCapital,mDtoPopulation,mDtoLanguages.convertListToString())
+        return PostCountryItemDto(mDtoName, mDtoCapital, mDtoPopulation, mDtoLanguages)
     }
 }
 
