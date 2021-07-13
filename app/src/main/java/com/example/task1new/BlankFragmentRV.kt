@@ -10,12 +10,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
-import com.example.task1new.ext.convertToCountryNameList
-
 import com.example.task1new.dto.PostCountryItemDto
+import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
+import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
+import com.example.task1new.model.PostCountryItemModel
+import com.example.task1new.model.convertToDto
 import com.example.task1new.room.*
-import com.example.task1new.transformer.DaoEntityToAPITransformer
+import com.example.task1new.transformer.DaoEntityToDtoTransformer
 import retrofit2.Call
 import retrofit2.Response
 
@@ -135,7 +136,7 @@ class BlankFragmentRV : Fragment() {
         // Filling mPost Countries Data through transformer, using info and languages entities
         mCountriesInfoEntities.forEachIndexed { index, infoEntity ->
             mPostCountriesData.add(
-                DaoEntityToAPITransformer.daoEntityToApiTransformer(
+                DaoEntityToDtoTransformer.daoEntityToDtoTransformer(
                     infoEntity,
                     mCountriesLanguageEntities[index]
                 )
@@ -161,18 +162,18 @@ class BlankFragmentRV : Fragment() {
         val retrofitData = OkRetrofit.retrofitData
 
 
-        retrofitData.enqueue(object : retrofit2.Callback<List<PostCountryItemDto>?> {
-            override fun onFailure(call: Call<List<PostCountryItemDto>?>, t: Throwable) {
+        retrofitData.enqueue(object : retrofit2.Callback<List<PostCountryItemModel>?> {
+            override fun onFailure(call: Call<List<PostCountryItemModel>?>, t: Throwable) {
                 Log.d(ContentValues.TAG, "On Failure: " + t.message)
             }
 
             override fun onResponse(
-                call: Call<List<PostCountryItemDto>?>,
-                response: Response<List<PostCountryItemDto>?>
+                call: Call<List<PostCountryItemModel>?>,
+                response: Response<List<PostCountryItemModel>?>
             ) {
                 val responseBody = response.body() ?: emptyList()
 
-                myAdapter.addNewUniqueItems(responseBody)
+                myAdapter.addNewUniqueItems(responseBody.convertToDto())
 
 
                 // DB inserting data
@@ -189,12 +190,7 @@ class BlankFragmentRV : Fragment() {
 
                 mCountriesInfoFromAPI.slice(1..20).forEach { item ->
                     mCountriesInfoToDB.add(
-                        CountryDatabaseCommonInfoEntity(
-                            item.name,
-                            item.capital,
-                            item.population,
-                            item.languages.convertToCountryNameList()
-                        )
+                        item.convertCommonInfoAPIDatatoDBItem()
                     )
                     countryDao?.deleteAll(mCountriesInfoToDB) // for testing purposes
                     countryDao?.addAll(mCountriesInfoToDB)
