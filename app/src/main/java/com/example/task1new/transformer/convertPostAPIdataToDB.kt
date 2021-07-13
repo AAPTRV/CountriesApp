@@ -21,7 +21,7 @@ fun PostCountryItemModel.convertCommonInfoAPIDatatoDBItem(): CountryDatabaseComm
     if(this.population != null){
         mEntityPopulation = this.population
     }
-    if(!this.languages.isEmpty()){
+    if(this.languages.isNotEmpty()){
         mEntityLanguages = this.languages.convertToCountryNameList()
     }
     return CountryDatabaseCommonInfoEntity(mEntityName, mEntityCapital, mEntityPopulation, mEntityLanguages)

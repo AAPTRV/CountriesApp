@@ -14,16 +14,16 @@ data class LanguageModel(
 
     fun convertToDto(): LanguageDto {
 
-        var mDtoIso639_1 = "no iso 639_1"
-        var mDtoIso639_2 = "no iso 639_2"
+        var mDtoIso6391 = "no iso 639_1"
+        var mDtoIso6392 = "no iso 639_2"
         var mDtoName = "no name"
         var mDtoNativeName = "No native name"
 
         if (!this.iso639_1.isNullOrEmpty()) {
-            mDtoIso639_1 = this.iso639_1
+            mDtoIso6391 = this.iso639_1
         }
         if (!this.iso639_2.isNullOrEmpty()) {
-            mDtoIso639_2 = this.iso639_2
+            mDtoIso6392 = this.iso639_2
         }
         if (!this.name.isNullOrEmpty()) {
             mDtoName = this.name
@@ -32,7 +32,7 @@ data class LanguageModel(
             mDtoNativeName = this.nativeName
         }
         return LanguageDto(
-            mDtoIso639_1, mDtoIso639_2, mDtoName, mDtoNativeName
+            mDtoIso6391, mDtoIso6392, mDtoName, mDtoNativeName
         )
     }
 }

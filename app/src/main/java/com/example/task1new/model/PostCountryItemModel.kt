@@ -18,7 +18,7 @@ data class PostCountryItemModel(
     val population: Int?,
     val languages: List<LanguageModel>
 ) {
-    fun MutableList<LanguageDto>.convertListToString(): String {
+    private fun MutableList<LanguageDto>.convertListToString(): String {
         val sb = StringBuilder()
         this.forEachIndexed { index, item ->
             if (this.size > 1 && index != this.size - 1) {
@@ -36,7 +36,7 @@ data class PostCountryItemModel(
         var mDtoName = "No name"
         var mDtoCapital = "No capital"
         var mDtoPopulation = 0
-        var mDtoLanguages: MutableList<LanguageDto> = mutableListOf()
+        val mDtoLanguages: MutableList<LanguageDto> = mutableListOf()
 
         if(!this.name.isNullOrEmpty()){
             mDtoName = this.name

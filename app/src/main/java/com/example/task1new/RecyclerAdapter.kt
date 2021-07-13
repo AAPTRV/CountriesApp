@@ -97,19 +97,12 @@ class RecyclerAdapter(private val dataListInAdapter: MutableList<PostCountryItem
 
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var itemImage: ImageView
-        var itemName: TextView
-        var itemTitle: TextView
-        var itemDetail: TextView
-        var languages: TextView
+        var itemImage: ImageView = itemView.findViewById(R.id.cardIcon)
+        var itemName: TextView = itemView.findViewById(R.id.text_name_title)
+        var itemTitle: TextView = itemView.findViewById(R.id.text_title)
+        var itemDetail: TextView = itemView.findViewById(R.id.text_description)
+        var languages: TextView = itemView.findViewById(R.id.text_languages)
 
-        init {
-            itemImage = itemView.findViewById(R.id.cardIcon)
-            itemName = itemView.findViewById(R.id.text_name_title)
-            itemTitle = itemView.findViewById(R.id.text_title)
-            itemDetail = itemView.findViewById(R.id.text_description)
-            languages = itemView.findViewById(R.id.text_languages)
-        }
     }
 //
 }
