@@ -16,6 +16,7 @@ abstract class BaseAdapter<ItemType>: RecyclerView.Adapter<RecyclerView.ViewHold
         fun onClick(item: ItemType)
     }
 
+
     fun setItemClick(clickListener: (ItemType) -> Unit){
         mOnItemClickListener = clickListener
     }
