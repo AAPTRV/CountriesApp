@@ -30,7 +30,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [BlankFragmentRV.newInstance] factory method to
  * create an instance of this fragment.
  */
-
+//
 private const val SHARED_PREFS: String = "sharedPrefs"
 private const val MENU_SORT_ICON_STATE = "menu sort icon state"
 
