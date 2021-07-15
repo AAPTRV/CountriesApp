@@ -18,7 +18,7 @@ import com.example.task1new.dto.PostCountryItemDto
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
 import com.example.task1new.model.PostCountryItemModel
-import com.example.task1new.model.convertToDto
+import com.example.task1new.model.convertToPostCountryItemDto
 import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToDtoTransformer
 import retrofit2.Call
@@ -179,7 +179,7 @@ class BlankFragmentRV : Fragment() {
             ) {
                 val responseBody = response.body() ?: emptyList()
 
-                myAdapter.addNewUniqueItems(responseBody.convertToDto())
+                myAdapter.addNewUniqueItems(responseBody.convertToPostCountryItemDto())
 
 
                 // DB inserting data

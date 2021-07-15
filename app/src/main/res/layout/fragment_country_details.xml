@@ -22,17 +22,15 @@
 				android:layout_height="match_parent"
 				app:layout_constraintBottom_toBottomOf="parent"
 				app:layout_constraintTop_toTopOf="parent">
-				<ProgressBar
-					android:layout_width="48dp"
-					android:layout_height="48dp"
-					android:layout_gravity="center" />
+
 			</FrameLayout>
 
 			<androidx.appcompat.widget.AppCompatTextView
 				android:id="@+id/country_name"
 				android:layout_width="@dimen/zero_size"
 				android:layout_height="wrap_content"
-				android:textAlignment="viewStart"
+				android:textAlignment="center"
+				android:textSize="@dimen/common_text_large"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toTopOf="parent"
@@ -43,13 +41,14 @@
 				android:layout_width="@dimen/country_flag_image_size"
 				android:layout_height="@dimen/country_flag_image_size"
 				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintTop_toBottomOf="@+id/country_name" />
 
 			<androidx.appcompat.widget.AppCompatTextView
 				android:id="@+id/appCompatTextView"
 				android:layout_width="@dimen/zero_size"
 				android:layout_height="wrap_content"
-				android:text="asduiusdidfiasufnainsfoasnfoasnfoansfoansfoansfonasfonasfnlaskfnlasnfoansflnasfnalskfnlasnflkasfansflkalslasnflkasfosflnasfnasfnolanonsfoasfonasofnaosfnolasnasfolnsfafoiasduiusdidfiasufnainsfoasnfoasnfoansfoansfoansfonasfonasfnlaskfnlasnfoansflnasfnalskfnlasnflkasfansflkalslasnflkasfosflnasfnasfnolanonsfoasfonasofnaosfnolasnasfolnsfafoiasduiusdidfiasufnainsfoasnfoasnfoansfoansfoansfonasfonasfnlaskfnlasnfoansflnasfnalskfnlasnflkasfansflkalslasnflkasfosflnasfnasfnolanonsfoasfonasofnaosfnolasnasfolnsfafoiasduiusdidfiasufnainsfoasnfoasnfoansfoansfoansfonasfonasfnlaskfnlasnfoansflnasfnalskfnlasnflkasfansflkalslasnflkasfosflnasfnasfnolanonsfoasfonasofnaosfnolasnasfolnsfafoiasduiusdidfiasufnainsfoasnfoasnfoansfoansfoansfonasfonasfnlaskfnlasnfoansflnasfnalskfnlasnflkasfansflkalslasnflkasfosflnasfnasfnolanonsfoasfonasofnaosfnolasnasfolnsfafoiasduiusdidfiasufnainsfoasnfoasnfoansfoansfoansfonasfonasfnlaskfnlasnfoansflnasfnalskfnlasnflkasfansflkalslasnflkasfosflnasfnasfnolanonsfoasfonasofnaosfnolasnasfolnsfafoiasduiusdidfiasufnainsfoasnfoasnfoansfoansfoansfonasfonasfnlaskfnlasnfoansflnasfnalskfnlasnflkasfansflkalslasnflkasfosflnasfnasfnolanonsfoasfonasofnaosfnolasnasfolnsfafoiasduiusdidfiasufnainsfoasnfoasnfoansfoansfoansfonasfonasfnlaskfnlasnfoansflnasfnalskfnlasnflkasfansflkalslasnflkasfosflnasfnasfnolanonsfoasfonasofnaosfnolasnasfolnsfafoiasduiusdidfiasufnainsfoasnfoasnfoansfoansfoansfonasfonasfnlaskfnlasnfoansflnasfnalskfnlasnflkasfansflkalslasnflkasfosflnasfnasfnolanonsfoasfonasofnaosfnolasnasfolnsfafoi"
+				android:text="Sed ut perspiciatis, unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa, quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt, explicabo. Nemo enim ipsam voluptatem, quia voluptas sit, aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos, qui ratione voluptatem sequi nesciunt, neque porro quisquam est, qui dolorem ipsum, quia dolor sit, amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit, qui in ea voluptate velit esse, quam nihil molestiae consequatur, vel illum, qui dolorem eum fugiat, quo voluptas nulla pariatur? At vero eos et accusamus et iusto odio dignissimos ducimus, qui blanditiis praesentium voluptatum deleniti atque corrupti, quos dolores et quas molestias excepturi sint, obcaecati cupiditate non provident, similique sunt in culpa, qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio, cumque nihil impedit, quo minus id, quod maxime placeat, facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet, ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat."
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@id/iv_country_flag" />
@@ -58,6 +57,7 @@
 				android:id="@+id/mv_country_details"
 				android:layout_width="@dimen/zero_size"
 				android:layout_height="@dimen/country_details_map_view_height"
+				android:background="@color/black"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@+id/appCompatTextView" />
@@ -70,6 +70,16 @@
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@+id/mv_country_details" />
+
+			<ProgressBar
+				android:layout_width="48dp"
+				android:layout_height="48dp"
+				android:layout_gravity="center"
+				android:layout_marginTop="32dp"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent"
+				android:visibility="invisible"/>
 
 		</androidx.constraintlayout.widget.ConstraintLayout>
 

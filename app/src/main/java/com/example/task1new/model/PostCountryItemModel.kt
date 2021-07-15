@@ -1,13 +1,15 @@
 package com.example.task1new.model
 
+import com.example.task1new.dto.FlagDto
 import com.example.task1new.dto.LanguageDto
 import com.example.task1new.dto.PostCountryItemDto
+import com.google.gson.annotations.SerializedName
 import java.lang.StringBuilder
 
-fun List<PostCountryItemModel>.convertToDto(): List<PostCountryItemDto> {
+fun List<PostCountryItemModel>.convertToPostCountryItemDto(): List<PostCountryItemDto> {
     val resultListDto = mutableListOf<PostCountryItemDto>()
     for (model in this) {
-        resultListDto.add(model.convertToDto())
+        resultListDto.add(model.convertToPostCountryItemDto())
     }
     return resultListDto
 }
@@ -16,7 +18,9 @@ data class PostCountryItemModel(
     val name: String?,
     val capital: String?,
     val population: Int?,
-    val languages: List<LanguageModel>
+    val languages: List<LanguageModel>,
+    @SerializedName("flag")
+    val flagImageUrl: String?
 ) {
     private fun MutableList<LanguageDto>.convertListToString(): String {
         val sb = StringBuilder()
@@ -31,27 +35,39 @@ data class PostCountryItemModel(
         return sb.toString()
     }
 
-    fun convertToDto(): PostCountryItemDto {
+    fun convertToPostCountryItemDto(): PostCountryItemDto {
 
         var mDtoName = "No name"
         var mDtoCapital = "No capital"
         var mDtoPopulation = 0
         val mDtoLanguages: MutableList<LanguageDto> = mutableListOf()
 
-        if (!this.name.isNullOrEmpty()) {
-            mDtoName = this.name
+        this.name?.let {
+            if (it.isNotEmpty()) {
+                mDtoName = it
+            }
         }
-        if (!this.capital.isNullOrEmpty()) {
-            mDtoCapital = this.capital
+        this.capital?.let {
+            if (it.isNotEmpty()) {
+                mDtoCapital = it
+            }
         }
-        if (this.population != null) {
-            mDtoPopulation = this.population
+        this.population?.let {
+            mDtoPopulation = it
         }
-        for (Language in this.languages) {
-            mDtoLanguages.add(Language.convertToDto())
-        }
-
+        this.languages.forEach { mDtoLanguages.add(it.convertToDto()) }
         return PostCountryItemDto(mDtoName, mDtoCapital, mDtoPopulation, mDtoLanguages)
+    }
+
+    fun convertToFlagDto(): FlagDto {
+        var mFlagImageUrl =
+            "https://yt3.ggpht.com/ytc/AAUvwnj-HQCcnej-gvi_dCwAz8TmulUOPoHLGlS05rMi=s900-c-k-c0x00ffffff-no-rj"
+        this.flagImageUrl?.let {
+            if (it.isNotEmpty()) {
+                mFlagImageUrl = it
+            }
+        }
+        return FlagDto(mFlagImageUrl)
     }
 }
 

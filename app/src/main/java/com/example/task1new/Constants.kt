@@ -1,3 +1,4 @@
 package com.example.task1new
 
 const val COUNTRY_NAME_BUNDLE_KEY = "COUNTRY_NAME_BUNDLE_KEY"
+const val COUNTRY_FLAG_URL_BUNDLE_KEY = "COUNTRY_NAME_BUNDLE_KEY"
