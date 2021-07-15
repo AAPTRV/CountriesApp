@@ -1,6 +1,8 @@
 package com.example.task1new.screens.details
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,11 +16,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
 import com.example.task1new.OkRetrofit
 import com.example.task1new.R
+import com.example.task1new.ext.loadSvg
+import com.example.task1new.ext.showDialogWithOneButton
 import com.example.task1new.model.PostCountryItemModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import com.example.task1new.ext.loadSvg
 
 class CountryDetailsFragment : Fragment() {
 
@@ -56,15 +59,14 @@ class CountryDetailsFragment : Fragment() {
         mRvLanguages.adapter = mLanguagesAdapter
 
         mSrCountryDetails.setOnRefreshListener {
-            getCountryByName()
+            getCountryByName(true)
         }
-        progress.visibility = View.VISIBLE
-        getCountryByName()
-        Thread.sleep(1000)
-        progress.visibility = View.GONE
+        getCountryByName(false)
+        activity?.showDialogWithOneButton("Title", "Description", R.string.ok, null)
     }
 
-    private fun getCountryByName() {
+    private fun getCountryByName(isRefresh: Boolean) {
+        progress.visibility = if (isRefresh) View.GONE else View.VISIBLE
         OkRetrofit.jsonPlaceHolderApi.getCountryByName(mCountryName)
             .enqueue(object : Callback<List<PostCountryItemModel>> {
                 override fun onResponse(
@@ -78,6 +80,7 @@ class CountryDetailsFragment : Fragment() {
                     )
                     mSrCountryDetails.isRefreshing = false
                     mIvCountryFlag.loadSvg(response.body()?.get(0)?.flagImageUrl.toString())
+                    Thread.sleep(1000)
                     progress.visibility = View.GONE
                 }
 
