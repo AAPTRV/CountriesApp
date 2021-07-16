@@ -1,7 +1,9 @@
 package com.example.task1new.ext
 
 import com.example.task1new.dto.LanguageDto
+import com.example.task1new.dto.LatLngDto
 import com.example.task1new.model.LanguageModel
+import com.example.task1new.model.PostCountryItemModel
 import java.lang.StringBuilder
 
 fun List<LanguageModel>.convertToCountryNameList(): String {
@@ -13,3 +15,4 @@ fun List<LanguageModel>.convertToCountryNameList(): String {
     }
     return sb.toString()
 }
+

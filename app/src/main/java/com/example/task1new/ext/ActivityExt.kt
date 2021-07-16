@@ -19,7 +19,6 @@ import com.example.task1new.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
-
 val DIALOG_WIDTH_DELTA_7: Float = 0.7F
 
 /**
