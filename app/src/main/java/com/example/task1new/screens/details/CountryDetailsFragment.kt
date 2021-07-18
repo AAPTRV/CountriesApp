@@ -16,9 +16,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
 import com.example.task1new.OkRetrofit
 import com.example.task1new.R
+import com.example.task1new.databinding.FragmentCountryDetailsBinding
 import com.example.task1new.dto.LatLngDto
 import com.example.task1new.ext.loadSvg
 import com.example.task1new.ext.showDialogWithOneButton
+import com.example.task1new.ext.showSimpleDialog
 import com.example.task1new.model.PostCountryItemModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -33,56 +35,43 @@ import retrofit2.Response
 
 class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
 
-    private lateinit var progress: FrameLayout
-    private lateinit var mSrCountryDetails: SwipeRefreshLayout
     private lateinit var mLanguagesAdapter: LanguageAdapter
-    private lateinit var mRvLanguages: RecyclerView
-    private lateinit var mTvCountryName: AppCompatTextView
     private lateinit var mCountryName: String
-    private lateinit var mIvCountryFlag: ImageView
-    private lateinit var mMvCountryDetails: MapView
     private lateinit var mGoogleMap: GoogleMap
+    private var binding: FragmentCountryDetailsBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val v = inflater.inflate(R.layout.fragment_country_details, container, false)
-
+        binding = FragmentCountryDetailsBinding.inflate(inflater, container, false)
         mCountryName = arguments?.getString(COUNTRY_NAME_BUNDLE_KEY, "") ?: ""
-        mMvCountryDetails = v.findViewById(R.id.mv_country_details)
-        mMvCountryDetails.onCreate(savedInstanceState)
-        return v
+        binding?.mvCountryDetails?.onCreate(savedInstanceState)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mRvLanguages = view.findViewById(R.id.rv_country_details_languages)
-        mTvCountryName = view.findViewById(R.id.country_name)
-        mSrCountryDetails = view.findViewById(R.id.sr_country_details)
-        progress = view.findViewById(R.id.progress)
-        mIvCountryFlag = view.findViewById(R.id.iv_country_flag)
-
-        mMvCountryDetails.getMapAsync(OnMapReadyCallback {
+        binding?.mvCountryDetails?.getMapAsync(OnMapReadyCallback {
             mGoogleMap = it
         })
 
-        mTvCountryName.text = mCountryName
+        binding?.countryName?.text = mCountryName
 
         mLanguagesAdapter = LanguageAdapter()
-        mRvLanguages.adapter = mLanguagesAdapter
+        binding?.rvCountryDetailsLanguages?.adapter = mLanguagesAdapter
 
-        mSrCountryDetails.setOnRefreshListener {
+        binding?.srCountryDetails?.setOnRefreshListener {
             getCountryByName(true)
         }
         getCountryByName(false)
-        activity?.showDialogWithOneButton("Title", "Description", R.string.ok, null)
+        activity?.showSimpleDialog()
     }
 
     private fun getCountryByName(isRefresh: Boolean) {
-        progress.visibility = if (isRefresh) View.GONE else View.VISIBLE
+        binding?.progress?.visibility = if (isRefresh) View.GONE else View.VISIBLE
         OkRetrofit.jsonPlaceHolderApi.getCountryByName(mCountryName)
             .enqueue(object : Callback<List<PostCountryItemModel>> {
                 override fun onResponse(
@@ -94,13 +83,14 @@ class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
                         response.body()?.get(0)?.convertToPostCountryItemDto()?.languages
                             ?: mutableListOf()
                     )
-                    mSrCountryDetails.isRefreshing = false
-                    mIvCountryFlag.loadSvg(response.body()?.get(0)?.flagImageUrl.toString())
-
+                    binding?.srCountryDetails?.isRefreshing = false
+                    binding?.ivCountryFlag?.loadSvg(
+                        response.body()?.get(0)?.flagImageUrl.toString()
+                    )
 
                     val position = LatLng(
-                        response.body()?.get(0)?.latlng!![0],
-                        response.body()?.get(0)?.latlng!![1]
+                        response.body()?.get(0)?.convertToLatLngDto()?.mLatitude!!,
+                        response.body()?.get(0)?.convertToLatLngDto()?.mLongitude!!
                     )
 
                     mGoogleMap.addMarker(
@@ -110,13 +100,13 @@ class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
                     )
                     val cameraPosition = CameraPosition.Builder().target(position).build()
                     mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-                    progress.visibility = View.GONE
+                    binding?.progress?.visibility = View.GONE
                 }
 
                 override fun onFailure(call: Call<List<PostCountryItemModel>>, t: Throwable) {
                     t.printStackTrace()
-                    mSrCountryDetails.isRefreshing = false
-                    progress.visibility = View.GONE
+                    binding?.srCountryDetails?.isRefreshing = false
+                    binding?.progress?.visibility = View.GONE
                 }
 
             })
@@ -131,18 +121,18 @@ class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onResume() {
-        mMvCountryDetails.onResume()
+        binding?.mvCountryDetails?.onResume()
         super.onResume()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        mMvCountryDetails.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        mMvCountryDetails.onLowMemory()
+        binding?.mvCountryDetails?.onLowMemory()
     }
 
 }

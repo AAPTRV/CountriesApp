@@ -22,7 +22,7 @@ data class PostCountryItemModel(
     val languages: List<LanguageModel>,
     @SerializedName("flag")
     val flagImageUrl: String?,
-    val latlng: List<Double>
+    val latlng: List<Double?>
 ) {
     private fun MutableList<LanguageDto>.convertListToString(): String {
         val sb = StringBuilder()
@@ -73,8 +73,16 @@ data class PostCountryItemModel(
     }
 
     fun convertToLatLngDto(): LatLngDto {
+        var mLatitude = 0.0
+        var mLongitude = 0.0
+        this.latlng[0]?.let {
+            mLatitude = it
+        }
+        this.latlng[1]?.let {
+            mLongitude = it
+        }
         return LatLngDto(
-            this.latlng[0], this.latlng[1]
+            mLatitude, mLongitude
         )
     }
 }

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.task1new.R
 import com.example.task1new.base.adapter.BaseAdapter
 import com.example.task1new.dto.PostCountryItemDto
+import com.example.task1new.dto.convertLanguagesDtoToString
 
 //var dataList: MutableList<PostCountryItemDto>
 
@@ -86,7 +87,7 @@ class RecyclerAdapter : BaseAdapter<PostCountryItemDto>() {
             holder.languages.text =
                 holder.itemView.context.getString(
                     R.string.adapter_languages,
-                    mDataListInAdapter[position].languages
+                    mDataListInAdapter[position].languages.convertLanguagesDtoToString()
                 )
             holder.itemImage.setImageResource(images)
             holder.itemView.setOnClickListener { mOnItemClickListener?.invoke(mDataListInAdapter[position]) }

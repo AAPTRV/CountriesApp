@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
 import com.example.task1new.OkRetrofit
 import com.example.task1new.R
+import com.example.task1new.databinding.FragmentBlankRVBinding
+import com.example.task1new.databinding.FragmentCountryDetailsBinding
 import com.example.task1new.dto.PostCountryItemDto
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
@@ -46,9 +48,9 @@ class BlankFragmentRV : Fragment() {
 
     lateinit var myAdapter: RecyclerAdapter
 
-    lateinit var recycleView: RecyclerView
-
     private var mDatabase: DBInfo? = null
+
+    private var binding: FragmentBlankRVBinding? = null
 
     var sortIconClipped = false
 
@@ -64,8 +66,9 @@ class BlankFragmentRV : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        binding = FragmentBlankRVBinding.inflate(inflater, container, false)
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_blank_r_v, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -79,8 +82,7 @@ class BlankFragmentRV : Fragment() {
         getInitialDataFromDB(daoCountryInfo, daoLanguageInfo)
         getData(daoCountryInfo, daoLanguageInfo)
 
-        recycleView = view.findViewById(R.id.recycleView)
-        recycleView.setHasFixedSize(true)
+        binding?.recycleView?.setHasFixedSize(true)
         myAdapter.setItemClick {
             val bundle = Bundle()
             bundle.putString(COUNTRY_NAME_BUNDLE_KEY, it.name)
@@ -89,8 +91,8 @@ class BlankFragmentRV : Fragment() {
                 bundle
             )
         }
-        recycleView.adapter = myAdapter
-        recycleView.layoutManager = LinearLayoutManager(context)
+        binding?.recycleView?.adapter = myAdapter
+        binding?.recycleView?.layoutManager = LinearLayoutManager(context)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -276,6 +278,11 @@ class BlankFragmentRV : Fragment() {
             ContentValues.TAG,
             "(LOG_ICON) UPDATE_MENU_ICON_STATE (AFTER) sortIconClipped = $sortIconClipped"
         )
+    }
+
+    override fun onDestroyView() {
+        binding = null
+        super.onDestroyView()
     }
 
 

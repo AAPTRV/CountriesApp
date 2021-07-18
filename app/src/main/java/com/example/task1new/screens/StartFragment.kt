@@ -3,9 +3,11 @@ package com.example.task1new.screens
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import android.widget.Button
 import androidx.navigation.Navigation
 import com.example.task1new.R
+import com.example.task1new.content.dialog.MyDialogFragment
+import com.example.task1new.databinding.FragmentBlankFRBinding
+import com.example.task1new.ext.showSimpleDialog
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,6 +26,8 @@ class BlankFragmentFR : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private var binding: FragmentBlankFRBinding? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -37,7 +41,8 @@ class BlankFragmentFR : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_blank_f_r, container, false)
+        binding = FragmentBlankFRBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -47,13 +52,20 @@ class BlankFragmentFR : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val buttonRV = view.findViewById<Button>(R.id.fragmentFR_RCV)
         setHasOptionsMenu(true)
-        buttonRV.setOnClickListener {
+        binding?.fragmentFRRCV?.setOnClickListener {
             Navigation.findNavController(view)
                 .navigate(R.id.action_blankFragmentFR_to_blankFragmentRV)
         }
+        binding?.dialogTestButton?.setOnClickListener {
+            activity?.showSimpleDialog()
+        }
 
+    }
+
+    override fun onDestroyView() {
+        binding = null
+        super.onDestroyView()
     }
 
 
