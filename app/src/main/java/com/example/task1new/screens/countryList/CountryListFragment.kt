@@ -3,6 +3,7 @@ package com.example.task1new.screens.countryList
 import android.content.ContentValues
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.*
 import android.widget.Toast
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.task1new.COUNTRY_DETAILS_LAYOUT_MANAGER_KEY
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
 import com.example.task1new.OkRetrofit
 import com.example.task1new.R
@@ -23,6 +25,7 @@ import com.example.task1new.model.PostCountryItemModel
 import com.example.task1new.model.convertToPostCountryItemDto
 import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToDtoTransformer
+import kotlinx.android.synthetic.main.fragment_blank_r_v.*
 import retrofit2.Call
 import retrofit2.Response
 
@@ -56,6 +59,7 @@ class BlankFragmentRV : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setRetainInstance(true)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -91,8 +95,12 @@ class BlankFragmentRV : Fragment() {
                 bundle
             )
         }
+
         binding?.recycleView?.adapter = myAdapter
+
+        val recycleViewLayoutState: Parcelable? = savedInstanceState?.getParcelable(COUNTRY_DETAILS_LAYOUT_MANAGER_KEY)
         binding?.recycleView?.layoutManager = LinearLayoutManager(context)
+        binding?.recycleView?.layoutManager?.onRestoreInstanceState(recycleViewLayoutState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -284,6 +292,13 @@ class BlankFragmentRV : Fragment() {
         binding = null
         super.onDestroyView()
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(COUNTRY_DETAILS_LAYOUT_MANAGER_KEY, recycleView.layoutManager?.onSaveInstanceState() )
+    }
+
+
 
 
     companion object {

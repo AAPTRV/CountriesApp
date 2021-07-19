@@ -11,24 +11,21 @@ fun PostCountryItemModel.convertCommonInfoAPIDatatoDBItem(): CountryDatabaseComm
     var mEntityCapital = "No capital"
     var mEntityPopulation = 0
     var mEntityLanguages = "No languages"
+    var mEntityFlag = ""
 
-    if (!this.name.isNullOrEmpty()) {
-        mEntityName = this.name
-    }
-    if (!this.capital.isNullOrEmpty()) {
-        mEntityCapital = this.capital
-    }
-    if (this.population != null) {
-        mEntityPopulation = this.population
-    }
+    this.name?.let { mEntityName = this.name }
+    this.capital?.let { mEntityCapital = this.capital }
+    this.population?.let { mEntityPopulation = this.population }
     if (this.languages.isNotEmpty()) {
         mEntityLanguages = this.languages.convertToCountryNameList()
     }
+    this.flag?.let { mEntityFlag = it }
     return CountryDatabaseCommonInfoEntity(
         mEntityName,
         mEntityCapital,
         mEntityPopulation,
-        mEntityLanguages
+        mEntityLanguages,
+        mEntityFlag
     )
 }
 

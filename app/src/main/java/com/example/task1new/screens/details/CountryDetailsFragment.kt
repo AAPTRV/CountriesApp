@@ -1,31 +1,20 @@
 package com.example.task1new.screens.details
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ImageView
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.task1new.COUNTRY_DETAILS_LAYOUT_MANAGER_KEY
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
 import com.example.task1new.OkRetrofit
-import com.example.task1new.R
 import com.example.task1new.content.dialog.MyDialogFragment
 import com.example.task1new.databinding.FragmentCountryDetailsBinding
-import com.example.task1new.dto.LatLngDto
 import com.example.task1new.ext.loadSvg
-import com.example.task1new.ext.showDialogWithOneButton
-import com.example.task1new.ext.showSimpleDialog
 import com.example.task1new.model.PostCountryItemModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -88,7 +77,7 @@ class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
                     )
                     binding?.srCountryDetails?.isRefreshing = false
                     binding?.ivCountryFlag?.loadSvg(
-                        response.body()?.get(0)?.flagImageUrl.toString()
+                        response.body()?.get(0)?.flag.toString()
                     )
 
                     val position = LatLng(

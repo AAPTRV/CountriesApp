@@ -21,5 +21,6 @@ data class PostCountryItemDto(
     val name: String,
     val capital: String,
     val population: Int,
-    val languages: MutableList<LanguageDto>
+    val languages: MutableList<LanguageDto>,
+    val flag: String
 )

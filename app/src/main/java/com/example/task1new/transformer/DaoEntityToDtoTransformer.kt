@@ -20,12 +20,14 @@ class DaoEntityToDtoTransformer {
             val mPostCapital: String = countryEntity.capital
             val mPostPopulation: Int = countryEntity.population
             val mPostLanguages: MutableList<LanguageDto> = languageEntity.convertToLanguagesDto()
+            val mPostFlag: String = countryEntity.flag
 
             return PostCountryItemDto(
                 mPostName,
                 mPostCapital,
                 mPostPopulation,
-                mPostLanguages
+                mPostLanguages,
+                mPostFlag
             )
         }
     }

@@ -12,6 +12,7 @@ import com.example.task1new.R
 import com.example.task1new.base.adapter.BaseAdapter
 import com.example.task1new.dto.PostCountryItemDto
 import com.example.task1new.dto.convertLanguagesDtoToString
+import com.example.task1new.ext.loadSvg
 
 //var dataList: MutableList<PostCountryItemDto>
 
@@ -89,7 +90,8 @@ class RecyclerAdapter : BaseAdapter<PostCountryItemDto>() {
                     R.string.adapter_languages,
                     mDataListInAdapter[position].languages.convertLanguagesDtoToString()
                 )
-            holder.itemImage.setImageResource(images)
+            holder.itemImage.loadSvg(mDataListInAdapter[position].flag)
+
             holder.itemView.setOnClickListener { mOnItemClickListener?.invoke(mDataListInAdapter[position]) }
 
             Log.d(TAG, "ON BIND VIEW HOLDER STAGE")

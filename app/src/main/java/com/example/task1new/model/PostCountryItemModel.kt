@@ -21,7 +21,7 @@ data class PostCountryItemModel(
     val population: Int?,
     val languages: List<LanguageModel>,
     @SerializedName("flag")
-    val flagImageUrl: String?,
+    val flag: String?,
     val latlng: List<Double?>
 ) {
     private fun MutableList<LanguageDto>.convertListToString(): String {
@@ -43,6 +43,7 @@ data class PostCountryItemModel(
         var mDtoCapital = "No capital"
         var mDtoPopulation = 0
         val mDtoLanguages: MutableList<LanguageDto> = mutableListOf()
+        var mDtoFlagUrl = ""
 
         this.name?.let {
             if (it.isNotEmpty()) {
@@ -57,14 +58,17 @@ data class PostCountryItemModel(
         this.population?.let {
             mDtoPopulation = it
         }
+        this.flag?.let {
+            mDtoFlagUrl = it
+        }
         this.languages.forEach { mDtoLanguages.add(it.convertToDto()) }
-        return PostCountryItemDto(mDtoName, mDtoCapital, mDtoPopulation, mDtoLanguages)
+        return PostCountryItemDto(mDtoName, mDtoCapital, mDtoPopulation, mDtoLanguages, mDtoFlagUrl)
     }
 
     fun convertToFlagDto(): FlagDto {
         var mFlagImageUrl =
             "https://yt3.ggpht.com/ytc/AAUvwnj-HQCcnej-gvi_dCwAz8TmulUOPoHLGlS05rMi=s900-c-k-c0x00ffffff-no-rj"
-        this.flagImageUrl?.let {
+        this.flag?.let {
             if (it.isNotEmpty()) {
                 mFlagImageUrl = it
             }
