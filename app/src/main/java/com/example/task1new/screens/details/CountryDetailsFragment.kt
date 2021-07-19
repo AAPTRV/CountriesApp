@@ -6,10 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.task1new.COUNTRY_DETAILS_LAYOUT_MANAGER_KEY
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
 import com.example.task1new.OkRetrofit
-import com.example.task1new.content.dialog.MyDialogFragment
+import com.example.task1new.content.dialog.CustomDialog
 import com.example.task1new.databinding.FragmentCountryDetailsBinding
 import com.example.task1new.ext.loadSvg
 import com.example.task1new.model.PostCountryItemModel
@@ -58,7 +57,7 @@ class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
         }
         getCountryByName(false)
         //activity?.showSimpleDialog()
-        val myDialog = MyDialogFragment(this.requireContext())
+        val myDialog = CustomDialog(this.requireContext())
         myDialog.show()
     }
 

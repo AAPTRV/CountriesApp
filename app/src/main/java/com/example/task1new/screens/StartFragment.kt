@@ -5,7 +5,6 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.task1new.R
-import com.example.task1new.content.dialog.MyDialogFragment
 import com.example.task1new.databinding.FragmentBlankFRBinding
 import com.example.task1new.ext.showSimpleDialog
 

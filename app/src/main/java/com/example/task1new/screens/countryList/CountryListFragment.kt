@@ -57,9 +57,10 @@ class BlankFragmentRV : Fragment() {
 
     var sortIconClipped = false
 
+    private lateinit var mLayoutManagerState: Parcelable
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setRetainInstance(true)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -98,9 +99,18 @@ class BlankFragmentRV : Fragment() {
 
         binding?.recycleView?.adapter = myAdapter
 
-        val recycleViewLayoutState: Parcelable? = savedInstanceState?.getParcelable(COUNTRY_DETAILS_LAYOUT_MANAGER_KEY)
-        binding?.recycleView?.layoutManager = LinearLayoutManager(context)
-        binding?.recycleView?.layoutManager?.onRestoreInstanceState(recycleViewLayoutState)
+        if (savedInstanceState != null) {
+            mLayoutManagerState =
+                savedInstanceState.getParcelable(COUNTRY_DETAILS_LAYOUT_MANAGER_KEY)!!
+            binding?.recycleView?.layoutManager?.onRestoreInstanceState(mLayoutManagerState)
+        } else {
+            binding?.recycleView?.layoutManager = LinearLayoutManager(context)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mLayoutManagerState = recycleView.layoutManager?.onSaveInstanceState()!!
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -295,10 +305,11 @@ class BlankFragmentRV : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelable(COUNTRY_DETAILS_LAYOUT_MANAGER_KEY, recycleView.layoutManager?.onSaveInstanceState() )
+        outState.putParcelable(
+            COUNTRY_DETAILS_LAYOUT_MANAGER_KEY,
+            mLayoutManagerState
+        )
     }
-
-
 
 
     companion object {
