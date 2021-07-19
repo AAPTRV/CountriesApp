@@ -84,7 +84,10 @@ class BlankFragmentRV : Fragment() {
         myAdapter.setItemClick {
             val bundle = Bundle()
             bundle.putString(COUNTRY_NAME_BUNDLE_KEY, it.name)
-            findNavController().navigate(R.id.action_blankFragmentRV_to_countryDetailsFragment, bundle)
+            findNavController().navigate(
+                R.id.action_blankFragmentRV_to_countryDetailsFragment,
+                bundle
+            )
         }
         recycleView.adapter = myAdapter
         recycleView.layoutManager = LinearLayoutManager(context)
@@ -168,41 +171,42 @@ class BlankFragmentRV : Fragment() {
     }
 
     private fun getData(countryDao: CountryCommonInfoDAO?, languageDao: CountryLanguageDAO?) {
-        OkRetrofit.jsonPlaceHolderApi.getPosts().enqueue(object : retrofit2.Callback<List<PostCountryItemModel>?> {
-            override fun onFailure(call: Call<List<PostCountryItemModel>?>, t: Throwable) {
-                Log.d(ContentValues.TAG, "On Failure: " + t.message)
-            }
-
-            override fun onResponse(
-                call: Call<List<PostCountryItemModel>?>,
-                response: Response<List<PostCountryItemModel>?>
-            ) {
-                val responseBody = response.body() ?: emptyList()
-
-                myAdapter.addNewUniqueItems(responseBody.convertToPostCountryItemDto())
-
-
-                // DB inserting data
-                val mCountriesInfoFromAPI = response.body()!!.toMutableList()
-                val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
-
-                val mLanguagesFromApiToDB = mutableListOf<CountryDatabaseLanguageInfoEntity>()
-                mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                    mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
+        OkRetrofit.jsonPlaceHolderApi.getPosts()
+            .enqueue(object : retrofit2.Callback<List<PostCountryItemModel>?> {
+                override fun onFailure(call: Call<List<PostCountryItemModel>?>, t: Throwable) {
+                    Log.d(ContentValues.TAG, "On Failure: " + t.message)
                 }
-                languageDao?.deleteAll(mLanguagesFromApiToDB) // for testing purposes
-                languageDao?.addAll(mLanguagesFromApiToDB)
+
+                override fun onResponse(
+                    call: Call<List<PostCountryItemModel>?>,
+                    response: Response<List<PostCountryItemModel>?>
+                ) {
+                    val responseBody = response.body() ?: emptyList()
+
+                    myAdapter.addNewUniqueItems(responseBody.convertToPostCountryItemDto())
 
 
-                mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                    mCountriesInfoToDB.add(
-                        item.convertCommonInfoAPIDatatoDBItem()
-                    )
-                    countryDao?.deleteAll(mCountriesInfoToDB) // for testing purposes
-                    countryDao?.addAll(mCountriesInfoToDB)
+                    // DB inserting data
+                    val mCountriesInfoFromAPI = response.body()!!.toMutableList()
+                    val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
+
+                    val mLanguagesFromApiToDB = mutableListOf<CountryDatabaseLanguageInfoEntity>()
+                    mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+                        mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
+                    }
+                    languageDao?.deleteAll(mLanguagesFromApiToDB) // for testing purposes
+                    languageDao?.addAll(mLanguagesFromApiToDB)
+
+
+                    mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+                        mCountriesInfoToDB.add(
+                            item.convertCommonInfoAPIDatatoDBItem()
+                        )
+                        countryDao?.deleteAll(mCountriesInfoToDB) // for testing purposes
+                        countryDao?.addAll(mCountriesInfoToDB)
+                    }
                 }
-            }
-        })
+            })
     }
 
     private fun loadMenuSortIconState() {

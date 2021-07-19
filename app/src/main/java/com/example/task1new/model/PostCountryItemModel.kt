@@ -2,6 +2,7 @@ package com.example.task1new.model
 
 import com.example.task1new.dto.FlagDto
 import com.example.task1new.dto.LanguageDto
+import com.example.task1new.dto.LatLngDto
 import com.example.task1new.dto.PostCountryItemDto
 import com.google.gson.annotations.SerializedName
 import java.lang.StringBuilder
@@ -20,7 +21,8 @@ data class PostCountryItemModel(
     val population: Int?,
     val languages: List<LanguageModel>,
     @SerializedName("flag")
-    val flagImageUrl: String?
+    val flagImageUrl: String?,
+    val latlng: List<Double>
 ) {
     private fun MutableList<LanguageDto>.convertListToString(): String {
         val sb = StringBuilder()
@@ -68,6 +70,12 @@ data class PostCountryItemModel(
             }
         }
         return FlagDto(mFlagImageUrl)
+    }
+
+    fun convertToLatLngDto(): LatLngDto {
+        return LatLngDto(
+            this.latlng[0], this.latlng[1]
+        )
     }
 }
 
