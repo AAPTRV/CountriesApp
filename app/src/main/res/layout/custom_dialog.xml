@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
     android:background="@drawable/rectangle_rounded_grey">
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -16,6 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_dialog_info" />
     <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="This is our dialog text"
@@ -46,13 +49,4 @@
         app:layout_constraintStart_toEndOf="@+id/button_ok"
         app:layout_constraintTop_toTopOf="@+id/button_ok" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

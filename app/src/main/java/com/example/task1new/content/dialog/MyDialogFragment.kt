@@ -3,6 +3,7 @@ package com.example.task1new.content.dialog
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
@@ -19,11 +20,18 @@ class MyDialogFragment(context: Context) : Dialog(context) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.custom_dialog)
+        window?.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
         window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         this.setCancelable(false)
-    }
 
-    override fun onCreatePanelView(featureId: Int): View? {
-        return super.onCreatePanelView(featureId)
+        val mOkButton = findViewById<Button>(R.id.button_ok)
+        val mCancelButton = findViewById<Button>(R.id.button_cancel)
+        mOkButton.setOnClickListener {
+            this.dismiss()
+        }
+        mCancelButton.setOnClickListener {
+            this.dismiss()
+        }
+
     }
 }

@@ -45,11 +45,6 @@ class BlankFragmentFR : Fragment() {
         return binding?.root
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.countries_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
