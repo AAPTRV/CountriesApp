@@ -16,6 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
 import com.example.task1new.OkRetrofit
 import com.example.task1new.R
+import com.example.task1new.content.dialog.MyDialogFragment
 import com.example.task1new.databinding.FragmentCountryDetailsBinding
 import com.example.task1new.dto.LatLngDto
 import com.example.task1new.ext.loadSvg
@@ -67,7 +68,9 @@ class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
             getCountryByName(true)
         }
         getCountryByName(false)
-        activity?.showSimpleDialog()
+        //activity?.showSimpleDialog()
+        val myDialog = MyDialogFragment(this.requireContext())
+        myDialog.show()
     }
 
     private fun getCountryByName(isRefresh: Boolean) {
