@@ -11,13 +11,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.task1new.COUNTRY_DETAILS_LAYOUT_MANAGER_KEY
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
-import com.example.task1new.OkRetrofit
+import com.example.task1new.network.OkRetrofit
 import com.example.task1new.R
 import com.example.task1new.databinding.FragmentBlankRVBinding
-import com.example.task1new.databinding.FragmentCountryDetailsBinding
 import com.example.task1new.dto.PostCountryItemDto
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
@@ -25,9 +23,11 @@ import com.example.task1new.model.PostCountryItemModel
 import com.example.task1new.model.convertToPostCountryItemDto
 import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToDtoTransformer
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_blank_r_v.*
-import retrofit2.Call
-import retrofit2.Response
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -58,6 +58,7 @@ class BlankFragmentRV : Fragment() {
     var sortIconClipped = false
 
     private lateinit var mLayoutManagerState: Parcelable
+    private val mCompositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -191,42 +192,80 @@ class BlankFragmentRV : Fragment() {
     }
 
     private fun getData(countryDao: CountryCommonInfoDAO?, languageDao: CountryLanguageDAO?) {
-        OkRetrofit.jsonPlaceHolderApi.getPosts()
-            .enqueue(object : retrofit2.Callback<List<PostCountryItemModel>?> {
-                override fun onFailure(call: Call<List<PostCountryItemModel>?>, t: Throwable) {
-                    Log.d(ContentValues.TAG, "On Failure: " + t.message)
+        var subscription = OkRetrofit.jsonPlaceHolderApi.getPosts()
+            .flatMap { response ->
+                Flowable.fromSupplier {
+                    doDtabaseWork(response, languageDao, countryDao)
+                    return@fromSupplier response
                 }
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe({ response ->
+                myAdapter.addNewUniqueItems(response.convertToPostCountryItemDto())
+            }, { throwable -> throwable.printStackTrace() })
+        mCompositeDisposable.add(subscription)
+//            .enqueue(object : retrofit2.Callback<List<PostCountryItemModel>?> {
+//                override fun onFailure(call: Call<List<PostCountryItemModel>?>, t: Throwable) {
+//                    Log.d(ContentValues.TAG, "On Failure: " + t.message)
+//                }
+//
+//                override fun onResponse(
+//                    call: Call<List<PostCountryItemModel>?>,
+//                    response: Response<List<PostCountryItemModel>?>
+//                ) {
+//                    val responseBody = response.body() ?: emptyList()
+//
+//                    myAdapter.addNewUniqueItems(responseBody.convertToPostCountryItemDto())
+//
+//
+//                    // DB inserting data
+//                    val mCountriesInfoFromAPI = response.body()!!.toMutableList()
+//                    val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
+//
+//                    val mLanguagesFromApiToDB = mutableListOf<CountryDatabaseLanguageInfoEntity>()
+//                    mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+//                        mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
+//                    }
+//                    languageDao?.deleteAll(mLanguagesFromApiToDB) // for testing purposes
+//                    languageDao?.addAll(mLanguagesFromApiToDB)
+//
+//
+//                    mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+//                        mCountriesInfoToDB.add(
+//                            item.convertCommonInfoAPIDatatoDBItem()
+//                        )
+//                        countryDao?.deleteAll(mCountriesInfoToDB) // for testing purposes
+//                        countryDao?.addAll(mCountriesInfoToDB)
+//                    }
+//                }
+//            })
+    }
 
-                override fun onResponse(
-                    call: Call<List<PostCountryItemModel>?>,
-                    response: Response<List<PostCountryItemModel>?>
-                ) {
-                    val responseBody = response.body() ?: emptyList()
+    private fun doDtabaseWork(
+        response: List<PostCountryItemModel>,
+        languageDao: CountryLanguageDAO?,
+        countryDao: CountryCommonInfoDAO?
+    ) {
+        // DB inserting data
+        val mCountriesInfoFromAPI = response.toMutableList()
+        val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
 
-                    myAdapter.addNewUniqueItems(responseBody.convertToPostCountryItemDto())
-
-
-                    // DB inserting data
-                    val mCountriesInfoFromAPI = response.body()!!.toMutableList()
-                    val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
-
-                    val mLanguagesFromApiToDB = mutableListOf<CountryDatabaseLanguageInfoEntity>()
-                    mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                        mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
-                    }
-                    languageDao?.deleteAll(mLanguagesFromApiToDB) // for testing purposes
-                    languageDao?.addAll(mLanguagesFromApiToDB)
+        val mLanguagesFromApiToDB = mutableListOf<CountryDatabaseLanguageInfoEntity>()
+        mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+            mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
+        }
+        languageDao?.deleteAll(mLanguagesFromApiToDB) // for testing purposes
+        languageDao?.addAll(mLanguagesFromApiToDB)
 
 
-                    mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                        mCountriesInfoToDB.add(
-                            item.convertCommonInfoAPIDatatoDBItem()
-                        )
-                        countryDao?.deleteAll(mCountriesInfoToDB) // for testing purposes
-                        countryDao?.addAll(mCountriesInfoToDB)
-                    }
-                }
-            })
+        mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+            mCountriesInfoToDB.add(
+                item.convertCommonInfoAPIDatatoDBItem()
+            )
+            countryDao?.deleteAll(mCountriesInfoToDB) // for testing purposes
+            countryDao?.addAll(mCountriesInfoToDB)
+        }
     }
 
     private fun loadMenuSortIconState() {
@@ -300,6 +339,7 @@ class BlankFragmentRV : Fragment() {
 
     override fun onDestroyView() {
         binding = null
+        mCompositeDisposable.clear()
         super.onDestroyView()
     }
 

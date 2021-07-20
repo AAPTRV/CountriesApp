@@ -1,7 +1,7 @@
-package com.example.task1new
+package com.example.task1new.network
 
-import com.example.task1new.network.JsonPlaceHolderApi
 import com.example.task1new.utils.NetConstants
+import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -18,6 +18,7 @@ object OkRetrofit {
         .build()
     private val retrofitBuilder = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
+        .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .baseUrl(NetConstants.SERVER_API_BASE_URL)
         .client(okHttpClient)
         .build()

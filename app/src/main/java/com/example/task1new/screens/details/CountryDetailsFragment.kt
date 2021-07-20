@@ -7,10 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
-import com.example.task1new.OkRetrofit
+import com.example.task1new.network.OkRetrofit
 import com.example.task1new.R
 import com.example.task1new.content.dialog.CustomDialog
 import com.example.task1new.databinding.FragmentCountryDetailsBinding
@@ -79,45 +78,45 @@ class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun getCountryByName(isRefresh: Boolean) {
-        binding?.progress?.visibility = if (isRefresh) View.GONE else View.VISIBLE
-        OkRetrofit.jsonPlaceHolderApi.getCountryByName(mCountryName)
-            .enqueue(object : Callback<List<PostCountryItemModel>> {
-                override fun onResponse(
-                    call: Call<List<PostCountryItemModel>>,
-                    response: Response<List<PostCountryItemModel>>
-                ) {
-                    Log.e("hz", response.body().toString())
-                    mLanguagesAdapter.addListOfItems(
-                        response.body()?.get(0)?.convertToPostCountryItemDto()?.languages
-                            ?: mutableListOf()
-                    )
-                    binding?.srCountryDetails?.isRefreshing = false
-                    binding?.ivCountryFlag?.loadSvg(
-                        response.body()?.get(0)?.flag.toString()
-                    )
-
-                    val position = LatLng(
-                        response.body()?.get(0)?.convertToLatLngDto()?.mLatitude!!,
-                        response.body()?.get(0)?.convertToLatLngDto()?.mLongitude!!
-                    )
-
-                    mGoogleMap.addMarker(
-                        MarkerOptions().position(
-                            position
-                        )
-                    )
-                    val cameraPosition = CameraPosition.Builder().target(position).build()
-                    mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-                    binding?.progress?.visibility = View.GONE
-                }
-
-                override fun onFailure(call: Call<List<PostCountryItemModel>>, t: Throwable) {
-                    t.printStackTrace()
-                    binding?.srCountryDetails?.isRefreshing = false
-                    binding?.progress?.visibility = View.GONE
-                }
-
-            })
+//        binding?.progress?.visibility = if (isRefresh) View.GONE else View.VISIBLE
+//        OkRetrofit.jsonPlaceHolderApi.getCountryByName(mCountryName)
+//            .enqueue(object : Callback<List<PostCountryItemModel>> {
+//                override fun onResponse(
+//                    call: Call<List<PostCountryItemModel>>,
+//                    response: Response<List<PostCountryItemModel>>
+//                ) {
+//                    Log.e("hz", response.body().toString())
+//                    mLanguagesAdapter.addListOfItems(
+//                        response.body()?.get(0)?.convertToPostCountryItemDto()?.languages
+//                            ?: mutableListOf()
+//                    )
+//                    binding?.srCountryDetails?.isRefreshing = false
+//                    binding?.ivCountryFlag?.loadSvg(
+//                        response.body()?.get(0)?.flag.toString()
+//                    )
+//
+//                    val position = LatLng(
+//                        response.body()?.get(0)?.convertToLatLngDto()?.mLatitude!!,
+//                        response.body()?.get(0)?.convertToLatLngDto()?.mLongitude!!
+//                    )
+//
+//                    mGoogleMap.addMarker(
+//                        MarkerOptions().position(
+//                            position
+//                        )
+//                    )
+//                    val cameraPosition = CameraPosition.Builder().target(position).build()
+//                    mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+//                    binding?.progress?.visibility = View.GONE
+//                }
+//
+//                override fun onFailure(call: Call<List<PostCountryItemModel>>, t: Throwable) {
+//                    t.printStackTrace()
+//                    binding?.srCountryDetails?.isRefreshing = false
+//                    binding?.progress?.visibility = View.GONE
+//                }
+//
+//            })
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
