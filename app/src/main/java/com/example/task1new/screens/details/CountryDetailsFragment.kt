@@ -5,9 +5,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
 import com.example.task1new.OkRetrofit
+import com.example.task1new.R
 import com.example.task1new.content.dialog.CustomDialog
 import com.example.task1new.databinding.FragmentCountryDetailsBinding
 import com.example.task1new.ext.loadSvg
@@ -56,9 +60,22 @@ class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
             getCountryByName(true)
         }
         getCountryByName(false)
-        //activity?.showSimpleDialog()
         val myDialog = CustomDialog(this.requireContext())
         myDialog.show()
+        binding?.note?.setOnClickListener{
+            myDialog.show()
+        }
+        val mEtDialog = myDialog.findViewById<EditText>(R.id.editText)
+        val mOkButton = myDialog.findViewById<Button>(R.id.button_ok)
+        val mCancelButton = myDialog.findViewById<Button>(R.id.button_cancel)
+
+        mOkButton.setOnClickListener {
+            binding?.note?.text = mEtDialog.text.toString()
+            myDialog.dismiss()
+        }
+        mCancelButton.setOnClickListener {
+            myDialog.dismiss()
+        }
     }
 
     private fun getCountryByName(isRefresh: Boolean) {

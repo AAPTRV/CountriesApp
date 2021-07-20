@@ -31,5 +31,4 @@ class LanguageAdapter : BaseAdapter<LanguageDto>() {
             val item = mDataListInAdapter[position]
             holder.tvLanguage.text = item.name
         }
-    }
-}
+    }}

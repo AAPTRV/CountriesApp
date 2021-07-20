@@ -22,7 +22,7 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Enter note"
+        android:text="Note adjustment"
         android:layout_marginTop="10dp"
         android:textSize="@dimen/common_text_medium"
         android:textColor="@color/white"
@@ -42,6 +42,8 @@
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/editText"
+        android:hint="Enter your note here"
+        android:textAlignment="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/textView"

@@ -31,13 +31,25 @@
 					app:layout_constraintTop_toTopOf="parent"
 					tools:text="abc" />
 
+				<androidx.appcompat.widget.AppCompatTextView
+					android:id="@+id/note"
+					android:layout_width="@dimen/zero_size"
+					android:layout_height="wrap_content"
+					android:textAlignment="center"
+					android:textSize="@dimen/common_text_large"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@id/country_name"
+					android:text="Note"
+					android:textColor="@color/black"/>
+
 				<androidx.appcompat.widget.AppCompatImageView
 					android:id="@+id/iv_country_flag"
 					android:layout_width="@dimen/country_flag_image_size"
 					android:layout_height="@dimen/country_flag_image_size"
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/country_name" />
+					app:layout_constraintTop_toBottomOf="@id/note" />
 
 				<androidx.appcompat.widget.AppCompatTextView
 					android:id="@+id/appCompatTextView"
