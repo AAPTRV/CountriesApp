@@ -77,10 +77,15 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:' + androidLegacySupportVersion
     implementation 'androidx.navigation:navigation-fragment-ktx:' + androidXNavigationFragmentVersion
     implementation 'androidx.navigation:navigation-ui-ktx:' + androidXNavigationUIVersion
+
+    //Network
     implementation 'com.squareup.okhttp3:okhttp:' + comSquareUpOkHTTP3Version
     implementation 'com.squareup.okhttp3:logging-interceptor:' + comSquareUpOkHTTP3fInterceptorVersion
     implementation 'com.squareup.retrofit2:retrofit:' + comSquareUpRetrofit2Version
     implementation 'com.squareup.retrofit2:converter-gson:' + comSquareUpRetrofit2ConverterGSONVersion
+    implementation "com.github.akarnokd:rxjava3-retrofit-adapter:3.0.0"
+
+    //RxJava
 
     //Maps
     implementation 'com.google.android.gms:play-services-maps:' + mapViewVersion
