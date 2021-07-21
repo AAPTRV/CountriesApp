@@ -27,4 +27,5 @@ abstract class BaseAdapter<ItemType>: RecyclerView.Adapter<RecyclerView.ViewHold
         mDataListInAdapter.add(item)
         notifyItemChanged(mDataListInAdapter.size - 1)
     }
+
 }

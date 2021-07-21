@@ -14,3 +14,14 @@ fun Activity.showSimpleDialog() {
     val dialog = builder.create()
     dialog.show()
 }
+
+fun Activity.showSimpleDialogNetworkError() {
+    val builder = AlertDialog.Builder(this)
+    builder.setTitle("Network error")
+    builder.setMessage("Unable to load data from network")
+    builder.setPositiveButton("Ok") { dialog, which ->
+        dialog.dismiss()
+    }
+    val dialog = builder.create()
+    dialog.show()
+}

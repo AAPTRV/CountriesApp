@@ -18,7 +18,9 @@ import com.example.task1new.ext.loadSvg
 
 class RecyclerAdapter : BaseAdapter<PostCountryItemDto>() {
 
-    var images = R.drawable.icon
+    private var images = R.drawable.icon
+    private var currentPosition = 0
+    private var mFilteredDataList: MutableList<PostCountryItemDto> = mDataListInAdapter
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.row_layout, parent, false)
@@ -26,9 +28,17 @@ class RecyclerAdapter : BaseAdapter<PostCountryItemDto>() {
         return CountryViewHolder(v)
     }
 
+    fun getDataListFromAdapter(): MutableList<PostCountryItemDto> {
+        return mFilteredDataList
+    }
+
+    fun getCurrentAdapterPosition(): Int {
+        return currentPosition
+    }
+
     override fun getItemCount(): Int {
         Log.d(TAG, "GET ITEM COUNT STAGE")
-        return mDataListInAdapter.size
+        return mFilteredDataList.size
     }
 
     fun addNewUniqueItems(newItemsDto: List<PostCountryItemDto>) {
@@ -46,16 +56,17 @@ class RecyclerAdapter : BaseAdapter<PostCountryItemDto>() {
             }
         }
         mDataListInAdapter.addAll(uniqueItems)
+        mFilteredDataList = mDataListInAdapter
         notifyDataSetChanged()
     }
 
     fun sortAscendingDataListInAdapter() {
-        mDataListInAdapter.sortBy { it.population }
+        mFilteredDataList.sortBy { it.population }
         notifyDataSetChanged()
     }
 
     fun sortDescendingDataListInAdapter() {
-        mDataListInAdapter.sortByDescending { it.population }
+        mFilteredDataList.sortByDescending { it.population }
         notifyDataSetChanged()
     }
 
@@ -68,33 +79,49 @@ class RecyclerAdapter : BaseAdapter<PostCountryItemDto>() {
 
     }
 
+    fun filterByName(name: String) {
+        mFilteredDataList = if (name.isEmpty()) {
+            mDataListInAdapter
+        } else {
+            var filteredList = mutableListOf<PostCountryItemDto>()
+            for (country in mFilteredDataList) {
+                if (country.name.lowercase().contains(name.lowercase())) {
+                    filteredList.add(country)
+                }
+            }
+            filteredList
+        }
+        notifyDataSetChanged()
+    }
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is CountryViewHolder) {
             holder.itemName.text =
                 holder.itemName.context.getString(
                     R.string.adapter_name,
-                    mDataListInAdapter[position].name
+                    mFilteredDataList[position].name
                 )
             holder.itemTitle.text =
                 holder.itemView.context.getString(
                     R.string.adapter_capital,
-                    mDataListInAdapter[position].capital
+                    mFilteredDataList[position].capital
                 )
             holder.itemDetail.text =
                 holder.itemView.context.getString(
                     R.string.adapter_population,
-                    mDataListInAdapter[position].population
+                    mFilteredDataList[position].population
                 )
             holder.languages.text =
                 holder.itemView.context.getString(
                     R.string.adapter_languages,
-                    mDataListInAdapter[position].languages.convertLanguagesDtoToString()
+                    mFilteredDataList[position].languages.convertLanguagesDtoToString()
                 )
-            holder.itemImage.loadSvg(mDataListInAdapter[position].flag)
+            holder.itemImage.loadSvg(mFilteredDataList[position].flag)
 
-            holder.itemView.setOnClickListener { mOnItemClickListener?.invoke(mDataListInAdapter[position]) }
+            holder.itemView.setOnClickListener { mOnItemClickListener?.invoke(mFilteredDataList[position]) }
 
             Log.d(TAG, "ON BIND VIEW HOLDER STAGE")
+            currentPosition = position
         }
     }
 //

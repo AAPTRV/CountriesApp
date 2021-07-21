@@ -4,13 +4,17 @@ import android.content.ContentValues
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuItemCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.example.task1new.COUNTRY_DETAILS_LAYOUT_MANAGER_KEY
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
@@ -25,6 +29,7 @@ import com.example.task1new.model.PostCountryItemModel
 import com.example.task1new.model.convertToPostCountryItemDto
 import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToDtoTransformer
+import com.trendyol.bubblescrollbarlib.BubbleTextProvider
 import kotlinx.android.synthetic.main.fragment_blank_r_v.*
 import retrofit2.Call
 import retrofit2.Response
@@ -98,6 +103,11 @@ class BlankFragmentRV : Fragment() {
         }
 
         binding?.recycleView?.adapter = myAdapter
+        binding?.bubbleScroll?.attachToRecyclerView(binding?.recycleView!!)
+        binding?.bubbleScroll?.bubbleTextProvider = BubbleTextProvider {
+//            myAdapter.getCurrentAdapterPosition().toString()
+            myAdapter.getDataListFromAdapter()[it].name
+        }
 
         if (savedInstanceState != null) {
             mLayoutManagerState =
@@ -122,16 +132,24 @@ class BlankFragmentRV : Fragment() {
         )
         loadMenuSortIconState()
         initialMenuSortIconSet(menu.findItem(R.id.menu_sort_button))
+
+        //Initialize menu search button
+        var menuSearchItem = menu.findItem(R.id.menu_search_button)
+        var mSvMenu: SearchView = menuSearchItem.actionView as SearchView
+        mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                myAdapter.filterByName(newText)
+                return true
+            }
+        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        if (item.itemId == R.id.itemSortUp) {
-            myAdapter.sortDescendingDataListInAdapter()
-        }
-        if (item.itemId == R.id.itemSortDown) {
-            myAdapter.sortAscendingDataListInAdapter()
-        }
         if (item.itemId == R.id.menu_sort_button) {
             updateMenuSortIconView(item)
             saveMenuSortIconState()

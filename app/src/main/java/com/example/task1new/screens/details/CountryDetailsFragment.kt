@@ -15,6 +15,7 @@ import com.example.task1new.R
 import com.example.task1new.content.dialog.CustomDialog
 import com.example.task1new.databinding.FragmentCountryDetailsBinding
 import com.example.task1new.ext.loadSvg
+import com.example.task1new.ext.showSimpleDialogNetworkError
 import com.example.task1new.model.PostCountryItemModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -115,6 +116,7 @@ class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
                     t.printStackTrace()
                     binding?.srCountryDetails?.isRefreshing = false
                     binding?.progress?.visibility = View.GONE
+                    activity?.showSimpleDialogNetworkError()
                 }
 
             })
