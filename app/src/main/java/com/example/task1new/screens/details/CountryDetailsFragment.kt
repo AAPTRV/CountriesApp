@@ -1,5 +1,6 @@
 package com.example.task1new.screens.details
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
 import com.example.task1new.OkRetrofit
@@ -29,6 +32,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+private const val SHARED_PREFS: String = "sharedPrefs"
+private const val NOTE_TEXT_STATE = "Note text state"
+
 class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var mLanguagesAdapter: LanguageAdapter
@@ -41,6 +47,7 @@ class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.e("hz", "COUNTRY DETAILS FRAGMENT -> onCreateView")
         binding = FragmentCountryDetailsBinding.inflate(inflater, container, false)
         mCountryName = arguments?.getString(COUNTRY_NAME_BUNDLE_KEY, "") ?: ""
         binding?.mvCountryDetails?.onCreate(savedInstanceState)
@@ -49,6 +56,9 @@ class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.e("hz", "COUNTRY DETAILS FRAGMENT -> onViewCreated")
+
+        loadNoteTextState()
 
         binding?.mvCountryDetails?.getMapAsync(OnMapReadyCallback {
             mGoogleMap = it
@@ -74,6 +84,7 @@ class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
 
         mOkButton.setOnClickListener {
             binding?.note?.text = mEtDialog.text.toString()
+            saveNoteTextState()
             myDialog.dismiss()
         }
         mCancelButton.setOnClickListener {
@@ -118,6 +129,7 @@ class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+        Log.e("hz", "COUNTRY DETAILS FRAGMENT -> onMapReady")
         googleMap.addMarker(
             MarkerOptions()
                 .position(LatLng(0.0, 0.0))
@@ -126,11 +138,13 @@ class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onResume() {
+        Log.e("hz", "COUNTRY DETAILS FRAGMENT -> onResume")
         binding?.mvCountryDetails?.onResume()
         super.onResume()
     }
 
     override fun onDestroyView() {
+        Log.e("hz", "COUNTRY DETAILS FRAGMENT -> onDestroyView")
         super.onDestroyView()
         binding = null
     }
@@ -138,6 +152,21 @@ class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
     override fun onLowMemory() {
         super.onLowMemory()
         binding?.mvCountryDetails?.onLowMemory()
+    }
+
+    private fun saveNoteTextState(){
+        val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
+            SHARED_PREFS, AppCompatActivity.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putString(NOTE_TEXT_STATE, binding?.note?.text.toString())
+        editor.apply()
+        Toast.makeText(this.requireActivity(), "Data Saved", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun loadNoteTextState(){
+        val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
+            SHARED_PREFS, AppCompatActivity.MODE_PRIVATE)
+        binding?.note?.text = sharedPreferences.getString(NOTE_TEXT_STATE,"No note yet")
     }
 
 }
