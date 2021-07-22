@@ -140,6 +140,7 @@ class BlankFragmentRV : Fragment() {
         var mSvMenu: SearchView = menuSearchItem.actionView as SearchView
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let { myAdapter.filterByName(query) }
                 return false
             }
 

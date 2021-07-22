@@ -80,17 +80,14 @@ class RecyclerAdapter : BaseAdapter<PostCountryItemDto>() {
     }
 
     fun filterByName(name: String) {
-        mFilteredDataList = if (name.isEmpty()) {
-            mDataListInAdapter
-        } else {
-            var filteredList = mutableListOf<PostCountryItemDto>()
-            for (country in mFilteredDataList) {
-                if (country.name.lowercase().contains(name.lowercase())) {
-                    filteredList.add(country)
-                }
+        mFilteredDataList = mDataListInAdapter
+        val filteredList = mutableListOf<PostCountryItemDto>()
+        for (country in mFilteredDataList) {
+            if (country.name.lowercase().contains(name.lowercase())) {
+                filteredList.add(country)
             }
-            filteredList
         }
+        mFilteredDataList = filteredList
         notifyDataSetChanged()
     }
 
