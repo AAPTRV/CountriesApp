@@ -30,6 +30,8 @@ import com.example.task1new.model.convertToPostCountryItemDto
 import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToDtoTransformer
 import com.trendyol.bubblescrollbarlib.BubbleTextProvider
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_blank_r_v.*
 import retrofit2.Call
 import retrofit2.Response
@@ -210,41 +212,31 @@ class BlankFragmentRV : Fragment() {
 
     private fun getData(countryDao: CountryCommonInfoDAO?, languageDao: CountryLanguageDAO?) {
         OkRetrofit.jsonPlaceHolderApi.getPosts()
-            .enqueue(object : retrofit2.Callback<List<PostCountryItemModel>?> {
-                override fun onFailure(call: Call<List<PostCountryItemModel>?>, t: Throwable) {
-                    Log.d(ContentValues.TAG, "On Failure: " + t.message)
+            .observeOn(AndroidSchedulers.mainThread()) // Where subscribe() will run
+            .subscribeOn(Schedulers.io()) // Where getPosts() will run
+            .subscribe({response ->
+
+                myAdapter.addNewUniqueItems(response.convertToPostCountryItemDto())
+
+                // DB inserting data
+                val mCountriesInfoFromAPI = response.toMutableList()
+                val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
+
+                val mLanguagesFromApiToDB = mutableListOf<CountryDatabaseLanguageInfoEntity>()
+                mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+                    mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
                 }
+                languageDao?.deleteAll(mLanguagesFromApiToDB) // for testing purposes
+                languageDao?.addAll(mLanguagesFromApiToDB)
 
-                override fun onResponse(
-                    call: Call<List<PostCountryItemModel>?>,
-                    response: Response<List<PostCountryItemModel>?>
-                ) {
-                    val responseBody = response.body() ?: emptyList()
-
-                    myAdapter.addNewUniqueItems(responseBody.convertToPostCountryItemDto())
-
-
-                    // DB inserting data
-                    val mCountriesInfoFromAPI = response.body()!!.toMutableList()
-                    val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
-
-                    val mLanguagesFromApiToDB = mutableListOf<CountryDatabaseLanguageInfoEntity>()
-                    mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                        mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
-                    }
-                    languageDao?.deleteAll(mLanguagesFromApiToDB) // for testing purposes
-                    languageDao?.addAll(mLanguagesFromApiToDB)
-
-
-                    mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                        mCountriesInfoToDB.add(
-                            item.convertCommonInfoAPIDatatoDBItem()
-                        )
-                        countryDao?.deleteAll(mCountriesInfoToDB) // for testing purposes
-                        countryDao?.addAll(mCountriesInfoToDB)
-                    }
+                mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+                    mCountriesInfoToDB.add(
+                        item.convertCommonInfoAPIDatatoDBItem()
+                    )
+                    countryDao?.deleteAll(mCountriesInfoToDB) // for testing purposes
+                    countryDao?.addAll(mCountriesInfoToDB)
                 }
-            })
+            }, {throwable -> throwable.printStackTrace()})
     }
 
     private fun loadMenuSortIconState() {
