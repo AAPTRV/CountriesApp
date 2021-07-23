@@ -4,13 +4,13 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 
-abstract class BaseMvpFragment<View : BaseMvpView> : Fragment() {
+abstract class BaseMvpFragment<View : BaseMvpView, PresenterType : BaseMvpPresenter<View>> : Fragment() {
 
-    protected lateinit var mPresenter: BaseMvpPresenter<View>
+    protected lateinit var mPresenter: PresenterType
 
     abstract fun createPresenter()
 
-    abstract fun getPresenter(): BaseMvpPresenter<View>
+    abstract fun getPresenter(): PresenterType
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -39,7 +39,8 @@ import retrofit2.Response
 private const val SHARED_PREFS: String = "sharedPrefs"
 private const val NOTE_TEXT_STATE = "Note text state"
 
-class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView>(), OnMapReadyCallback, CountryDetailsView {
+class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetailsPresenter>(), OnMapReadyCallback,
+    CountryDetailsView {
 
     //private lateinit var mPresenter: CountryDetailsPresenter
 
@@ -161,8 +162,6 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView>(), OnMapReady
         mPresenter = CountryDetailsPresenter()
     }
 
-    override fun getPresenter(): CountryDetailsPresenter = mPresenter as CountryDetailsPresenter
-
     override fun showCountryInfo(country: PostCountryItemDto, location: LatLng) {
         Log.e("hz", country.toString())
         mLanguagesAdapter.addListOfItems(
@@ -194,5 +193,7 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView>(), OnMapReady
     override fun hideProgress() {
         binding?.progress?.visibility = View.GONE
     }
+
+    override fun getPresenter(): CountryDetailsPresenter = mPresenter
 
 }
