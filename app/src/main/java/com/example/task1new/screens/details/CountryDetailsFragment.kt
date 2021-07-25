@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
 import com.example.task1new.OkRetrofit
 import com.example.task1new.R
+import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.content.dialog.CustomDialog
 import com.example.task1new.databinding.FragmentCountryDetailsBinding
 import com.example.task1new.ext.loadSvg
@@ -39,7 +40,7 @@ import retrofit2.Response
 private const val SHARED_PREFS: String = "sharedPrefs"
 private const val NOTE_TEXT_STATE = "Note text state"
 
-class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
+class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetailsPresenter>(), OnMapReadyCallback {
 
     private lateinit var mLanguagesAdapter: LanguageAdapter
     private lateinit var mCountryName: String
@@ -172,6 +173,14 @@ class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
         val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
             SHARED_PREFS, AppCompatActivity.MODE_PRIVATE)
         binding?.note?.text = sharedPreferences.getString(NOTE_TEXT_STATE,"No note yet")
+    }
+
+    override fun createPresenter() {
+        TODO("Not yet implemented")
+    }
+
+    override fun getPresenter(): CountryDetailsPresenter {
+        TODO("Not yet implemented")
     }
 
 }
