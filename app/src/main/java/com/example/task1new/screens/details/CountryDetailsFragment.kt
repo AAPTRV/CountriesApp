@@ -1,11 +1,14 @@
 package com.example.task1new.screens.details
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -28,6 +31,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.android.synthetic.main.custom_dialog.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -74,14 +78,15 @@ class CountryDetailsFragment : Fragment(), OnMapReadyCallback {
         }
         getCountryByName(false)
         val myDialog = CustomDialog(this.requireContext())
-        myDialog.show()
+        myDialog.create()
         binding?.note?.setOnClickListener{
             myDialog.show()
         }
         val mEtDialog = myDialog.findViewById<EditText>(R.id.editText)
+        mEtDialog.requestFocus()
+        mEtDialog.showSoftInputOnFocus = true
         val mOkButton = myDialog.findViewById<Button>(R.id.button_ok)
         val mCancelButton = myDialog.findViewById<Button>(R.id.button_cancel)
-
         mOkButton.setOnClickListener {
             binding?.note?.text = mEtDialog.text.toString()
             saveNoteTextState()

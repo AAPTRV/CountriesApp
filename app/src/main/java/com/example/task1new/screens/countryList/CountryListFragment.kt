@@ -56,18 +56,21 @@ class BlankFragmentRV : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    lateinit var myAdapter: RecyclerAdapter
-
-    private var mDatabase: DBInfo? = null
+    private var mDatabase: DBInfo? = context?.let { DBInfo.init(it) }
 
     private var binding: FragmentBlankRVBinding? = null
 
     var sortIconClipped = false
 
+    private lateinit var myAdapter: RecyclerAdapter
+
     private lateinit var mLayoutManagerState: Parcelable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        myAdapter = RecyclerAdapter()
+
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -92,7 +95,6 @@ class BlankFragmentRV : Fragment() {
         val daoLanguageInfo = mDatabase?.getLanguageCommonInfoDAO()
 
         getInitialDataFromDB(daoCountryInfo, daoLanguageInfo)
-        getData(daoCountryInfo, daoLanguageInfo)
 
         binding?.recycleView?.setHasFixedSize(true)
         myAdapter.setItemClick {
@@ -107,7 +109,6 @@ class BlankFragmentRV : Fragment() {
         binding?.recycleView?.adapter = myAdapter
         binding?.bubbleScroll?.attachToRecyclerView(binding?.recycleView!!)
         binding?.bubbleScroll?.bubbleTextProvider = BubbleTextProvider {
-//            myAdapter.getCurrentAdapterPosition().toString()
             myAdapter.getDataListFromAdapter()[it].name
         }
 
@@ -136,8 +137,8 @@ class BlankFragmentRV : Fragment() {
         initialMenuSortIconSet(menu.findItem(R.id.menu_sort_button))
 
         //Initialize menu search button
-        var menuSearchItem = menu.findItem(R.id.menu_search_button)
-        var mSvMenu: SearchView = menuSearchItem.actionView as SearchView
+        val menuSearchItem = menu.findItem(R.id.menu_search_button)
+        val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let { myAdapter.filterByName(query) }
@@ -200,22 +201,18 @@ class BlankFragmentRV : Fragment() {
             ContentValues.TAG,
             "DB TEST mPostCountryData.size = ${mPostCountriesData.size}"
         )
-
-        // Filling adapter with first 20 items from DB
-        myAdapter = RecyclerAdapter()
-        myAdapter.addListOfItems(mPostCountriesData)
-        if (sortIconClipped) {
-            myAdapter.sortAscendingDataListInAdapter()
-        } else {
-            myAdapter.sortDescendingDataListInAdapter()
+        if (mPostCountriesData.isNotEmpty()) {
+            // Filling adapter with first 20 items from DB
+            myAdapter.addNewUniqueItems(mPostCountriesData)
         }
+        getData(countryDao, languageDao)
     }
 
     private fun getData(countryDao: CountryCommonInfoDAO?, languageDao: CountryLanguageDAO?) {
         OkRetrofit.jsonPlaceHolderApi.getPosts()
             .observeOn(AndroidSchedulers.mainThread()) // Where subscribe() will run
             .subscribeOn(Schedulers.io()) // Where getPosts() will run
-            .subscribe({response ->
+            .subscribe({ response ->
 
                 myAdapter.addNewUniqueItems(response.convertToPostCountryItemDto())
 
@@ -234,10 +231,9 @@ class BlankFragmentRV : Fragment() {
                     mCountriesInfoToDB.add(
                         item.convertCommonInfoAPIDatatoDBItem()
                     )
-                    countryDao?.deleteAll(mCountriesInfoToDB) // for testing purposes
                     countryDao?.addAll(mCountriesInfoToDB)
                 }
-            }, {throwable -> throwable.printStackTrace()})
+            }, { throwable -> throwable.printStackTrace() })
     }
 
     private fun loadMenuSortIconState() {

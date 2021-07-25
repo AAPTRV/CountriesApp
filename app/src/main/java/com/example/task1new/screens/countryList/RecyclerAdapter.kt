@@ -18,7 +18,6 @@ import com.example.task1new.ext.loadSvg
 
 class RecyclerAdapter : BaseAdapter<PostCountryItemDto>() {
 
-    private var images = R.drawable.icon
     private var currentPosition = 0
     private var mFilteredDataList: MutableList<PostCountryItemDto> = mDataListInAdapter
 
@@ -42,31 +41,45 @@ class RecyclerAdapter : BaseAdapter<PostCountryItemDto>() {
     }
 
     fun addNewUniqueItems(newItemsDto: List<PostCountryItemDto>) {
-        val uniqueItems = mutableListOf<PostCountryItemDto>()
-        for (newDto in newItemsDto) {
-            var itemIsUnique = true
-            for (oldDto in mDataListInAdapter) {
-                if (newDto.name == oldDto.name) {
-                    itemIsUnique = false
-                    break
+
+        if(mDataListInAdapter.isEmpty()){ // case #1 -> Data loading (initially)
+            mDataListInAdapter.addAll(newItemsDto)
+            mFilteredDataList = mDataListInAdapter
+            notifyDataSetChanged()
+            Log.e(TAG, " CASE 1 : ADD ALL ITEMS IN DATA LIST. mData.size = ${mDataListInAdapter.size}")
+        } else if (mDataListInAdapter.containsAll(newItemsDto)){ // case #2 -> no new elements
+            Log.e(TAG, " CASE 2 : NO DATA TO ADD, NO NEW ELEMENTS mData.size = ${mDataListInAdapter.size}")
+        } else { // case #3 -> adding new unique elements
+            Log.e(TAG, " CASE 3 : ADD NEW UNIQUE ITEMS mData.size = ${mDataListInAdapter.size}")
+            val uniqueItems = mutableListOf<PostCountryItemDto>()
+            for (newDto in newItemsDto) {
+                var itemIsUnique = true
+                for (oldDto in mDataListInAdapter) {
+                    if (newDto.name == oldDto.name) {
+                        itemIsUnique = false
+                        break
+                    }
+                }
+                if (itemIsUnique) {
+                    uniqueItems.add(newDto)
                 }
             }
-            if (itemIsUnique) {
-                uniqueItems.add(newDto)
-            }
+            mDataListInAdapter.addAll(uniqueItems)
+            mFilteredDataList = mDataListInAdapter
+            val initialSize = mDataListInAdapter.size
+            notifyItemRangeChanged(initialSize - 1, mDataListInAdapter.size - 1)
         }
-        mDataListInAdapter.addAll(uniqueItems)
+    }
+
+    fun sortAscendingDataListInAdapter() {
+        mDataListInAdapter.sortBy { it.population }
         mFilteredDataList = mDataListInAdapter
         notifyDataSetChanged()
     }
 
-    fun sortAscendingDataListInAdapter() {
-        mFilteredDataList.sortBy { it.population }
-        notifyDataSetChanged()
-    }
-
     fun sortDescendingDataListInAdapter() {
-        mFilteredDataList.sortByDescending { it.population }
+        mDataListInAdapter.sortByDescending { it.population }
+        mFilteredDataList = mDataListInAdapter
         notifyDataSetChanged()
     }
 
@@ -76,7 +89,6 @@ class RecyclerAdapter : BaseAdapter<PostCountryItemDto>() {
         var itemTitle: TextView = itemView.findViewById(R.id.text_title)
         var itemDetail: TextView = itemView.findViewById(R.id.text_description)
         var languages: TextView = itemView.findViewById(R.id.text_languages)
-
     }
 
     fun filterByName(name: String) {
