@@ -21,6 +21,7 @@ import com.example.task1new.R
 import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.content.dialog.CustomDialog
 import com.example.task1new.databinding.FragmentCountryDetailsBinding
+import com.example.task1new.dto.PostCountryItemDto
 import com.example.task1new.ext.loadSvg
 import com.example.task1new.ext.showSimpleDialogNetworkError
 import com.example.task1new.model.PostCountryItemModel
@@ -40,7 +41,7 @@ import retrofit2.Response
 private const val SHARED_PREFS: String = "sharedPrefs"
 private const val NOTE_TEXT_STATE = "Note text state"
 
-class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetailsPresenter>(), OnMapReadyCallback {
+class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetailsPresenter>(), OnMapReadyCallback, CountryDetailsView {
 
     private lateinit var mLanguagesAdapter: LanguageAdapter
     private lateinit var mCountryName: String
@@ -63,6 +64,7 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         super.onViewCreated(view, savedInstanceState)
         Log.e("hz", "COUNTRY DETAILS FRAGMENT -> onViewCreated")
 
+        getPresenter().attachView(this)
         loadNoteTextState()
 
         binding?.mvCountryDetails?.getMapAsync(OnMapReadyCallback {
@@ -176,11 +178,27 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
     }
 
     override fun createPresenter() {
-        TODO("Not yet implemented")
+        mPresenter = CountryDetailsPresenter()
     }
 
     override fun getPresenter(): CountryDetailsPresenter {
+        return mPresenter
+    }
+
+    override fun showCountryInfo(country: PostCountryItemDto, location: LatLng) {
         TODO("Not yet implemented")
+    }
+
+    override fun showError(error: String, throwable: Throwable) {
+        activity?.showSimpleDialogNetworkError()
+    }
+
+    override fun showProgress() {
+        binding?.progress?.visibility = View.VISIBLE
+    }
+
+    override fun hideProgress() {
+        binding?.progress?.visibility = View.GONE
     }
 
 }

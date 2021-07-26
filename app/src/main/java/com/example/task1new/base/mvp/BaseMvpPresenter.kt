@@ -32,6 +32,7 @@ abstract class BaseMvpPresenter<View : BaseMvpView> {
 
     fun <Data> handleProgress(flowable: Flowable<Data>, isRefresh: Boolean): Flowable<Data> {
         return flowable
+            .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe {
                 if (!isRefresh) {
                     getView()?.showProgress()
@@ -39,5 +40,6 @@ abstract class BaseMvpPresenter<View : BaseMvpView> {
             }.doOnNext {
                 getView()?.hideProgress()
             }
+            .observeOn(Schedulers.io())
     }
 }
