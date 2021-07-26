@@ -20,11 +20,13 @@ import com.example.task1new.COUNTRY_DETAILS_LAYOUT_MANAGER_KEY
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
 import com.example.task1new.OkRetrofit
 import com.example.task1new.R
+import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.databinding.FragmentBlankRVBinding
 import com.example.task1new.databinding.FragmentCountryDetailsBinding
 import com.example.task1new.dto.PostCountryItemDto
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
+import com.example.task1new.ext.showSimpleDialogNetworkError
 import com.example.task1new.model.PostCountryItemModel
 import com.example.task1new.model.convertToPostCountryItemDto
 import com.example.task1new.room.*
@@ -51,25 +53,25 @@ private const val SHARED_PREFS: String = "sharedPrefs"
 private const val MENU_SORT_ICON_STATE = "menu sort icon state"
 
 
-class BlankFragmentRV : Fragment() {
+class BlankFragmentRV : BaseMvpFragment<CountryListView, CountryListPresenter>(), CountryListView {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
-    private var mDatabase: DBInfo? = context?.let { DBInfo.init(it) }
+    private var mDatabase: DBInfo? = null
 
     private var binding: FragmentBlankRVBinding? = null
 
     var sortIconClipped = false
 
-    private lateinit var myAdapter: RecyclerAdapter
+    private var myAdapter: RecyclerAdapter = RecyclerAdapter()
 
     private lateinit var mLayoutManagerState: Parcelable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        myAdapter = RecyclerAdapter()
+        mDatabase = context?.let { DBInfo.init(it) }
+        getPresenter().attachDataBase(mDatabase)
 
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
@@ -89,12 +91,10 @@ class BlankFragmentRV : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        mDatabase = context?.let { DBInfo.init(it) }
+        getPresenter().attachView(this)
 
-        val daoCountryInfo = mDatabase?.getCountryCommonInfoDAO()
-        val daoLanguageInfo = mDatabase?.getLanguageCommonInfoDAO()
-
-        getInitialDataFromDB(daoCountryInfo, daoLanguageInfo)
+        getPresenter().getDataFromDBToRecycleAdapter()
+        getPresenter().getDataFromRetrofitToRecycleAdapter()
 
         binding?.recycleView?.setHasFixedSize(true)
         myAdapter.setItemClick {
@@ -129,10 +129,6 @@ class BlankFragmentRV : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.countries_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
-        Log.d(
-            ContentValues.TAG,
-            "(LOG_ICON) ON_CREATE_OPTIONS_LOAD_MENU sortIconClipped = $sortIconClipped"
-        )
         loadMenuSortIconState()
         initialMenuSortIconSet(menu.findItem(R.id.menu_sort_button))
 
@@ -167,73 +163,8 @@ class BlankFragmentRV : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun getInitialDataFromDB(
-        countryDao: CountryCommonInfoDAO?,
-        languageDao: CountryLanguageDAO?
-    ) {
-
-        //BD reading data (initializing variables for entities)
-        val mCountriesLanguageEntities = mutableListOf<CountryDatabaseLanguageInfoEntity>()
-        val mCountriesInfoEntities = mutableListOf<CountryDatabaseCommonInfoEntity>()
-        val mPostCountriesData = mutableListOf<PostCountryItemDto>()
-
-        // Filling mCountriesInfoEntities list with items from DB
-        countryDao?.getAllInfo()?.forEach { entity ->
-            mCountriesInfoEntities.add(entity)
-        }
-
-        // Filling mCountriesLanguageEntities with items from DB
-        mCountriesInfoEntities.forEach { entity ->
-            mCountriesLanguageEntities.add(languageDao?.getLanguageInfoByCountry(entity.name)!!)
-        }
-
-        // Filling mPost Countries Data through transformer, using info and languages entities
-        mCountriesInfoEntities.forEachIndexed { index, infoEntity ->
-            mPostCountriesData.add(
-                DaoEntityToDtoTransformer.daoEntityToDtoTransformer(
-                    infoEntity,
-                    mCountriesLanguageEntities[index]
-                )
-            )
-        }
-
-        Log.d(
-            ContentValues.TAG,
-            "DB TEST mPostCountryData.size = ${mPostCountriesData.size}"
-        )
-        if (mPostCountriesData.isNotEmpty()) {
-            // Filling adapter with first 20 items from DB
-            myAdapter.addNewUniqueItems(mPostCountriesData)
-        }
-        getData(countryDao, languageDao)
-    }
-
-    private fun getData(countryDao: CountryCommonInfoDAO?, languageDao: CountryLanguageDAO?) {
-        OkRetrofit.jsonPlaceHolderApi.getPosts()
-            .observeOn(AndroidSchedulers.mainThread()) // Where subscribe() will run
-            .subscribeOn(Schedulers.io()) // Where getPosts() will run
-            .subscribe({ response ->
-
-                myAdapter.addNewUniqueItems(response.convertToPostCountryItemDto())
-
-                // DB inserting data
-                val mCountriesInfoFromAPI = response.toMutableList()
-                val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
-
-                val mLanguagesFromApiToDB = mutableListOf<CountryDatabaseLanguageInfoEntity>()
-                mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                    mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
-                }
-                languageDao?.deleteAll(mLanguagesFromApiToDB) // for testing purposes
-                languageDao?.addAll(mLanguagesFromApiToDB)
-
-                mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                    mCountriesInfoToDB.add(
-                        item.convertCommonInfoAPIDatatoDBItem()
-                    )
-                    countryDao?.addAll(mCountriesInfoToDB)
-                }
-            }, { throwable -> throwable.printStackTrace() })
+    override fun addNewUniqueItemsInRecycleAdapter(data: List<PostCountryItemDto>){
+        myAdapter.addNewUniqueItems(data)
     }
 
     private fun loadMenuSortIconState() {
@@ -337,5 +268,29 @@ class BlankFragmentRV : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    override fun createPresenter() {
+        mPresenter = CountryListPresenter()
+    }
+
+    override fun getPresenter(): CountryListPresenter {
+        return mPresenter
+    }
+
+    override fun showDataInfo() {
+        TODO("Not yet implemented")
+    }
+
+    override fun showError(error: String, throwable: Throwable) {
+        activity?.showSimpleDialogNetworkError()
+    }
+
+    override fun showProgress() {
+        TODO("Not yet implemented")
+    }
+
+    override fun hideProgress() {
+        TODO("Not yet implemented")
     }
 }
