@@ -77,9 +77,9 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         binding?.rvCountryDetailsLanguages?.adapter = mLanguagesAdapter
 
         binding?.srCountryDetails?.setOnRefreshListener {
-            getCountryByName(true)
+            getPresenter().getCountryByName(mCountryName,true)
         }
-        getCountryByName(false)
+        getPresenter().getCountryByName(mCountryName, true)
         val myDialog = CustomDialog(this.requireContext())
         myDialog.create()
         binding?.note?.setOnClickListener{
@@ -98,42 +98,6 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         mCancelButton.setOnClickListener {
             myDialog.dismiss()
         }
-    }
-
-    private fun getCountryByName(isRefresh: Boolean) {
-        binding?.progress?.visibility = if (isRefresh) View.GONE else View.VISIBLE
-        OkRetrofit.jsonPlaceHolderApi.getCountryByName(mCountryName)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({response ->
-                Log.e("hz", response.toString())
-                mLanguagesAdapter.addListOfItems(
-                    response[0].convertToPostCountryItemDto().languages
-
-                )
-                binding?.srCountryDetails?.isRefreshing = false
-                binding?.ivCountryFlag?.loadSvg(
-                    response[0].flag.toString()
-                )
-
-                val position = LatLng(
-                    response[0].convertToLatLngDto().mLatitude,
-                    response[0].convertToLatLngDto().mLongitude
-                )
-
-                mGoogleMap.addMarker(
-                    MarkerOptions().position(
-                        position
-                    )
-                )
-                val cameraPosition = CameraPosition.Builder().target(position).build()
-                mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-                binding?.progress?.visibility = View.GONE
-
-            }, {throwable -> throwable.printStackTrace()
-                binding?.srCountryDetails?.isRefreshing = false
-                binding?.progress?.visibility = View.GONE
-                activity?.showSimpleDialogNetworkError()})
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -186,7 +150,19 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
     }
 
     override fun showCountryInfo(country: PostCountryItemDto, location: LatLng) {
-        TODO("Not yet implemented")
+        Log.e("hz", country.toString())
+        mLanguagesAdapter.addListOfItems(
+            country.languages
+        )
+        binding?.srCountryDetails?.isRefreshing = false
+        binding?.ivCountryFlag?.loadSvg(
+            country.flag
+        )
+        mGoogleMap.addMarker(
+            MarkerOptions().position(
+                location
+            )
+        )
     }
 
     override fun showError(error: String, throwable: Throwable) {
