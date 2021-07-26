@@ -52,13 +52,11 @@ class CountryListPresenter : BaseMvpPresenter<CountryListView>() {
     }
 
     fun getDataFromRetrofitToRecycleAdapter() {
-        OkRetrofit.jsonPlaceHolderApi.getPosts()
-            .observeOn(AndroidSchedulers.mainThread()) // Where subscribe() will run
-            .subscribeOn(Schedulers.io()) // Where getPosts() will run
-            .subscribe({ response ->
-
+        addDisposable(
+            inBackground(
+                handleProgress(OkRetrofit.jsonPlaceHolderApi.getPosts(), false)
+            ).subscribe({ response ->
                 getView()?.addNewUniqueItemsInRecycleAdapter(response.convertToPostCountryItemDto())
-
                 // DB inserting data
                 val mCountriesInfoFromAPI = response.toMutableList()
                 val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
@@ -76,6 +74,7 @@ class CountryListPresenter : BaseMvpPresenter<CountryListView>() {
                     mDaoCountryInfo.addAll(mCountriesInfoToDB)
                 }
             }, { throwable -> throwable.printStackTrace() })
+        )
     }
 
 }
