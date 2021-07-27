@@ -151,7 +151,7 @@ class BlankFragmentRV : BaseMvpFragment<CountryListView, CountryListPresenter>()
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        if(item.itemId == R.id.menu_maps_button){
+        if (item.itemId == R.id.menu_maps_button) {
             Navigation.findNavController(requireView()).navigate(R.id.action_blankFragmentRV_to_mapsFragmentBlank2)
         }
         if (item.itemId == R.id.menu_sort_button) {
@@ -167,7 +167,7 @@ class BlankFragmentRV : BaseMvpFragment<CountryListView, CountryListPresenter>()
         return super.onOptionsItemSelected(item)
     }
 
-    override fun addNewUniqueItemsInRecycleAdapter(data: List<PostCountryItemDto>){
+    override fun addNewUniqueItemsInRecycleAdapter(data: List<PostCountryItemDto>) {
         myAdapter.addNewUniqueItems(data)
     }
 
@@ -242,6 +242,7 @@ class BlankFragmentRV : BaseMvpFragment<CountryListView, CountryListPresenter>()
 
     override fun onDestroyView() {
         binding = null
+        mPresenter.onDestroyView()
         super.onDestroyView()
     }
 
