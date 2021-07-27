@@ -1,7 +1,7 @@
 package com.example.task1new.utils
 
 object NetConstants {
-    const val SESSION_TIMEOUT: Long = 5000
+    const val SESSION_TIMEOUT: Long = 10000
 
     const val PATH_VARIABLE = "path"
     const val PATH_URL = "/{$PATH_VARIABLE}"

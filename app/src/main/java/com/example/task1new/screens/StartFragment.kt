@@ -51,6 +51,9 @@ class BlankFragmentFR : Fragment() {
             Navigation.findNavController(view)
                 .navigate(R.id.action_blankFragmentFR_to_blankFragmentRV)
         }
+        binding?.mapButton?.setOnClickListener {
+            Navigation.findNavController(view).navigate(R.id.action_blankFragmentFR_to_mapsFragmentBlank)
+        }
         binding?.dialogTestButton?.setOnClickListener {
             activity?.showSimpleDialog()
         }

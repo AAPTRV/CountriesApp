@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_blankFragmentFR_to_blankFragmentRV"
             app:destination="@id/blankFragmentRV" />
+        <action
+            android:id="@+id/action_blankFragmentFR_to_mapsFragmentBlank"
+            app:destination="@id/mapsFragmentBlank" />
     </fragment>
     <fragment
         android:id="@+id/blankFragmentRV"
@@ -20,14 +23,19 @@
         android:label="fragment_blank_r_v"
         tools:layout="@layout/fragment_blank_r_v" >
         <action
-            android:id="@+id/action_blankFragmentRV_to_blankFragmentFR"
-            app:destination="@id/blankFragmentFR" />
-        <action
             android:id="@+id/action_blankFragmentRV_to_countryDetailsFragment"
             app:destination="@id/countryDetailsFragment" />
+        <action
+            android:id="@+id/action_blankFragmentRV_to_mapsFragmentBlank2"
+            app:destination="@id/mapsFragmentBlank" />
     </fragment>
     <fragment
         android:id="@+id/countryDetailsFragment"
         android:name="com.example.task1new.screens.details.CountryDetailsFragment"
         android:label="CountryDetailsFragment" />
+    <fragment
+        android:id="@+id/mapsFragmentBlank"
+        android:name="com.example.task1new.screens.map.MapsFragmentBlank"
+        android:label="fragment_maps_blank"
+        tools:layout="@layout/fragment_maps_blank" />
 </navigation>

@@ -101,12 +101,7 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        Log.e("hz", "COUNTRY DETAILS FRAGMENT -> onMapReady")
-        googleMap.addMarker(
-            MarkerOptions()
-                .position(LatLng(0.0, 0.0))
-                .title("Marker")
-        )
+
     }
 
     override fun onResume() {
@@ -162,7 +157,10 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
             MarkerOptions().position(
                 location
             )
+                .title(country.name)
         )
+
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(location))
     }
 
     override fun showError(error: String, throwable: Throwable) {

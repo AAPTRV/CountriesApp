@@ -7,7 +7,7 @@
         android:orderInCategory="10"
         android:title="Sort"
         android:icon="@drawable/ic_ascending_sort"
-        app:showAsAction="always">
+        app:showAsAction="ifRoom">
     </item>
 
     <item
@@ -17,6 +17,14 @@
         app:actionViewClass="android.widget.SearchView"
         android:icon="@drawable/ic_baseline_search_24"
         app:showAsAction="always">
+    </item>
+
+    <item
+        android:id="@+id/menu_maps_button"
+        android:orderInCategory="9"
+        android:title="Map"
+        android:icon="@drawable/ic_baseline_map_24"
+        app:showAsAction="ifRoom">
     </item>
 
 </menu>

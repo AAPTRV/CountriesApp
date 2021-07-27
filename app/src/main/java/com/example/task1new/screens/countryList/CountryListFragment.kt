@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuItemCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
@@ -150,6 +151,9 @@ class BlankFragmentRV : BaseMvpFragment<CountryListView, CountryListPresenter>()
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
+        if(item.itemId == R.id.menu_maps_button){
+            Navigation.findNavController(requireView()).navigate(R.id.action_blankFragmentRV_to_mapsFragmentBlank2)
+        }
         if (item.itemId == R.id.menu_sort_button) {
             updateMenuSortIconView(item)
             saveMenuSortIconState()
@@ -249,7 +253,6 @@ class BlankFragmentRV : BaseMvpFragment<CountryListView, CountryListPresenter>()
         )
     }
 
-
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -278,19 +281,15 @@ class BlankFragmentRV : BaseMvpFragment<CountryListView, CountryListPresenter>()
         return mPresenter
     }
 
-    override fun showDataInfo() {
-        TODO("Not yet implemented")
-    }
-
     override fun showError(error: String, throwable: Throwable) {
         activity?.showSimpleDialogNetworkError()
     }
 
     override fun showProgress() {
-        TODO("Not yet implemented")
+        binding?.progress?.visibility = View.VISIBLE
     }
 
     override fun hideProgress() {
-        TODO("Not yet implemented")
+        binding?.progress?.visibility = View.GONE
     }
 }

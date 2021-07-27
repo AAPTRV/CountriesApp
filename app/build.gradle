@@ -65,6 +65,9 @@ def ioReactiveRxJava3RxJavaVersion = '3.0.13'
 def ioReactiveRxJava3RxAndroid = '3.0.0'
 def comGitHubTrendyolBubbleScrollBarVersion = '0.1'
 
+final maps = "3.1.0-beta"
+final gms = "18.0.0"
+
 repositories {
     google()
     mavenCentral()
@@ -95,6 +98,11 @@ dependencies {
 
     //Maps
     implementation 'com.google.android.gms:play-services-maps:' + mapViewVersion
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation "com.google.android.gms:play-services-location:$gms"
+    implementation "com.google.android.libraries.maps:maps:$maps"
+    implementation 'com.google.android.gms:play-services-maps:17.0.1'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
 
     //Test
     testImplementation 'junit:junit:4.+' + junitVersion
