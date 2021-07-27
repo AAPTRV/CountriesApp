@@ -47,28 +47,29 @@ class MapsFragmentBlank : BaseMvpFragment<MapsView, MapsPresenter>(), OnMapReady
     }
 
     override fun showAllCountryMarkersOnMap(countriesModels: List<PostCountryItemModel>) {
-        hideProgress()
         for (item in countriesModels) {
-            val location = item.convertToLatLngDto()
+            val location = item.latlng
             val country = item.convertToPostCountryItemDto()
-            mGoogleMap?.addMarker(
-                MarkerOptions().position(
-                    LatLng(
-                        location.mLatitude,
-                        location.mLongitude
-                    )
-                ).title("Marker in ${country.name}")
-            )
-            mGoogleMap?.moveCamera(
-                CameraUpdateFactory.newLatLng(
-                    LatLng(
-                        location.mLatitude,
-                        location.mLongitude
+            if(location.size == 2){
+                mGoogleMap?.addMarker(
+                    MarkerOptions().position(
+                        LatLng(
+                            location[0]!!,
+                            location[1]!!
+                        )
+                    ).title("Marker in ${country.name}")
+                )
+                mGoogleMap?.moveCamera(
+                    CameraUpdateFactory.newLatLng(
+                        LatLng(
+                            location[0]!!,
+                            location[1]!!
+                        )
                     )
                 )
-            )
+            }
         }
-
+        hideProgress()
     }
 
     override fun showError(error: String, throwable: Throwable) {
