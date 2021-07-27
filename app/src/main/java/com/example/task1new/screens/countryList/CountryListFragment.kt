@@ -69,7 +69,7 @@ class BlankFragmentRV : BaseMvpFragment<CountryListView, CountryListPresenter>()
 
     var sortIconClipped = false
 
-    private var viewModel: BaseViewModel = BaseViewModel(SavedStateHandle())
+    private var viewModel: CountryListViewModel = CountryListViewModel(SavedStateHandle())
 
     private var myAdapter: RecyclerAdapter = RecyclerAdapter()
 
