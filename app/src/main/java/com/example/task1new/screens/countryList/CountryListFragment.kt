@@ -286,10 +286,10 @@ class BlankFragmentRV : BaseMvpFragment<CountryListView, CountryListPresenter>()
     }
 
     override fun showProgress() {
-        binding?.progress?.visibility = View.VISIBLE
+        binding?.progressList?.visibility = View.VISIBLE
     }
 
     override fun hideProgress() {
-        binding?.progress?.visibility = View.GONE
+        binding?.progressList?.visibility = View.GONE
     }
 }

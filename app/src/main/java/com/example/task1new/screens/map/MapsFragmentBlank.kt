@@ -76,11 +76,11 @@ class MapsFragmentBlank : BaseMvpFragment<MapsView, MapsPresenter>(), OnMapReady
     }
 
     override fun showProgress() {
-        binding?.progress?.visibility = View.VISIBLE
+        binding?.progressMaps?.visibility = View.VISIBLE
     }
 
     override fun hideProgress() {
-        binding?.progress?.visibility = View.GONE
+        binding?.progressMaps?.visibility = View.GONE
     }
 
     override fun createPresenter() {

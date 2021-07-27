@@ -37,7 +37,7 @@
         app:bubbleMinWidth="20dp"/>
 
     <FrameLayout
-        android:id="@+id/progress"
+        android:id="@+id/progressList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"

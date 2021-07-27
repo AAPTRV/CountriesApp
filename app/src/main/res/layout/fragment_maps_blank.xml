@@ -9,7 +9,7 @@
     tools:context=".screens.map.MapsFragmentBlank">
 
         <ProgressBar
-            android:id="@+id/progress"
+            android:id="@+id/progressMaps"
             android:layout_width="@dimen/progress_size"
             android:layout_height="@dimen/progress_size"
             android:layout_gravity="center"
