@@ -34,6 +34,7 @@ class MapsFragmentBlank : BaseMvpFragment<MapsView, MapsPresenter>(), OnMapReady
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        showProgress()
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
         getPresenter().attachView(this)
@@ -42,13 +43,11 @@ class MapsFragmentBlank : BaseMvpFragment<MapsView, MapsPresenter>(), OnMapReady
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        val sydney = LatLng(-34.0, 151.0)
         mGoogleMap = googleMap
-        mGoogleMap?.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mGoogleMap?.moveCamera(CameraUpdateFactory.newLatLng(sydney))
     }
 
     override fun showAllCountryMarkersOnMap(countriesModels: List<PostCountryItemModel>) {
+        hideProgress()
         for (item in countriesModels) {
             val location = item.convertToLatLngDto()
             val country = item.convertToPostCountryItemDto()
@@ -69,6 +68,7 @@ class MapsFragmentBlank : BaseMvpFragment<MapsView, MapsPresenter>(), OnMapReady
                 )
             )
         }
+
     }
 
     override fun showError(error: String, throwable: Throwable) {

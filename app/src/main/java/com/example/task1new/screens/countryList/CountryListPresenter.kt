@@ -54,7 +54,7 @@ class CountryListPresenter : BaseMvpPresenter<CountryListView>() {
     fun getDataFromRetrofitToRecycleAdapter() {
         addDisposable(
             inBackground(
-                handleProgress(OkRetrofit.jsonPlaceHolderApi.getPosts(), false)
+                OkRetrofit.jsonPlaceHolderApi.getPosts()
             ).subscribe({ response ->
                 getView()?.addNewUniqueItemsInRecycleAdapter(response.convertToPostCountryItemDto())
                 // DB inserting data

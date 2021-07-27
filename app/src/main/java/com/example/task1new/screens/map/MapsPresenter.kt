@@ -9,7 +9,7 @@ class MapsPresenter: BaseMvpPresenter<MapsView>() {
     fun getDataFromRetrofitToShowMarkers(){
         addDisposable(
             inBackground(
-                handleProgress(OkRetrofit.jsonPlaceHolderApi.getPosts(), false)
+                OkRetrofit.jsonPlaceHolderApi.getPosts()
             ).subscribe({ response ->
                 Log.e(ContentValues.TAG, "getDataStart")
                 getView()?.showAllCountryMarkersOnMap(response)
