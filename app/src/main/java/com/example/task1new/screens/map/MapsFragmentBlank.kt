@@ -1,17 +1,14 @@
 package com.example.task1new.screens.map
 
-import android.content.ContentValues
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.task1new.R
 import com.example.task1new.base.mvp.BaseMvpFragment
-import com.example.task1new.databinding.FragmentCountryListBinding
 import com.example.task1new.databinding.FragmentMapsBlankBinding
+import com.example.task1new.dto.LatLngDto
 import com.example.task1new.ext.showSimpleDialogNetworkError
-import com.example.task1new.model.PostCountryItemModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -38,7 +35,6 @@ class MapsFragmentBlank : BaseMvpFragment<MapsView, MapsPresenter>(), OnMapReady
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
         getPresenter().attachView(this)
-        Log.e(ContentValues.TAG, "beforePresenter")
         getPresenter().getDataFromRetrofitToShowMarkers()
     }
 
@@ -46,29 +42,25 @@ class MapsFragmentBlank : BaseMvpFragment<MapsView, MapsPresenter>(), OnMapReady
         mGoogleMap = googleMap
     }
 
-    override fun showAllCountryMarkersOnMap(countriesModels: List<PostCountryItemModel>) {
-        for (item in countriesModels) {
-            val location = item.latlng
-            val country = item.convertToPostCountryItemDto()
-            if(location.size == 2){
+    override fun showAllCountryMarkersOnMap(dtoList: List<LatLngDto>) {
+        for (dto in dtoList) {
                 mGoogleMap?.addMarker(
                     MarkerOptions().position(
                         LatLng(
-                            location[0]!!,
-                            location[1]!!
+                            dto.mLatitude,
+                            dto.mLongitude
                         )
-                    ).title("Marker in ${country.name}")
+                    ).title(dto.name)
                 )
                 mGoogleMap?.moveCamera(
                     CameraUpdateFactory.newLatLng(
                         LatLng(
-                            location[0]!!,
-                            location[1]!!
+                            dto.mLatitude,
+                            dto.mLongitude
                         )
                     )
                 )
             }
-        }
         hideProgress()
     }
 
