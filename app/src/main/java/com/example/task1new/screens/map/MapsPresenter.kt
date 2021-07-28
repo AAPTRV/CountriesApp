@@ -1,7 +1,5 @@
 package com.example.task1new.screens.map
 
-import android.content.ContentValues
-import android.util.Log
 import com.example.task1new.OkRetrofit
 import com.example.task1new.base.mvp.BaseMvpPresenter
 import com.example.task1new.dto.LatLngDto

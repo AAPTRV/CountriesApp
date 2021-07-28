@@ -1,7 +1,8 @@
-package com.example.task1new
+package com.example.task1new.app
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.task1new.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

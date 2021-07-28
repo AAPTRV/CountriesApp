@@ -1,6 +1,8 @@
 package com.example.task1new.screens.countryList
 
+import android.app.Application
 import com.example.task1new.OkRetrofit
+import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.mvp.BaseMvpPresenter
 import com.example.task1new.dto.PostCountryItemDto
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
@@ -12,17 +14,11 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-class CountryListPresenter : BaseMvpPresenter<CountryListView>() {
+class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView>() {
 
-    private lateinit var mDatabase: DBInfo
-    private lateinit var mDaoCountryInfo: CountryCommonInfoDAO
-    private lateinit var mDaoLanguageInfo: CountryLanguageDAO
+    private var mDaoCountryInfo: CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
+    private var mDaoLanguageInfo: CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
 
-    fun attachDataBase(dataBase: DBInfo?) = dataBase?.let {
-        mDatabase = dataBase
-        mDaoCountryInfo = mDatabase.getCountryCommonInfoDAO()
-        mDaoLanguageInfo = mDatabase.getLanguageCommonInfoDAO()
-    }
 
     fun getDataFromDBToRecycleAdapter() {
         //BD reading data (initializing variables for entities)

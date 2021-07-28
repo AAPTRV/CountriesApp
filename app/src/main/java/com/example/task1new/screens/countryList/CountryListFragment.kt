@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.task1new.COUNTRY_DETAILS_LAYOUT_MANAGER_KEY
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
 import com.example.task1new.R
+import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.databinding.FragmentCountryListBinding
 import com.example.task1new.dto.PostCountryItemDto
@@ -44,8 +45,6 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
     private var param1: String? = null
     private var param2: String? = null
 
-    private var mDatabase: DBInfo? = null
-
     private var binding: FragmentCountryListBinding? = null
 
     var sortIconClipped = false
@@ -56,8 +55,6 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mDatabase = context?.let { DBInfo.init(it) }
-        getPresenter().attachDataBase(mDatabase)
 
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
@@ -228,7 +225,7 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
     }
 
     override fun createPresenter() {
-        mPresenter = CountryListPresenter()
+        mPresenter = CountryListPresenter(CountriesApp.mDatabase)
     }
 
     override fun getPresenter(): CountryListPresenter {
