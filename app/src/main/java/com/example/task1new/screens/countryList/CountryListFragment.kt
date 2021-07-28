@@ -195,6 +195,7 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
 
     override fun onDestroyView() {
         binding = null
+        mPresenter.onDestroyView()
         super.onDestroyView()
     }
 

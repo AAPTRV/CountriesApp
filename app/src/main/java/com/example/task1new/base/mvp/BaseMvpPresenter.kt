@@ -25,9 +25,10 @@ abstract class BaseMvpPresenter<View : BaseMvpView> {
         mCompositeDisposable.add(disposable)
     }
 
-    fun <Data> inBackground(flowable: Flowable<Data>): Flowable<Data>{
-        return flowable.observeOn(AndroidSchedulers.mainThread())
+    fun <Data> inBackground(flowable: Flowable<Data>): Flowable<Data> {
+        return flowable
             .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
     fun <Data> handleProgress(flowable: Flowable<Data>, isRefresh: Boolean): Flowable<Data> {
