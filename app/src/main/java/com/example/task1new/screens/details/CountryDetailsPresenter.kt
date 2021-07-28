@@ -6,10 +6,10 @@ import com.google.android.gms.maps.model.LatLng
 
 class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
 
-    fun getCountryByName(name: String, isRefresh: Boolean){
+    fun getCountryByName(name: String, isRefresh: Boolean) {
         addDisposable(
             inBackground(
-                OkRetrofit.jsonPlaceHolderApi.getCountryByName(name)
+                handleProgress(OkRetrofit.jsonPlaceHolderApi.getCountryByName(name), false)
             ).subscribe(
                 {
                     getView()?.showCountryInfo(
