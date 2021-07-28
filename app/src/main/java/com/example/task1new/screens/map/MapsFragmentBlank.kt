@@ -61,7 +61,6 @@ class MapsFragmentBlank : BaseMvpFragment<MapsView, MapsPresenter>(), OnMapReady
                     )
                 )
             }
-        hideProgress()
     }
 
     override fun showError(error: String, throwable: Throwable) {

@@ -1,10 +1,8 @@
 package com.example.task1new.screens.countryList
 
-import android.content.ContentValues
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Parcelable
-import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
@@ -21,7 +19,6 @@ import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.databinding.FragmentCountryListBinding
 import com.example.task1new.dto.PostCountryItemDto
 import com.example.task1new.ext.showSimpleDialogNetworkError
-import com.example.task1new.room.*
 import com.trendyol.bubblescrollbarlib.BubbleTextProvider
 
 // TODO: Rename parameter arguments, choose names that match
@@ -77,7 +74,7 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         getPresenter().attachView(this)
 
         getPresenter().getDataFromDBToRecycleAdapter()
-        getPresenter().getDataFromRetrofitToRecycleAdapter()
+        getPresenter().getDataFromRetrofitToRecycleAdapter(false)
 
         binding?.recycleView?.setHasFixedSize(true)
         myAdapter.setItemClick {
@@ -150,7 +147,6 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
 
     override fun addNewUniqueItemsInRecycleAdapter(data: List<PostCountryItemDto>) {
         myAdapter.addNewUniqueItems(data)
-        hideProgress()
     }
 
     private fun loadMenuSortIconState() {

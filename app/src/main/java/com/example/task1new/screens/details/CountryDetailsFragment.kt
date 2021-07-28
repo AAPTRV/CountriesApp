@@ -148,7 +148,6 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         )
 
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(location))
-        hideProgress()
     }
 
     override fun showError(error: String, throwable: Throwable) {
