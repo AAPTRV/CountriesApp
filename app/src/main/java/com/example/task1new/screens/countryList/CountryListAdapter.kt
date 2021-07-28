@@ -16,7 +16,7 @@ import com.example.task1new.ext.loadSvg
 
 //var dataList: MutableList<PostCountryItemDto>
 
-class RecyclerAdapter : BaseAdapter<PostCountryItemDto>() {
+class CountryListAdapter : BaseAdapter<PostCountryItemDto>() {
 
     private var currentPosition = 0
     private var mFilteredDataList: MutableList<PostCountryItemDto> = mDataListInAdapter

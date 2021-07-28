@@ -4,40 +4,24 @@ import android.content.ContentValues
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Parcelable
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.MenuItemCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSmoothScroller
-import androidx.recyclerview.widget.RecyclerView
 import com.example.task1new.COUNTRY_DETAILS_LAYOUT_MANAGER_KEY
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
-import com.example.task1new.OkRetrofit
 import com.example.task1new.R
 import com.example.task1new.base.mvp.BaseMvpFragment
-import com.example.task1new.databinding.FragmentBlankRVBinding
-import com.example.task1new.databinding.FragmentCountryDetailsBinding
+import com.example.task1new.databinding.FragmentCountryListBinding
 import com.example.task1new.dto.PostCountryItemDto
-import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
-import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
 import com.example.task1new.ext.showSimpleDialogNetworkError
-import com.example.task1new.model.PostCountryItemModel
-import com.example.task1new.model.convertToPostCountryItemDto
 import com.example.task1new.room.*
-import com.example.task1new.transformer.DaoEntityToDtoTransformer
 import com.trendyol.bubblescrollbarlib.BubbleTextProvider
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_blank_r_v.*
-import retrofit2.Call
-import retrofit2.Response
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -46,7 +30,7 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [BlankFragmentRV.newInstance] factory method to
+ * Use the [CountryListFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
 
@@ -54,18 +38,19 @@ private const val SHARED_PREFS: String = "sharedPrefs"
 private const val MENU_SORT_ICON_STATE = "menu sort icon state"
 
 
-class BlankFragmentRV : BaseMvpFragment<CountryListView, CountryListPresenter>(), CountryListView {
+class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresenter>(),
+    CountryListView {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
     private var mDatabase: DBInfo? = null
 
-    private var binding: FragmentBlankRVBinding? = null
+    private var binding: FragmentCountryListBinding? = null
 
     var sortIconClipped = false
 
-    private var myAdapter: RecyclerAdapter = RecyclerAdapter()
+    private var myAdapter: CountryListAdapter = CountryListAdapter()
 
     private lateinit var mLayoutManagerState: Parcelable
 
@@ -84,7 +69,7 @@ class BlankFragmentRV : BaseMvpFragment<CountryListView, CountryListPresenter>()
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentBlankRVBinding.inflate(inflater, container, false)
+        binding = FragmentCountryListBinding.inflate(inflater, container, false)
         // Inflate the layout for this fragment
         return binding?.root
     }
@@ -124,7 +109,7 @@ class BlankFragmentRV : BaseMvpFragment<CountryListView, CountryListPresenter>()
 
     override fun onPause() {
         super.onPause()
-        mLayoutManagerState = recycleView.layoutManager?.onSaveInstanceState()!!
+        mLayoutManagerState = binding?.recycleView?.layoutManager?.onSaveInstanceState()!!
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -150,9 +135,9 @@ class BlankFragmentRV : BaseMvpFragment<CountryListView, CountryListPresenter>()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        if(item.itemId == R.id.menu_maps_button){
-            Navigation.findNavController(requireView()).navigate(R.id.action_blankFragmentRV_to_mapsFragmentBlank2)
+        if (item.itemId == R.id.menu_maps_button) {
+            Navigation.findNavController(requireView())
+                .navigate(R.id.action_blankFragmentRV_to_mapsFragmentBlank2)
         }
         if (item.itemId == R.id.menu_sort_button) {
             updateMenuSortIconView(item)
@@ -163,36 +148,23 @@ class BlankFragmentRV : BaseMvpFragment<CountryListView, CountryListPresenter>()
                 myAdapter.sortDescendingDataListInAdapter()
             }
         }
-
         return super.onOptionsItemSelected(item)
     }
 
-    override fun addNewUniqueItemsInRecycleAdapter(data: List<PostCountryItemDto>){
+    override fun addNewUniqueItemsInRecycleAdapter(data: List<PostCountryItemDto>) {
         myAdapter.addNewUniqueItems(data)
     }
 
     private fun loadMenuSortIconState() {
-        Log.d(
-            ContentValues.TAG,
-            "(LOG_ICON) LOAD_MENU_SORT_ICON_STATE (BEFORE) sortIconClipped = $sortIconClipped"
-        )
         val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
             SHARED_PREFS,
             AppCompatActivity.MODE_PRIVATE
         )
         sortIconClipped = sharedPreferences.getBoolean(MENU_SORT_ICON_STATE, false)
-        Log.d(
-            ContentValues.TAG,
-            "(LOG_ICON) LOAD_MENU_SORT_ICON_STATE (AFTER) sortIconClipped = $sortIconClipped"
-        )
     }
 
 
     private fun saveMenuSortIconState() {
-        Log.d(
-            ContentValues.TAG,
-            "(LOG_ICON) SAVE_MENU_ICON_STATE (BEFORE) sortIconClipped = $sortIconClipped"
-        )
         val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
             SHARED_PREFS, AppCompatActivity.MODE_PRIVATE
         )
@@ -200,44 +172,24 @@ class BlankFragmentRV : BaseMvpFragment<CountryListView, CountryListPresenter>()
         editor.putBoolean(MENU_SORT_ICON_STATE, sortIconClipped)
         editor.apply()
         Toast.makeText(this.requireActivity(), "Data Saved", Toast.LENGTH_SHORT).show()
-        Log.d(
-            ContentValues.TAG,
-            "(LOG_ICON) SAVE_MENU_ICON_STATE (AFTER) sortIconClipped = $sortIconClipped"
-        )
     }
 
     private fun initialMenuSortIconSet(item: MenuItem) {
-        Log.d(
-            ContentValues.TAG,
-            "(LOG_ICON) INITIAL_MENU_SORT_ICON_SET (BEFORE) sortIconClipped = $sortIconClipped"
-        )
         if (sortIconClipped) {
             item.setIcon(R.drawable.ic_ascending_sort)
         } else {
             item.setIcon(R.drawable.ic_descending_sort)
         }
-        Log.d(
-            ContentValues.TAG,
-            "(LOG_ICON) INITIAL_MENU_SORT_ICON_SET (AFTER) sortIconClipped = $sortIconClipped"
-        )
     }
 
     private fun updateMenuSortIconView(item: MenuItem) {
-        Log.d(
-            ContentValues.TAG,
-            "(LOG_ICON) UPDATE_MENU_ICON_STATE (BEFORE) sortIconClipped = $sortIconClipped"
-        )
-        if (!sortIconClipped) {
+        sortIconClipped = if (!sortIconClipped) {
             item.setIcon(R.drawable.ic_ascending_sort)
-            sortIconClipped = true
+            true
         } else {
             item.setIcon(R.drawable.ic_descending_sort)
-            sortIconClipped = false
+            false
         }
-        Log.d(
-            ContentValues.TAG,
-            "(LOG_ICON) UPDATE_MENU_ICON_STATE (AFTER) sortIconClipped = $sortIconClipped"
-        )
     }
 
     override fun onDestroyView() {
@@ -265,7 +217,7 @@ class BlankFragmentRV : BaseMvpFragment<CountryListView, CountryListPresenter>()
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            BlankFragmentRV().apply {
+            CountryListFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)

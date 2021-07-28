@@ -5,14 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.task1new.R
 import com.example.task1new.base.adapter.BaseAdapter
 import com.example.task1new.dto.LanguageDto
-import com.example.task1new.screens.countryList.RecyclerAdapter
 
 class LanguageAdapter : BaseAdapter<LanguageDto>() {
 
