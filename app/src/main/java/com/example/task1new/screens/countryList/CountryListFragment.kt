@@ -48,6 +48,8 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
 
     private var myAdapter: CountryListAdapter = CountryListAdapter()
 
+    private var searchSave: String? = null
+
     private lateinit var mLayoutManagerState: Parcelable
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,9 +117,11 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         //Initialize menu search button
         val menuSearchItem = menu.findItem(R.id.menu_search_button)
         val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
+        searchSave?.let { mSvMenu.setQuery(searchSave, true) }
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let { myAdapter.filterByName(query) }
+                searchSave = query
                 return false
             }
 
