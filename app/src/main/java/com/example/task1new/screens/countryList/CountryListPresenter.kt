@@ -1,5 +1,7 @@
 package com.example.task1new.screens.countryList
 
+import android.content.ContentValues
+import android.util.Log
 import com.example.task1new.OkRetrofit
 import com.example.task1new.base.mvp.BaseMvpPresenter
 import com.example.task1new.dto.PostCountryItemDto
@@ -48,28 +50,32 @@ class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView
 //            getView()?.showProgress()
 //        }
         addDisposable(
-            inBackground(handleProgress(
-                OkRetrofit.jsonPlaceHolderApi.getPosts(), isRefresh
-            ).doOnNext { // DB inserting data
-                val mCountriesInfoFromAPI = it.toMutableList()
-                val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
+            inBackground(
+                OkRetrofit.jsonPlaceHolderApi.getPosts()
+                    .doOnNext {
+                        // DB inserting data
+                        Log.e(ContentValues.TAG, "RX JAVA DB on: " +  Thread.currentThread().getName())
+                        val mCountriesInfoFromAPI = it.toMutableList()
+                        val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
 
-                val mLanguagesFromApiToDB = mutableListOf<CountryDatabaseLanguageInfoEntity>()
-                mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                    mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
-                }
-                mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
+                        val mLanguagesFromApiToDB =
+                            mutableListOf<CountryDatabaseLanguageInfoEntity>()
+                        mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+                            mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
+                        }
+                        mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
 
-                mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                    mCountriesInfoToDB.add(
-                        item.convertCommonInfoAPIDatatoDBItem()
-                    )
-                    mDaoCountryInfo.addAll(mCountriesInfoToDB)
-                }
-            }
-                .map { it.convertToPostCountryItemDto() }
+                        mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+                            mCountriesInfoToDB.add(
+                                item.convertCommonInfoAPIDatatoDBItem()
+                            )
+                            mDaoCountryInfo.addAll(mCountriesInfoToDB)
+                        }
+                    }
+                    .map { it.convertToPostCountryItemDto() }
             ).subscribe({ dto ->
                 getView()?.addNewUniqueItemsInRecycleAdapter(dto)
+                Log.e(ContentValues.TAG, "RX JAVA Final on: " +  Thread.currentThread().getName())
 //                if (!isRefresh) {
 //                    getView()?.hideProgress()
 //                }
