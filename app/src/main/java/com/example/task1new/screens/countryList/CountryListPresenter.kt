@@ -44,40 +44,41 @@ class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView
     }
 
     fun getDataFromRetrofitToRecycleAdapter(isRefresh: Boolean) {
-        if(!isRefresh){
-            getView()?.showProgress()
-        }
+//        if (!isRefresh) {
+//            getView()?.showProgress()
+//        }
         addDisposable(
-            inBackground(
-                OkRetrofit.jsonPlaceHolderApi.getPosts()
-                    .doOnNext { // DB inserting data
-                        val mCountriesInfoFromAPI = it.toMutableList()
-                        val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
+            inBackground(handleProgress(
+                OkRetrofit.jsonPlaceHolderApi.getPosts(), isRefresh
+            ).doOnNext { // DB inserting data
+                val mCountriesInfoFromAPI = it.toMutableList()
+                val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
 
-                        val mLanguagesFromApiToDB = mutableListOf<CountryDatabaseLanguageInfoEntity>()
-                        mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                            mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
-                        }
-                        mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
+                val mLanguagesFromApiToDB = mutableListOf<CountryDatabaseLanguageInfoEntity>()
+                mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+                    mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
+                }
+                mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
 
-                        mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                            mCountriesInfoToDB.add(
-                                item.convertCommonInfoAPIDatatoDBItem()
-                            )
-                            mDaoCountryInfo.addAll(mCountriesInfoToDB)
-                        } }
-                    .map {it.convertToPostCountryItemDto()}
+                mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+                    mCountriesInfoToDB.add(
+                        item.convertCommonInfoAPIDatatoDBItem()
+                    )
+                    mDaoCountryInfo.addAll(mCountriesInfoToDB)
+                }
+            }
+                .map { it.convertToPostCountryItemDto() }
             ).subscribe({ dto ->
                 getView()?.addNewUniqueItemsInRecycleAdapter(dto)
-                if(!isRefresh){
-                    getView()?.hideProgress()
-                }
+//                if (!isRefresh) {
+//                    getView()?.hideProgress()
+//                }
 
             }, { throwable ->
                 throwable.printStackTrace()
-                if(!isRefresh){
-                    getView()?.hideProgress()
-                }
+//                if (!isRefresh) {
+//                    getView()?.hideProgress()
+//                }
             })
         )
     }
