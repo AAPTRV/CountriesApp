@@ -153,6 +153,7 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
 
     override fun addNewUniqueItemsInRecycleAdapter(data: List<PostCountryItemDto>) {
         myAdapter.addNewUniqueItems(data)
+        hideProgress()
     }
 
     private fun loadMenuSortIconState() {

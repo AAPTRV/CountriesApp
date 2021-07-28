@@ -52,6 +52,7 @@ class CountryListPresenter : BaseMvpPresenter<CountryListView>() {
     }
 
     fun getDataFromRetrofitToRecycleAdapter() {
+        getView()?.showProgress()
         addDisposable(
             inBackground(
                 OkRetrofit.jsonPlaceHolderApi.getPosts()
@@ -73,7 +74,10 @@ class CountryListPresenter : BaseMvpPresenter<CountryListView>() {
                     )
                     mDaoCountryInfo.addAll(mCountriesInfoToDB)
                 }
-            }, { throwable -> throwable.printStackTrace() })
+            }, { throwable ->
+                throwable.printStackTrace()
+                getView()?.hideProgress()
+            })
         )
     }
 

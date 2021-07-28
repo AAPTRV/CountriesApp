@@ -5,15 +5,19 @@ import android.util.Log
 import com.example.task1new.OkRetrofit
 import com.example.task1new.base.mvp.BaseMvpPresenter
 
-class MapsPresenter: BaseMvpPresenter<MapsView>() {
-    fun getDataFromRetrofitToShowMarkers(){
+class MapsPresenter : BaseMvpPresenter<MapsView>() {
+    fun getDataFromRetrofitToShowMarkers() {
+        getView()?.showProgress()
         addDisposable(
             inBackground(
                 OkRetrofit.jsonPlaceHolderApi.getPosts()
             ).subscribe({ response ->
                 Log.e(ContentValues.TAG, "getDataStart")
                 getView()?.showAllCountryMarkersOnMap(response)
-            }, { throwable -> throwable.printStackTrace() })
+            }, { throwable ->
+                throwable.printStackTrace()
+                getView()?.hideProgress()
+            })
         )
     }
 }

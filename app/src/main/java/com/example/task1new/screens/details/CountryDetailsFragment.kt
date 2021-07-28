@@ -133,7 +133,6 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
     }
 
     override fun showCountryInfo(country: PostCountryItemDto, location: LatLng) {
-        Log.e("hz", country.toString())
         mLanguagesAdapter.addListOfItems(
             country.languages
         )
@@ -149,6 +148,7 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         )
 
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(location))
+        hideProgress()
     }
 
     override fun showError(error: String, throwable: Throwable) {

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.task1new.R
 import com.example.task1new.base.mvp.BaseMvpFragment
+import com.example.task1new.databinding.FragmentCountryListBinding
 import com.example.task1new.databinding.FragmentMapsBlankBinding
 import com.example.task1new.ext.showSimpleDialogNetworkError
 import com.example.task1new.model.PostCountryItemModel
@@ -34,7 +35,6 @@ class MapsFragmentBlank : BaseMvpFragment<MapsView, MapsPresenter>(), OnMapReady
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        showProgress()
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
         getPresenter().attachView(this)

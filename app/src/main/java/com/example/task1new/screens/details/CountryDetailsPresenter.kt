@@ -6,7 +6,8 @@ import com.google.android.gms.maps.model.LatLng
 
 class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
 
-    fun getCountryByName(name: String, isRefresh: Boolean){
+    fun getCountryByName(name: String, isRefresh: Boolean) {
+        getView()?.showProgress()
         addDisposable(
             inBackground(
                 OkRetrofit.jsonPlaceHolderApi.getCountryByName(name)
@@ -19,7 +20,10 @@ class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
                         )
                     )
                 }, { throwable ->
-                    throwable.message?.let { errorMessage -> getView()?.showError(errorMessage, throwable) }
+                    throwable.message?.let { errorMessage ->
+                        getView()?.showError(errorMessage, throwable)
+                        getView()?.hideProgress()
+                    }
                 }
             )
         )
