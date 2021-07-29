@@ -230,6 +230,7 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
     private fun getSearchSubject(): Observable<List<PostCountryItemModel>> = mSearchSubject
         .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
         .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
+        .distinctUntilChanged()
         .map { it.lowercase() }
         .flatMap {
             OkRetrofit.jsonPlaceHolderApi.getCountryByName(it).toObservable()
