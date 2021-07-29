@@ -14,21 +14,6 @@ open class BaseViewModel(protected val savedStateHandle: SavedStateHandle) : Vie
     //val mCountryLiveData = MutableLiveData<Outcome<PostCountryItemDto>>()
     protected val mCompositeDisposable: CompositeDisposable = CompositeDisposable()
 
-//    class MVPActivity : AppCompatActivity(R.layout.mvp_activity), KoinScopeComponent {
-//
-//        // Create scope
-//        override val scope: Scope by lazy { newScope() }
-//
-//        // Inject presenter with org.koin.core.scope.inject extension
-//        // also can use directly the scope: scope.inject<>()
-//        val presenter: ScopedPresenter by inject()
-//
-//        // Don't forget to close it when finish
-//        override fun onDestroy() {
-//            super.onDestroy()
-//            scope.close()
-//        }
-//    }
 
     @CallSuper
     override fun onCleared() {
