@@ -58,23 +58,6 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
         super.onViewCreated(view, savedInstanceState)
         Log.e("hz", "COUNTRY DETAILS FRAGMENT -> onViewCreated")
 
-        OkRetrofit.jsonPlaceHolderApi.getCountryByName("belarus")
-            .observeOn(Schedulers.io())
-            .doOnNext {
-                Log.d("hz", "hz1")
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {
-                Log.d("hz", "hz2")
-            }
-            .map {
-                Log.d("hz", "hz3")
-                it
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
-
         getPresenter().attachView(this)
         loadNoteTextState()
 
