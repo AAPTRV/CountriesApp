@@ -37,12 +37,12 @@ class CountryListAdapter : BaseAdapter<PostCountryItemDto>() {
 
     fun addNewUniqueItems(newItemsDto: List<PostCountryItemDto>) {
 
-        if(mDataListInAdapter.isEmpty()){ // case #1 -> Data loading (initially)
+        if (mDataListInAdapter.isEmpty()) { // case #1 -> Data loading (initially)
             mDataListInAdapter.addAll(newItemsDto)
             mFilteredDataList = mDataListInAdapter
             notifyDataSetChanged()
             Log.e(TAG, " CASE 1 : ADD ALL ITEMS IN DATA LIST. mData.size = ${mDataListInAdapter.size}")
-        } else if (mDataListInAdapter.containsAll(newItemsDto)){ // case #2 -> no new elements
+        } else if (mDataListInAdapter.containsAll(newItemsDto)) { // case #2 -> no new elements
             Log.e(TAG, " CASE 2 : NO DATA TO ADD, NO NEW ELEMENTS mData.size = ${mDataListInAdapter.size}")
         } else { // case #3 -> adding new unique elements
             Log.e(TAG, " CASE 3 : ADD NEW UNIQUE ITEMS mData.size = ${mDataListInAdapter.size}")
@@ -60,7 +60,7 @@ class CountryListAdapter : BaseAdapter<PostCountryItemDto>() {
                 }
             }
             mDataListInAdapter.addAll(uniqueItems)
-            if(mFilteredDataList.size == 0){
+            if (mFilteredDataList.size == 0) {
                 mFilteredDataList.addAll(mDataListInAdapter)
             }
             val initialSize = mDataListInAdapter.size
@@ -97,6 +97,12 @@ class CountryListAdapter : BaseAdapter<PostCountryItemDto>() {
             }
         }
         mFilteredDataList = filteredList
+        notifyDataSetChanged()
+    }
+
+    fun repopulateFilteredData(data: List<PostCountryItemDto>) {
+        mFilteredDataList.clear()
+        mFilteredDataList.addAll(data)
         notifyDataSetChanged()
     }
 

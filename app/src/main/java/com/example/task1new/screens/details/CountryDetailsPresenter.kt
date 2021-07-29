@@ -3,6 +3,9 @@ package com.example.task1new.screens.details
 import com.example.task1new.OkRetrofit
 import com.example.task1new.base.mvp.BaseMvpPresenter
 import com.google.android.gms.maps.model.LatLng
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.subjects.BehaviorSubject
+import java.util.*
 
 class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
 

@@ -11,15 +11,22 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.task1new.COUNTRY_DETAILS_LAYOUT_MANAGER_KEY
-import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
-import com.example.task1new.R
+import com.example.task1new.*
 import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.databinding.FragmentCountryListBinding
 import com.example.task1new.dto.PostCountryItemDto
 import com.example.task1new.ext.showSimpleDialogNetworkError
+import com.example.task1new.model.PostCountryItemModel
+import com.example.task1new.model.convertToPostCountryItemDto
+import com.google.android.material.snackbar.Snackbar
 import com.trendyol.bubblescrollbarlib.BubbleTextProvider
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.BehaviorSubject
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -49,6 +56,8 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
     private var myAdapter: CountryListAdapter = CountryListAdapter()
 
     private lateinit var mLayoutManagerState: Parcelable
+
+    private val mSearchSubject = BehaviorSubject.create<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,14 +126,30 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         val menuSearchItem = menu.findItem(R.id.menu_search_button)
         val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
 
+        val disposable = getSearchSubject()
+            .subscribe({
+                myAdapter.repopulateFilteredData(data = it.convertToPostCountryItemDto())
+            }, {
+                it.message?.let { it1 -> showError(it1, it) }
+            })
+
+        val disposable1 = getSearchSubject()
+            .subscribe({
+                binding?.root?.let { it1 -> Snackbar.make(it1, "disposable1", Snackbar.LENGTH_LONG).show() }
+            }, {
+                it.message?.let { it1 -> showError(it1, it) }
+            })
+
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let { myAdapter.filterByName(query) }
+                //query?.let { myAdapter.filterByName(query) }
+                query?.let { mSearchSubject.onNext(query) }
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                myAdapter.filterByName(newText)
+                //myAdapter.filterByName(newText)
+                mSearchSubject.onNext(newText)
                 return true
             }
         })
@@ -201,6 +226,18 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
             mLayoutManagerState
         )
     }
+
+    private fun getSearchSubject(): Observable<List<PostCountryItemModel>> = mSearchSubject
+        .filter { it.length >= MIN_SEARCH_STRING_LENGTH }
+        .debounce(DEBOUNCE_TIME_MILLIS, TimeUnit.MILLISECONDS)
+        .map { it.lowercase() }
+        .flatMap {
+            OkRetrofit.jsonPlaceHolderApi.getCountryByName(it).toObservable()
+                .onErrorResumeNext { Observable.just(mutableListOf()) }
+        }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+
 
     companion object {
         /**
