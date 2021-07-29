@@ -116,6 +116,7 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         //Initialize menu search button
         val menuSearchItem = menu.findItem(R.id.menu_search_button)
         val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
+
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let { myAdapter.filterByName(query) }

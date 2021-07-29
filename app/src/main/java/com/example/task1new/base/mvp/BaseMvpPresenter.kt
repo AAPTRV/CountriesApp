@@ -37,14 +37,16 @@ abstract class BaseMvpPresenter<View : BaseMvpView> {
     fun <Data> handleProgress(flowable: Flowable<Data>, isRefresh: Boolean): Flowable<Data> {
         return flowable
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe {
-                if (!isRefresh) {
-                    getView()?.showProgress()
-                    Log.d(TAG, "RX JAVA showProgress on: " +  Thread.currentThread().getName())
+            .flatMap {
+                Flowable.just(it).doOnSubscribe {
+                    if (!isRefresh) {
+                        getView()?.showProgress()
+                        println("GET VIEW SHOW PROGRESS")
+                    }
                 }
             }.doOnNext {
                 getView()?.hideProgress()
-                Log.d(TAG, "RX JAVA HideProgress on: " +  Thread.currentThread().getName())
+                println("GET VIEW HIDE PROGRESS")
             }
             .observeOn(Schedulers.io())
     }

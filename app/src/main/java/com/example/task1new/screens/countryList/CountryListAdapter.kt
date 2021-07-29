@@ -18,7 +18,7 @@ import com.example.task1new.ext.loadSvg
 
 class CountryListAdapter : BaseAdapter<PostCountryItemDto>() {
 
-    private var mFilteredDataList: MutableList<PostCountryItemDto> = mDataListInAdapter
+    private var mFilteredDataList: MutableList<PostCountryItemDto> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.row_layout, parent, false)
@@ -60,7 +60,9 @@ class CountryListAdapter : BaseAdapter<PostCountryItemDto>() {
                 }
             }
             mDataListInAdapter.addAll(uniqueItems)
-            mFilteredDataList = mDataListInAdapter
+            if(mFilteredDataList.size == 0){
+                mFilteredDataList.addAll(mDataListInAdapter)
+            }
             val initialSize = mDataListInAdapter.size
             notifyItemRangeChanged(initialSize - 1, mDataListInAdapter.size - 1)
         }

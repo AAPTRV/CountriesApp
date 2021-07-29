@@ -1,12 +1,8 @@
 package com.example.task1new.screens.details
 
-import android.nfc.Tag
-import android.util.Log
 import com.example.task1new.OkRetrofit
 import com.example.task1new.base.mvp.BaseMvpPresenter
 import com.google.android.gms.maps.model.LatLng
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
 
 class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
 
