@@ -1,7 +1,5 @@
 package com.example.task1new.screens.countryList
 
-import android.content.ContentValues
-import android.util.Log
 import com.example.task1new.OkRetrofit
 import com.example.task1new.base.mvp.BaseMvpPresenter
 import com.example.task1new.dto.PostCountryItemDto
@@ -46,15 +44,14 @@ class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView
     }
 
     fun getDataFromRetrofitToRecycleAdapter(isRefresh: Boolean) {
-//        if (!isRefresh) {
-//            getView()?.showProgress()
-//        }
+        if (!isRefresh) {
+            getView()?.showProgress()
+        }
         addDisposable(
             inBackground(
                 OkRetrofit.jsonPlaceHolderApi.getPosts()
                     .doOnNext {
                         // DB inserting data
-                        Log.e(ContentValues.TAG, "RX JAVA DB on: " +  Thread.currentThread().getName())
                         val mCountriesInfoFromAPI = it.toMutableList()
                         val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
 
@@ -75,16 +72,15 @@ class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView
                     .map { it.convertToPostCountryItemDto() }
             ).subscribe({ dto ->
                 getView()?.addNewUniqueItemsInRecycleAdapter(dto)
-                Log.e(ContentValues.TAG, "RX JAVA Final on: " +  Thread.currentThread().getName())
-//                if (!isRefresh) {
-//                    getView()?.hideProgress()
-//                }
+                if (!isRefresh) {
+                    getView()?.hideProgress()
+                }
 
             }, { throwable ->
                 throwable.printStackTrace()
-//                if (!isRefresh) {
-//                    getView()?.hideProgress()
-//                }
+                if (!isRefresh) {
+                    getView()?.hideProgress()
+                }
             })
         )
     }

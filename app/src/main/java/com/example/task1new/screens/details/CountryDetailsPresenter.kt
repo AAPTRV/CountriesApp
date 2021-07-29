@@ -11,12 +11,12 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
 
     fun getCountryByName(name: String, isRefresh: Boolean) {
-//        if (!isRefresh) {
-//            getView()?.showProgress()
-//        }
+        if (!isRefresh) {
+            getView()?.showProgress()
+        }
         addDisposable(
             inBackground(
-                handleProgress(OkRetrofit.jsonPlaceHolderApi.getCountryByName(name), isRefresh)
+                OkRetrofit.jsonPlaceHolderApi.getCountryByName(name)
             ).subscribe(
                 {
                     getView()?.showCountryInfo(
@@ -31,10 +31,9 @@ class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
                 }, { throwable ->
                     throwable.message?.let { errorMessage ->
                         getView()?.showError(errorMessage, throwable)
-                        println("ERROR -> $errorMessage")
-//                        if (!isRefresh) {
-//                            getView()?.hideProgress()
-//                        }
+                        if (!isRefresh) {
+                            getView()?.hideProgress()
+                        }
                     }
                 }
             )

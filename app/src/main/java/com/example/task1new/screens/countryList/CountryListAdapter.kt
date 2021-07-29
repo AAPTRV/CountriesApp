@@ -18,7 +18,6 @@ import com.example.task1new.ext.loadSvg
 
 class CountryListAdapter : BaseAdapter<PostCountryItemDto>() {
 
-    private var currentPosition = 0
     private var mFilteredDataList: MutableList<PostCountryItemDto> = mDataListInAdapter
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
@@ -29,10 +28,6 @@ class CountryListAdapter : BaseAdapter<PostCountryItemDto>() {
 
     fun getDataListFromAdapter(): MutableList<PostCountryItemDto> {
         return mFilteredDataList
-    }
-
-    fun getCurrentAdapterPosition(): Int {
-        return currentPosition
     }
 
     override fun getItemCount(): Int {
@@ -130,7 +125,6 @@ class CountryListAdapter : BaseAdapter<PostCountryItemDto>() {
             holder.itemView.setOnClickListener { mOnItemClickListener?.invoke(mFilteredDataList[position]) }
 
             Log.d(TAG, "ON BIND VIEW HOLDER STAGE")
-            currentPosition = position
         }
     }
 //
