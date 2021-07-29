@@ -31,6 +31,7 @@ abstract class BaseMvpPresenter<View : BaseMvpView> {
             .observeOn(AndroidSchedulers.mainThread())
     }
 
+    /// TODO: 29.07.2021 fix timing
     fun <Data> handleProgress(flowable: Flowable<Data>, isRefresh: Boolean): Flowable<Data> {
         return flowable
             .observeOn(AndroidSchedulers.mainThread())

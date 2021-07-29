@@ -52,11 +52,11 @@ class CountryListPresenter : BaseMvpPresenter<CountryListView>() {
         }
     }
 
-    fun getDataFromRetrofitToRecycleAdapter() {
+    fun getDataFromRetrofitToRecycleAdapter(isRefresh: Boolean) {
         getView()?.showProgress()
         addDisposable(
             inBackground(
-                OkRetrofit.jsonPlaceHolderApi.getPosts()
+                handleProgress(OkRetrofit.jsonPlaceHolderApi.getPosts(), isRefresh)
                     .doOnNext {
                         val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
                         val mLanguagesFromApiToDB = mutableListOf<CountryDatabaseLanguageInfoEntity>()
@@ -78,12 +78,12 @@ class CountryListPresenter : BaseMvpPresenter<CountryListView>() {
                     .map { it.convertToPostCountryItemDto() }
             ).subscribe(
                 { dto ->
+                    //getView()?.hideProgress()
                     getView()?.addNewUniqueItemsInRecycleAdapter(dto)
-                    getView()?.hideProgress()
                 },
                 { throwable ->
+                    //getView()?.hideProgress()
                     throwable.printStackTrace()
-                    getView()?.hideProgress()
                 })
         )
     }

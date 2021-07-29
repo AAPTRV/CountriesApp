@@ -9,7 +9,7 @@ class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
     fun getCountryByName(name: String, isRefresh: Boolean) {
         addDisposable(
             inBackground(
-                handleProgress(OkRetrofit.jsonPlaceHolderApi.getCountryByName(name), false)
+                handleProgress(OkRetrofit.jsonPlaceHolderApi.getCountryByName(name), isRefresh)
             ).subscribe(
                 {
                     getView()?.showCountryInfo(

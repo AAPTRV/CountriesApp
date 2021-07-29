@@ -123,7 +123,7 @@ class BlankFragmentRV : BaseMvpFragment<CountryListView, CountryListPresenter>()
         getPresenter().attachView(this)
 
         getPresenter().getDataFromDBToRecycleAdapter()
-        getPresenter().getDataFromRetrofitToRecycleAdapter()
+        getPresenter().getDataFromRetrofitToRecycleAdapter(false)
 
         binding?.recycleView?.setHasFixedSize(true)
         myAdapter.setItemClick {
