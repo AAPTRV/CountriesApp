@@ -1,5 +1,7 @@
 package com.example.task1new.base.mvp
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -27,11 +29,11 @@ abstract class BaseMvpPresenter<View : BaseMvpView> {
 
     fun <Data> inBackground(flowable: Flowable<Data>): Flowable<Data> {
         return flowable
-            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+
     }
 
-    /// TODO: 29.07.2021 fix timing
     fun <Data> handleProgress(flowable: Flowable<Data>, isRefresh: Boolean): Flowable<Data> {
         return flowable
             .observeOn(AndroidSchedulers.mainThread())
@@ -39,10 +41,12 @@ abstract class BaseMvpPresenter<View : BaseMvpView> {
                 Flowable.just(it).doOnSubscribe {
                     if (!isRefresh) {
                         getView()?.showProgress()
+                        println("GET VIEW SHOW PROGRESS")
                     }
                 }
             }.doOnNext {
                 getView()?.hideProgress()
+                println("GET VIEW HIDE PROGRESS")
             }
             .observeOn(Schedulers.io())
     }

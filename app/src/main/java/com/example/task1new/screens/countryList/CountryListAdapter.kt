@@ -16,10 +16,9 @@ import com.example.task1new.ext.loadSvg
 
 //var dataList: MutableList<PostCountryItemDto>
 
-class RecyclerAdapter : BaseAdapter<PostCountryItemDto>() {
+class CountryListAdapter : BaseAdapter<PostCountryItemDto>() {
 
-    private var currentPosition = 0
-    private var mFilteredDataList: MutableList<PostCountryItemDto> = mDataListInAdapter
+    private var mFilteredDataList: MutableList<PostCountryItemDto> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.row_layout, parent, false)
@@ -31,10 +30,6 @@ class RecyclerAdapter : BaseAdapter<PostCountryItemDto>() {
         return mFilteredDataList
     }
 
-    fun getCurrentAdapterPosition(): Int {
-        return currentPosition
-    }
-
     override fun getItemCount(): Int {
         Log.d(TAG, "GET ITEM COUNT STAGE")
         return mFilteredDataList.size
@@ -42,12 +37,12 @@ class RecyclerAdapter : BaseAdapter<PostCountryItemDto>() {
 
     fun addNewUniqueItems(newItemsDto: List<PostCountryItemDto>) {
 
-        if(mDataListInAdapter.isEmpty()){ // case #1 -> Data loading (initially)
+        if (mDataListInAdapter.isEmpty()) { // case #1 -> Data loading (initially)
             mDataListInAdapter.addAll(newItemsDto)
             mFilteredDataList = mDataListInAdapter
             notifyDataSetChanged()
             Log.e(TAG, " CASE 1 : ADD ALL ITEMS IN DATA LIST. mData.size = ${mDataListInAdapter.size}")
-        } else if (mDataListInAdapter.containsAll(newItemsDto)){ // case #2 -> no new elements
+        } else if (mDataListInAdapter.containsAll(newItemsDto)) { // case #2 -> no new elements
             Log.e(TAG, " CASE 2 : NO DATA TO ADD, NO NEW ELEMENTS mData.size = ${mDataListInAdapter.size}")
         } else { // case #3 -> adding new unique elements
             Log.e(TAG, " CASE 3 : ADD NEW UNIQUE ITEMS mData.size = ${mDataListInAdapter.size}")
@@ -65,7 +60,9 @@ class RecyclerAdapter : BaseAdapter<PostCountryItemDto>() {
                 }
             }
             mDataListInAdapter.addAll(uniqueItems)
-            mFilteredDataList = mDataListInAdapter
+            if (mFilteredDataList.size == 0) {
+                mFilteredDataList.addAll(mDataListInAdapter)
+            }
             val initialSize = mDataListInAdapter.size
             notifyItemRangeChanged(initialSize - 1, mDataListInAdapter.size - 1)
         }
@@ -103,6 +100,12 @@ class RecyclerAdapter : BaseAdapter<PostCountryItemDto>() {
         notifyDataSetChanged()
     }
 
+    fun repopulateFilteredData(data: List<PostCountryItemDto>) {
+        mFilteredDataList.clear()
+        mFilteredDataList.addAll(data)
+        notifyDataSetChanged()
+    }
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is CountryViewHolder) {
             holder.itemName.text =
@@ -130,7 +133,6 @@ class RecyclerAdapter : BaseAdapter<PostCountryItemDto>() {
             holder.itemView.setOnClickListener { mOnItemClickListener?.invoke(mFilteredDataList[position]) }
 
             Log.d(TAG, "ON BIND VIEW HOLDER STAGE")
-            currentPosition = position
         }
     }
 //

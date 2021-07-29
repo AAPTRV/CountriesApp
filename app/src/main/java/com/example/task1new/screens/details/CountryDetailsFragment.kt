@@ -142,7 +142,6 @@ class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetail
     }
 
     override fun showCountryInfo(country: PostCountryItemDto, location: LatLng) {
-        Log.e("hz", country.toString())
         mLanguagesAdapter.addListOfItems(
             country.languages
         )

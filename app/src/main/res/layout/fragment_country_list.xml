@@ -5,12 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/purple_200"
-    tools:context=".screens.countryList.BlankFragmentRV">
+    tools:context=".screens.countryList.CountryListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/zero_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -29,12 +29,12 @@
         app:thumbBackground="@color/teal_200"
         app:scrollbarBackground="@color/white"
         app:bubbleTextColor="@color/white"
-        app:bubbleTextSize="4dp"
-        app:bubbleElevation="6dp"
-        app:bubbleMargin="4dp"
-        app:bubbleHeight="50dp"
-        app:bubblePadding="4dp"
-        app:bubbleMinWidth="20dp"/>
+        app:bubbleTextSize="@dimen/text_size_very_small"
+        app:bubbleElevation="@dimen/bubble_elevation"
+        app:bubbleMargin="@dimen/bubble_margin"
+        app:bubbleHeight="@dimen/bubble_height"
+        app:bubblePadding="@dimen/bubble_padding"
+        app:bubbleMinWidth="@dimen/bubble_minWidth"/>
 
     <FrameLayout
         android:id="@+id/progressList"

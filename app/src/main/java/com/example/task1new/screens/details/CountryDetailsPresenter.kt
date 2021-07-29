@@ -3,13 +3,19 @@ package com.example.task1new.screens.details
 import com.example.task1new.OkRetrofit
 import com.example.task1new.base.mvp.BaseMvpPresenter
 import com.google.android.gms.maps.model.LatLng
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.subjects.BehaviorSubject
+import java.util.*
 
 class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
 
     fun getCountryByName(name: String, isRefresh: Boolean) {
+        if (!isRefresh) {
+            getView()?.showProgress()
+        }
         addDisposable(
             inBackground(
-                handleProgress(OkRetrofit.jsonPlaceHolderApi.getCountryByName(name), isRefresh)
+                OkRetrofit.jsonPlaceHolderApi.getCountryByName(name)
             ).subscribe(
                 {
                     getView()?.showCountryInfo(
@@ -18,8 +24,16 @@ class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
                             it[0].convertToLatLngDto().mLongitude
                         )
                     )
+                    if (!isRefresh) {
+                        getView()?.hideProgress()
+                    }
                 }, { throwable ->
-                    throwable.message?.let { errorMessage -> getView()?.showError(errorMessage, throwable) }
+                    throwable.message?.let { errorMessage ->
+                        getView()?.showError(errorMessage, throwable)
+                        if (!isRefresh) {
+                            getView()?.hideProgress()
+                        }
+                    }
                 }
             )
         )

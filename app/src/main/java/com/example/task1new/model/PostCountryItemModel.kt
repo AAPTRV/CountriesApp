@@ -77,6 +77,7 @@ data class PostCountryItemModel(
     }
 
     fun convertToLatLngDto(): LatLngDto {
+        var mName = "No name"
         var mLatitude = 0.0
         var mLongitude = 0.0
         this.latlng[0]?.let {
@@ -85,8 +86,11 @@ data class PostCountryItemModel(
         this.latlng[1]?.let {
             mLongitude = it
         }
+        this.name?.let{
+            mName = it
+        }
         return LatLngDto(
-            mLatitude, mLongitude
+            mName, mLatitude, mLongitude
         )
     }
 }

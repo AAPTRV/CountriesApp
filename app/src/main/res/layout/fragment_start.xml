@@ -4,16 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".screens.BlankFragmentFR"
+    tools:context=".screens.FragmentStart"
     android:background="@color/teal_200">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:id="@+id/fragmentFR_textView"
+        android:id="@+id/startFragment_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/blank_fragment_FR_textView"
-        android:textSize="25sp"
+        android:textSize="@dimen/text_size_big_2"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,35 +22,35 @@
         app:layout_constraintVertical_bias="0.3" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/fragmentFR_RCV"
+        android:id="@+id/startFragment_rv_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/blank_fragment_FR_button_RCV"
-        android:textSize="15sp"
+        android:textSize="@dimen/common_text_medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragmentFR_textView"
+        app:layout_constraintTop_toBottomOf="@+id/startFragment_textView"
         app:layout_constraintVertical_bias="0.15"/>
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/dialog_test_button"
+        android:id="@+id/startFragment_dialog_test_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Dialog test"
-        android:textSize="15sp"
+        android:text="@string/startFragment_dialog_text"
+        android:textSize="@dimen/common_text_medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragmentFR_RCV" />
+        app:layout_constraintTop_toBottomOf="@id/startFragment_rv_button" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/map_button"
+        android:id="@+id/startFragment_map_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Map with all countries"
-        android:textSize="15sp"
+        android:text="@string/map_with_all_countries_button_text"
+        android:textSize="@dimen/common_text_medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dialog_test_button" />
+        app:layout_constraintTop_toBottomOf="@id/startFragment_dialog_test_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,21 +8,12 @@ import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
 import com.example.task1new.model.convertToPostCountryItemDto
 import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToDtoTransformer
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.schedulers.Schedulers
 
-class CountryListPresenter : BaseMvpPresenter<CountryListView>() {
+class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView>() {
 
-    private lateinit var mDatabase: DBInfo
-    private lateinit var mDaoCountryInfo: CountryCommonInfoDAO
-    private lateinit var mDaoLanguageInfo: CountryLanguageDAO
+    private var mDaoCountryInfo: CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
+    private var mDaoLanguageInfo: CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
 
-    fun attachDataBase(dataBase: DBInfo?) = dataBase?.let {
-        mDatabase = dataBase
-        mDaoCountryInfo = mDatabase.getCountryCommonInfoDAO()
-        mDaoLanguageInfo = mDatabase.getLanguageCommonInfoDAO()
-    }
 
     fun getDataFromDBToRecycleAdapter() {
         //BD reading data (initializing variables for entities)
@@ -53,74 +44,45 @@ class CountryListPresenter : BaseMvpPresenter<CountryListView>() {
     }
 
     fun getDataFromRetrofitToRecycleAdapter(isRefresh: Boolean) {
-        getView()?.showProgress()
+        if (!isRefresh) {
+            getView()?.showProgress()
+        }
         addDisposable(
             inBackground(
-                handleProgress(OkRetrofit.jsonPlaceHolderApi.getPosts(), isRefresh)
+                OkRetrofit.jsonPlaceHolderApi.getPosts()
                     .doOnNext {
-                        val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
-                        val mLanguagesFromApiToDB = mutableListOf<CountryDatabaseLanguageInfoEntity>()
-
+                        // DB inserting data
                         val mCountriesInfoFromAPI = it.toMutableList()
+                        val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
 
-                        it.slice(1..20).forEach { item ->
-                            mCountriesInfoToDB.add(
-                                item.convertCommonInfoAPIDatatoDBItem()
-                            )
-                        }
-                        mDaoCountryInfo.addAll(mCountriesInfoToDB)
-
+                        val mLanguagesFromApiToDB =
+                            mutableListOf<CountryDatabaseLanguageInfoEntity>()
                         mCountriesInfoFromAPI.slice(1..20).forEach { item ->
                             mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
                         }
                         mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
+
+                        mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+                            mCountriesInfoToDB.add(
+                                item.convertCommonInfoAPIDatatoDBItem()
+                            )
+                            mDaoCountryInfo.addAll(mCountriesInfoToDB)
+                        }
                     }
                     .map { it.convertToPostCountryItemDto() }
-            ).subscribe(
-                { dto ->
-                    //getView()?.hideProgress()
-                    getView()?.addNewUniqueItemsInRecycleAdapter(dto)
-                },
-                { throwable ->
-                    //getView()?.hideProgress()
-                    throwable.printStackTrace()
-                })
+            ).subscribe({ dto ->
+                getView()?.addNewUniqueItemsInRecycleAdapter(dto)
+                if (!isRefresh) {
+                    getView()?.hideProgress()
+                }
+
+            }, { throwable ->
+                throwable.printStackTrace()
+                if (!isRefresh) {
+                    getView()?.hideProgress()
+                }
+            })
         )
-    }
-
-    fun hz(isRefresh: Boolean) {
-        val mSub: Disposable = OkRetrofit.jsonPlaceHolderApi.getPosts()
-            .doOnNext {
-                val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
-                val mLanguagesFromApiToDB = mutableListOf<CountryDatabaseLanguageInfoEntity>()
-
-                val mCountriesInfoFromAPI = it.toMutableList()
-
-                it.slice(1..20).forEach { item ->
-                    mCountriesInfoToDB.add(
-                        item.convertCommonInfoAPIDatatoDBItem()
-                    )
-                }
-                mDaoCountryInfo.addAll(mCountriesInfoToDB)
-
-                mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                    mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
-                }
-                mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
-            }
-            .map { it.convertToPostCountryItemDto() }
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .doOnSubscribe {
-//                if (!isRefresh) {
-//                    getView()?.showProgress()
-//                }
-//            }
-//            .doOnNext {
-//                getView()?.hideProgress()
-//            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe({}, {})
     }
 
 }
