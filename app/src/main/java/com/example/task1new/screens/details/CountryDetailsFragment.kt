@@ -11,6 +11,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
+import com.example.task1new.OkRetrofit
 import com.example.task1new.R
 import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.content.dialog.CustomDialog
@@ -23,12 +24,18 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.FlowableOnSubscribe
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 
 private const val SHARED_PREFS: String = "sharedPrefs"
 private const val NOTE_TEXT_STATE = "Note text state"
 
-class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetailsPresenter>(), OnMapReadyCallback, CountryDetailsView {
+class CountryDetailsFragment : BaseMvpFragment<CountryDetailsView, CountryDetailsPresenter>(), OnMapReadyCallback,
+    CountryDetailsView {
 
     private lateinit var mLanguagesAdapter: LanguageAdapter
     private lateinit var mCountryName: String
@@ -51,6 +58,23 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         super.onViewCreated(view, savedInstanceState)
         Log.e("hz", "COUNTRY DETAILS FRAGMENT -> onViewCreated")
 
+        OkRetrofit.jsonPlaceHolderApi.getCountryByName("belarus")
+            .observeOn(Schedulers.io())
+            .doOnNext {
+                Log.d("hz", "hz1")
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext {
+                Log.d("hz", "hz2")
+            }
+            .map {
+                Log.d("hz", "hz3")
+                it
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+
         getPresenter().attachView(this)
         loadNoteTextState()
 
@@ -64,13 +88,13 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         binding?.rvCountryDetailsLanguages?.adapter = mLanguagesAdapter
 
         binding?.srCountryDetails?.setOnRefreshListener {
-            getPresenter().getCountryByName(mCountryName,true)
+            getPresenter().getCountryByName(mCountryName, true)
         }
         getPresenter().getCountryByName(mCountryName, false)
 
         val myDialog = CustomDialog(this.requireContext())
         myDialog.create()
-        binding?.note?.setOnClickListener{
+        binding?.note?.setOnClickListener {
             myDialog.show()
         }
         val mEtDialog = myDialog.findViewById<EditText>(R.id.editText)
@@ -109,19 +133,21 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         binding?.mvCountryDetails?.onLowMemory()
     }
 
-    private fun saveNoteTextState(){
+    private fun saveNoteTextState() {
         val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
-            SHARED_PREFS, AppCompatActivity.MODE_PRIVATE)
+            SHARED_PREFS, AppCompatActivity.MODE_PRIVATE
+        )
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
         editor.putString(NOTE_TEXT_STATE, binding?.note?.text.toString())
         editor.apply()
         Toast.makeText(this.requireActivity(), "Data Saved", Toast.LENGTH_SHORT).show()
     }
 
-    private fun loadNoteTextState(){
+    private fun loadNoteTextState() {
         val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
-            SHARED_PREFS, AppCompatActivity.MODE_PRIVATE)
-        binding?.note?.text = sharedPreferences.getString(NOTE_TEXT_STATE,"No note yet")
+            SHARED_PREFS, AppCompatActivity.MODE_PRIVATE
+        )
+        binding?.note?.text = sharedPreferences.getString(NOTE_TEXT_STATE, "No note yet")
     }
 
     override fun createPresenter() {
