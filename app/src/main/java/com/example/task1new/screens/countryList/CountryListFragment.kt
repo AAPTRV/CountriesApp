@@ -1,6 +1,7 @@
 package com.example.task1new.screens.countryList
 
 import android.content.SharedPreferences
+import android.database.Observable
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.*
@@ -13,13 +14,21 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.task1new.COUNTRY_DETAILS_LAYOUT_MANAGER_KEY
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
+import com.example.task1new.OkRetrofit
 import com.example.task1new.R
 import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.databinding.FragmentCountryListBinding
 import com.example.task1new.dto.PostCountryItemDto
 import com.example.task1new.ext.showSimpleDialogNetworkError
+import com.example.task1new.model.PostCountryItemModel
 import com.trendyol.bubblescrollbarlib.BubbleTextProvider
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Flowable.just
+import io.reactivex.rxjava3.core.Observable.just
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.BehaviorSubject
+import java.util.concurrent.TimeUnit
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -49,6 +58,8 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
     private var myAdapter: CountryListAdapter = CountryListAdapter()
 
     private lateinit var mLayoutManagerState: Parcelable
+
+    private var mSearchSubject = BehaviorSubject.create<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,12 +130,13 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
 
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let { myAdapter.filterByName(query) }
+                //query?.let { myAdapter.filterByName(query) }
+                query?.let { mSearchSubject.onNext(query) }
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                myAdapter.filterByName(newText)
+                mSearchSubject.onNext(newText)
                 return true
             }
         })
@@ -146,6 +158,18 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         }
         return super.onOptionsItemSelected(item)
     }
+
+    private fun getSearchSubject(): io.reactivex.rxjava3.core.Observable<List<PostCountryItemModel>> = mSearchSubject
+        .filter{it.length >= 3}
+        .debounce ( 500, TimeUnit.MILLISECONDS )
+        .distinctUntilChanged()
+        .map {it.lowercase()}
+        .flatMap {
+            OkRetrofit.jsonPlaceHolderApi.getCountryByName(it).toObservable()
+                .onErrorResumeNext { io.reactivex.rxjava3.core.Observable.just(mutableListOf())}
+        }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
 
     override fun addNewUniqueItemsInRecycleAdapter(data: List<PostCountryItemDto>) {
         myAdapter.addNewUniqueItems(data)
