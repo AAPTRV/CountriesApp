@@ -1,11 +1,11 @@
 package com.example.task1new.screens.countryList
 
-import com.example.task1new.OkRetrofit
+import com.example.task1new.Retrofit
 import com.example.task1new.base.mvp.BaseMvpPresenter
 import com.example.task1new.dto.PostCountryItemDto
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
-import com.example.task1new.model.convertToPostCountryItemDto
+import com.example.task1new.model.convertToCountryDto
 import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToDtoTransformer
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -58,13 +58,13 @@ class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView
             .distinctUntilChanged()
             .map { it.lowercase() }
             .flatMap {
-                OkRetrofit.jsonPlaceHolderApi.getCountryByName(it).toObservable()
+                Retrofit.jsonPlaceHolderApi.getCountryByName(it).toObservable()
                     .onErrorResumeNext { io.reactivex.rxjava3.core.Observable.just(mutableListOf()) }
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { getView()?.repopulateFilteredDataListInAdapter(data = it.convertToPostCountryItemDto()) },
+                { getView()?.repopulateFilteredDataListInAdapter(data = it.convertToCountryDto()) },
                 { it.message?.let { text -> getView()?.showError(text, it) } })
         )
     }
@@ -79,7 +79,7 @@ class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView
         }
         addDisposable(
             inBackground(
-                OkRetrofit.jsonPlaceHolderApi.getPosts()
+                Retrofit.jsonPlaceHolderApi.getPosts()
                     .doOnNext {
                         // DB inserting data
                         val mCountriesInfoFromAPI = it.toMutableList()
@@ -99,7 +99,7 @@ class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView
                             mDaoCountryInfo.addAll(mCountriesInfoToDB)
                         }
                     }
-                    .map { it.convertToPostCountryItemDto() }
+                    .map { it.convertToCountryDto() }
             ).subscribe({ dto ->
                 getView()?.addNewUniqueItemsInRecycleAdapter(dto)
                 if (!isRefresh) {

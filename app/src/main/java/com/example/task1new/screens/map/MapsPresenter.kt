@@ -1,6 +1,6 @@
 package com.example.task1new.screens.map
 
-import com.example.task1new.OkRetrofit
+import com.example.task1new.Retrofit
 import com.example.task1new.base.mvp.BaseMvpPresenter
 import com.example.task1new.dto.LatLngDto
 
@@ -9,7 +9,7 @@ class MapsPresenter : BaseMvpPresenter<MapsView>() {
         getView()?.showProgress()
         addDisposable(
             inBackground(
-                OkRetrofit.jsonPlaceHolderApi.getPosts()
+                Retrofit.jsonPlaceHolderApi.getPosts()
             ).subscribe({ response ->
                 val mRefinedLatLngDto: MutableList<LatLngDto> = mutableListOf()
                 for(model in response){

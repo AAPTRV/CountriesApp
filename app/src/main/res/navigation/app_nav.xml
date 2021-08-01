@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_blankFragmentRV_to_mapsFragmentBlank2"
             app:destination="@id/mapsFragmentBlank" />
+        <action
+            android:id="@+id/action_blankFragmentRV_to_filterFragment"
+            app:destination="@id/filterFragment" />
     </fragment>
     <fragment
         android:id="@+id/countryDetailsFragment"
@@ -38,4 +41,9 @@
         android:name="com.example.task1new.screens.map.MapsFragmentBlank"
         android:label="fragment_maps_blank"
         tools:layout="@layout/fragment_maps_blank" />
+    <fragment
+        android:id="@+id/filterFragment"
+        android:name="com.example.task1new.screens.filter.FilterFragment"
+        android:label="fragment_filter"
+        tools:layout="@layout/fragment_filter" />
 </navigation>

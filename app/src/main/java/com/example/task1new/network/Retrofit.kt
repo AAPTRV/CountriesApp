@@ -9,7 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-object OkRetrofit {
+object Retrofit {
 
     private val loggingInterceptor = HttpLoggingInterceptor()
     private val okHttpClient = OkHttpClient.Builder()

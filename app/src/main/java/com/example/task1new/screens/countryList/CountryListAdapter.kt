@@ -13,6 +13,7 @@ import com.example.task1new.base.adapter.BaseAdapter
 import com.example.task1new.dto.PostCountryItemDto
 import com.example.task1new.dto.convertLanguagesDtoToString
 import com.example.task1new.ext.loadSvg
+import org.w3c.dom.Text
 
 //var dataList: MutableList<PostCountryItemDto>
 
@@ -28,6 +29,11 @@ class CountryListAdapter : BaseAdapter<PostCountryItemDto>() {
 
     fun getDataListFromAdapter(): MutableList<PostCountryItemDto> {
         return mFilteredDataList
+    }
+
+    fun clearAdapter(){
+        mDataListInAdapter.clear()
+        mFilteredDataList.clear()
     }
 
     override fun getItemCount(): Int {
@@ -93,6 +99,7 @@ class CountryListAdapter : BaseAdapter<PostCountryItemDto>() {
         var itemTitle: TextView = itemView.findViewById(R.id.text_title)
         var itemDetail: TextView = itemView.findViewById(R.id.text_description)
         var languages: TextView = itemView.findViewById(R.id.text_languages)
+        var area: TextView = itemView.findViewById(R.id.text_area)
     }
 
     fun filterByName(name: String) {
@@ -139,6 +146,12 @@ class CountryListAdapter : BaseAdapter<PostCountryItemDto>() {
                     R.string.adapter_population,
                     mFilteredDataList[position].population
                 )
+            holder.area.text =
+                holder.itemView.context.getString(
+                    R.string.adapter_area,
+                    mFilteredDataList[position].population
+                )
+
             holder.languages.text =
                 holder.itemView.context.getString(
                     R.string.adapter_languages,

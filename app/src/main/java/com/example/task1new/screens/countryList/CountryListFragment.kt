@@ -45,8 +45,6 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
 
     private var sortIconClipped = false
 
-    private var myAdapter: CountryListAdapter = CountryListAdapter()
-
     private lateinit var mLayoutManagerState: Parcelable
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -140,6 +138,10 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
             Navigation.findNavController(requireView())
                 .navigate(R.id.action_blankFragmentRV_to_mapsFragmentBlank2)
         }
+        if(item.itemId == R.id.menu_filter_button){
+            Navigation.findNavController(requireView())
+                .navigate(R.id.action_blankFragmentRV_to_filterFragment)
+        }
         if (item.itemId == R.id.menu_sort_button) {
             updateMenuSortIconView(item)
             saveMenuSortIconState()
@@ -219,6 +221,9 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
          * @param param2 Parameter 2.
          * @return A new instance of fragment BlankFragmentRV.
          */
+
+        var myAdapter: CountryListAdapter = CountryListAdapter()
+
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             CountryListFragment().apply {

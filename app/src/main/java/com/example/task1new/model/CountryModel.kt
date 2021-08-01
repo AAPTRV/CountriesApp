@@ -7,7 +7,7 @@ import com.example.task1new.dto.PostCountryItemDto
 import com.google.gson.annotations.SerializedName
 import java.lang.StringBuilder
 
-fun List<PostCountryItemModel>.convertToPostCountryItemDto(): List<PostCountryItemDto> {
+fun List<PostCountryItemModel>.convertToCountryDto(): List<PostCountryItemDto> {
     val resultListDto = mutableListOf<PostCountryItemDto>()
     for (model in this) {
         resultListDto.add(model.convertToPostCountryItemDto())
@@ -22,20 +22,9 @@ data class PostCountryItemModel(
     val languages: List<LanguageModel>,
     @SerializedName("flag")
     val flag: String?,
-    val latlng: List<Double?>
+    val latlng: List<Double?>,
+    val area: Double?
 ) {
-    private fun MutableList<LanguageDto>.convertListToString(): String {
-        val sb = StringBuilder()
-        this.forEachIndexed { index, item ->
-            if (this.size > 1 && index != this.size - 1) {
-                sb.append(item)
-                sb.append(",")
-            } else {
-                sb.append(item)
-            }
-        }
-        return sb.toString()
-    }
 
     fun convertToPostCountryItemDto(): PostCountryItemDto {
 
@@ -44,6 +33,7 @@ data class PostCountryItemModel(
         var mDtoPopulation = 0
         val mDtoLanguages: MutableList<LanguageDto> = mutableListOf()
         var mDtoFlagUrl = ""
+        var mDtoArea = 0.0
 
         this.name?.let {
             if (it.isNotEmpty()) {
@@ -61,19 +51,12 @@ data class PostCountryItemModel(
         this.flag?.let {
             mDtoFlagUrl = it
         }
-        this.languages.forEach { mDtoLanguages.add(it.convertToDto()) }
-        return PostCountryItemDto(mDtoName, mDtoCapital, mDtoPopulation, mDtoLanguages, mDtoFlagUrl)
-    }
 
-    fun convertToFlagDto(): FlagDto {
-        var mFlagImageUrl =
-            "https://yt3.ggpht.com/ytc/AAUvwnj-HQCcnej-gvi_dCwAz8TmulUOPoHLGlS05rMi=s900-c-k-c0x00ffffff-no-rj"
-        this.flag?.let {
-            if (it.isNotEmpty()) {
-                mFlagImageUrl = it
-            }
+        this.area?.let {
+            mDtoArea = it
         }
-        return FlagDto(mFlagImageUrl)
+        this.languages.forEach { mDtoLanguages.add(it.convertToDto()) }
+        return PostCountryItemDto(mDtoName, mDtoCapital, mDtoPopulation, mDtoLanguages, mDtoFlagUrl, mDtoArea)
     }
 
     fun convertToLatLngDto(): LatLngDto {

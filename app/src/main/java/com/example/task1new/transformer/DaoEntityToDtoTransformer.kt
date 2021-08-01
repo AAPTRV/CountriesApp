@@ -21,13 +21,15 @@ class DaoEntityToDtoTransformer {
             val mPostPopulation: Int = countryEntity.population
             val mPostLanguages: MutableList<LanguageDto> = languageEntity.convertToLanguagesDto()
             val mPostFlag: String = countryEntity.flag
+            val mPostArea: Double = countryEntity.area
 
             return PostCountryItemDto(
                 mPostName,
                 mPostCapital,
                 mPostPopulation,
                 mPostLanguages,
-                mPostFlag
+                mPostFlag,
+                mPostArea
             )
         }
     }

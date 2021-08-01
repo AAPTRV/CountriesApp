@@ -28,6 +28,7 @@
     <string name="adapter_name">Name: %1$s</string>
     <string name="adapter_capital">Capital: %1$s</string>
     <string name="adapter_population">Population: %1$d </string>
+    <string name="adapter_area">Area: %1$d km </string>
     <string name="adapter_languages">Languages: %1$s</string>
     <string name="ok">ok</string>
     <string name="startFragment_dialog_text">Dialog test</string>
