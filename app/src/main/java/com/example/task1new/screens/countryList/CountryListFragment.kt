@@ -1,13 +1,8 @@
 package com.example.task1new.screens.countryList
 
-import android.app.Activity
-import android.content.ContentValues
-import android.content.Context
 import android.content.SharedPreferences
-import android.database.Observable
 import android.os.Bundle
 import android.os.Parcelable
-import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
@@ -18,24 +13,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.task1new.COUNTRY_DETAILS_LAYOUT_MANAGER_KEY
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
-import com.example.task1new.OkRetrofit
 import com.example.task1new.R
 import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.databinding.FragmentCountryListBinding
 import com.example.task1new.dto.PostCountryItemDto
 import com.example.task1new.ext.showSimpleDialogNetworkError
-import com.example.task1new.model.PostCountryItemModel
-import com.example.task1new.model.convertToPostCountryItemDto
 import com.trendyol.bubblescrollbarlib.BubbleTextProvider
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Flowable.just
-import io.reactivex.rxjava3.core.Observable.just
-import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.subjects.BehaviorSubject
-import java.util.concurrent.TimeUnit
 
-// TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -52,13 +37,13 @@ private const val MENU_SORT_ICON_STATE = "menu sort icon state"
 
 class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresenter>(),
     CountryListView {
-    // TODO: Rename and change types of parameters
+
     private var param1: String? = null
     private var param2: String? = null
 
     private var binding: FragmentCountryListBinding? = null
 
-    var sortIconClipped = false
+    private var sortIconClipped = false
 
     private var myAdapter: CountryListAdapter = CountryListAdapter()
 
@@ -234,7 +219,6 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
          * @param param2 Parameter 2.
          * @return A new instance of fragment BlankFragmentRV.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             CountryListFragment().apply {
