@@ -6,4 +6,6 @@ import com.example.task1new.dto.PostCountryItemDto
 interface CountryListView : BaseMvpView {
 
     fun addNewUniqueItemsInRecycleAdapter(data: List<PostCountryItemDto>)
+
+    fun repopulateFilteredDataListInAdapter(data: List<PostCountryItemDto>)
 }

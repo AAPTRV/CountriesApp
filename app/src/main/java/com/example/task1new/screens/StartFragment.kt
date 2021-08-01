@@ -1,6 +1,8 @@
 package com.example.task1new.screens
 
+import android.content.ContentValues
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
@@ -47,24 +49,22 @@ class FragmentStart : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        binding?.startFragmentRvButton?.setOnClickListener {
+        binding?.rvButton?.setOnClickListener {
             Navigation.findNavController(view)
                 .navigate(R.id.action_blankFragmentFR_to_blankFragmentRV)
         }
-        binding?.startFragmentMapButton?.setOnClickListener {
+        binding?.mapButton?.setOnClickListener {
             Navigation.findNavController(view).navigate(R.id.action_blankFragmentFR_to_mapsFragmentBlank)
         }
-        binding?.startFragmentDialogTestButton?.setOnClickListener {
+        binding?.dialogTestButton?.setOnClickListener {
             activity?.showSimpleDialog()
         }
-
     }
 
     override fun onDestroyView() {
         binding = null
         super.onDestroyView()
     }
-
 
     companion object {
         /**

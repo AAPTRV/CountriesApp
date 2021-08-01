@@ -36,5 +36,7 @@
     <dimen name="bubble_padding">4dp</dimen>
     <dimen name="bubble_minWidth">20dp</dimen>
     <dimen name="custom_dialog_standard_margin">8dp</dimen>
+    <dimen name="margin_start">10dp</dimen>
+    <dimen name="margin_end">10dp</dimen>
 
 </resources>

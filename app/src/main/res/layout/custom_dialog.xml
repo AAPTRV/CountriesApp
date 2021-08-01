@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="10dp"
-    android:layout_marginEnd="10dp"
+    android:layout_marginStart="@dimen/margin_start"
+    android:layout_marginEnd="@dimen/margin_end"
     android:background="@drawable/rectangle_rounded_grey">
 
     <androidx.appcompat.widget.AppCompatImageView

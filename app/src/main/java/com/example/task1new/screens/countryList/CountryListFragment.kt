@@ -1,9 +1,13 @@
 package com.example.task1new.screens.countryList
 
+import android.app.Activity
+import android.content.ContentValues
+import android.content.Context
 import android.content.SharedPreferences
 import android.database.Observable
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
@@ -22,6 +26,7 @@ import com.example.task1new.databinding.FragmentCountryListBinding
 import com.example.task1new.dto.PostCountryItemDto
 import com.example.task1new.ext.showSimpleDialogNetworkError
 import com.example.task1new.model.PostCountryItemModel
+import com.example.task1new.model.convertToPostCountryItemDto
 import com.trendyol.bubblescrollbarlib.BubbleTextProvider
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable.just
@@ -59,8 +64,6 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
 
     private lateinit var mLayoutManagerState: Parcelable
 
-    private var mSearchSubject = BehaviorSubject.create<String>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -78,6 +81,7 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         // Inflate the layout for this fragment
         return binding?.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -130,13 +134,17 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
 
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                //query?.let { myAdapter.filterByName(query) }
-                query?.let { mSearchSubject.onNext(query) }
+                query?.let {
+                    getPresenter().getSearchSubject().onNext(query)
+                }
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                mSearchSubject.onNext(newText)
+                getPresenter().getSearchSubject().onNext(newText)
+                if (newText.length == 2 && myAdapter.isFiltered()) {
+                    myAdapter.restoreFilteredListFromDataList()
+                }
                 return true
             }
         })
@@ -159,17 +167,9 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         return super.onOptionsItemSelected(item)
     }
 
-    private fun getSearchSubject(): io.reactivex.rxjava3.core.Observable<List<PostCountryItemModel>> = mSearchSubject
-        .filter{it.length >= 3}
-        .debounce ( 500, TimeUnit.MILLISECONDS )
-        .distinctUntilChanged()
-        .map {it.lowercase()}
-        .flatMap {
-            OkRetrofit.jsonPlaceHolderApi.getCountryByName(it).toObservable()
-                .onErrorResumeNext { io.reactivex.rxjava3.core.Observable.just(mutableListOf())}
-        }
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
+    override fun repopulateFilteredDataListInAdapter(data: List<PostCountryItemDto>){
+        myAdapter.repopulateFilteredDataList(data)
+    }
 
     override fun addNewUniqueItemsInRecycleAdapter(data: List<PostCountryItemDto>) {
         myAdapter.addNewUniqueItems(data)
@@ -182,7 +182,6 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         )
         sortIconClipped = sharedPreferences.getBoolean(MENU_SORT_ICON_STATE, false)
     }
-
 
     private fun saveMenuSortIconState() {
         val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
@@ -213,9 +212,9 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
     }
 
     override fun onDestroyView() {
-        binding = null
-        mPresenter.onDestroyView()
         super.onDestroyView()
+        binding = null
+        getPresenter().onDestroyView()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

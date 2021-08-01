@@ -8,12 +8,20 @@ import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
 import com.example.task1new.model.convertToPostCountryItemDto
 import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToDtoTransformer
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.BehaviorSubject
+import java.util.concurrent.TimeUnit
 
 class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView>() {
 
     private var mDaoCountryInfo: CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
     private var mDaoLanguageInfo: CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
+    private var mSearchSubject = BehaviorSubject.create<String>()
 
+    init {
+        setupSearchSubject()
+    }
 
     fun getDataFromDBToRecycleAdapter() {
         //BD reading data (initializing variables for entities)
@@ -41,6 +49,28 @@ class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView
             // Filling adapter with first 20 items from DB
             getView()?.addNewUniqueItemsInRecycleAdapter(mPostCountriesData)
         }
+    }
+
+    private fun setupSearchSubject() {
+        addDisposable(mSearchSubject
+            .filter { it.length >= 3 }
+            .debounce(500, TimeUnit.MILLISECONDS)
+            .distinctUntilChanged()
+            .map { it.lowercase() }
+            .flatMap {
+                OkRetrofit.jsonPlaceHolderApi.getCountryByName(it).toObservable()
+                    .onErrorResumeNext { io.reactivex.rxjava3.core.Observable.just(mutableListOf()) }
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { getView()?.repopulateFilteredDataListInAdapter(data = it.convertToPostCountryItemDto()) },
+                { it.message?.let { text -> getView()?.showError(text, it) } })
+        )
+    }
+
+    fun getSearchSubject(): BehaviorSubject<String> {
+        return mSearchSubject
     }
 
     fun getDataFromRetrofitToRecycleAdapter(isRefresh: Boolean) {
@@ -84,5 +114,4 @@ class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView
             })
         )
     }
-
 }

@@ -35,11 +35,16 @@ class CountryListAdapter : BaseAdapter<PostCountryItemDto>() {
         return mFilteredDataList.size
     }
 
+    fun isFiltered(): Boolean{
+        return mFilteredDataList.size != mDataListInAdapter.size
+    }
+
     fun addNewUniqueItems(newItemsDto: List<PostCountryItemDto>) {
 
         if(mDataListInAdapter.isEmpty()){ // case #1 -> Data loading (initially)
             mDataListInAdapter.addAll(newItemsDto)
-            mFilteredDataList = mDataListInAdapter
+            mFilteredDataList.clear()
+            mFilteredDataList.addAll(mDataListInAdapter)
             notifyDataSetChanged()
             Log.e(TAG, " CASE 1 : ADD ALL ITEMS IN DATA LIST. mData.size = ${mDataListInAdapter.size}")
         } else if (mDataListInAdapter.containsAll(newItemsDto)){ // case #2 -> no new elements
@@ -70,13 +75,15 @@ class CountryListAdapter : BaseAdapter<PostCountryItemDto>() {
 
     fun sortAscendingDataListInAdapter() {
         mDataListInAdapter.sortBy { it.population }
-        mFilteredDataList = mDataListInAdapter
+        mFilteredDataList.clear()
+        mFilteredDataList.addAll(mDataListInAdapter)
         notifyDataSetChanged()
     }
 
     fun sortDescendingDataListInAdapter() {
         mDataListInAdapter.sortByDescending { it.population }
-        mFilteredDataList = mDataListInAdapter
+        mFilteredDataList.clear()
+        mFilteredDataList.addAll(mDataListInAdapter)
         notifyDataSetChanged()
     }
 
@@ -89,7 +96,8 @@ class CountryListAdapter : BaseAdapter<PostCountryItemDto>() {
     }
 
     fun filterByName(name: String) {
-        mFilteredDataList = mDataListInAdapter
+        mFilteredDataList.clear()
+        mFilteredDataList.addAll(mDataListInAdapter)
         val filteredList = mutableListOf<PostCountryItemDto>()
         for (country in mFilteredDataList) {
             if (country.name.lowercase().contains(name.lowercase())) {
@@ -98,6 +106,20 @@ class CountryListAdapter : BaseAdapter<PostCountryItemDto>() {
         }
         mFilteredDataList = filteredList
         notifyDataSetChanged()
+    }
+
+    fun repopulateFilteredDataList(data: List<PostCountryItemDto>){
+        mFilteredDataList.clear()
+        mFilteredDataList.addAll(data)
+        notifyDataSetChanged()
+    }
+
+    fun restoreFilteredListFromDataList(){
+        if(mFilteredDataList.size != mDataListInAdapter.size){
+            mFilteredDataList.clear()
+            mFilteredDataList.addAll(mDataListInAdapter)
+            notifyDataSetChanged()
+        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
