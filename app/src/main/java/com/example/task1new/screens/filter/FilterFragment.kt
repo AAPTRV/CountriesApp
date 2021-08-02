@@ -21,7 +21,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [FilterFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class FilterFragment : BaseFilterFragment(CountryListFragment.myAdapter) {
+class FilterFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -47,10 +47,6 @@ class FilterFragment : BaseFilterFragment(CountryListFragment.myAdapter) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding?.filterFragmentButton?.setOnClickListener {
-            myAdapter.clearAdapter()
-        }
-
     }
 
     override fun onDestroyView() {

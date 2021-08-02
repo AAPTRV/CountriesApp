@@ -1,11 +1,11 @@
 package com.example.task1new.ext
 
-import com.example.task1new.model.PostCountryItemModel
+import com.example.task1new.model.CountryModel
 import com.example.task1new.room.CountryDatabaseCommonInfoEntity
 import com.example.task1new.room.CountryDatabaseLanguageInfoEntity
 import java.lang.StringBuilder
 
-fun PostCountryItemModel.convertCommonInfoAPIDatatoDBItem(): CountryDatabaseCommonInfoEntity {
+fun CountryModel.convertCommonInfoAPIDatatoDBItem(): CountryDatabaseCommonInfoEntity {
 
     var mEntityName = "No name"
     var mEntityCapital = "No capital"
@@ -13,6 +13,7 @@ fun PostCountryItemModel.convertCommonInfoAPIDatatoDBItem(): CountryDatabaseComm
     var mEntityLanguages = "No languages"
     var mEntityFlag = ""
     var mEntityArea = 0.0
+    var mEntityLocation = ""
 
     this.name?.let { mEntityName = this.name }
     this.capital?.let { mEntityCapital = this.capital }
@@ -22,17 +23,24 @@ fun PostCountryItemModel.convertCommonInfoAPIDatatoDBItem(): CountryDatabaseComm
     }
     this.flag?.let { mEntityFlag = it }
     this.area?.let { mEntityArea = it }
+
+
+    if(this.latlng.isNotEmpty()){
+        mEntityLocation = this.latlng.convertToCountryLocationList()
+    }
+
     return CountryDatabaseCommonInfoEntity(
         mEntityName,
         mEntityCapital,
         mEntityPopulation,
         mEntityLanguages,
         mEntityFlag,
-        mEntityArea
+        mEntityArea,
+        mEntityLocation
     )
 }
 
-fun PostCountryItemModel.convertLanguagesAPIDataToDBItem(): CountryDatabaseLanguageInfoEntity {
+fun CountryModel.convertLanguagesAPIDataToDBItem(): CountryDatabaseLanguageInfoEntity {
 
     fun MutableList<String>.convertListToString(): String {
         val sb = StringBuilder()
@@ -56,7 +64,6 @@ fun PostCountryItemModel.convertLanguagesAPIDataToDBItem(): CountryDatabaseLangu
     if (!this.name.isNullOrEmpty()) {
         mEntityCountryName = this.name
     }
-
 
     for (LanguageModel in this.languages) {
         if (!LanguageModel.iso639_1.isNullOrEmpty()) {

@@ -16,7 +16,7 @@ class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
             ).subscribe(
                 {
                     getView()?.showCountryInfo(
-                        it[0].convertToPostCountryItemDto(), LatLng(
+                        it[0].convertToCountryItemDto(), LatLng(
                             it[0].convertToLatLngDto().mLatitude,
                             it[0].convertToLatLngDto().mLongitude
                         )

@@ -1,21 +1,19 @@
 package com.example.task1new.model
 
-import com.example.task1new.dto.FlagDto
 import com.example.task1new.dto.LanguageDto
 import com.example.task1new.dto.LatLngDto
-import com.example.task1new.dto.PostCountryItemDto
+import com.example.task1new.dto.CountryDto
 import com.google.gson.annotations.SerializedName
-import java.lang.StringBuilder
 
-fun List<PostCountryItemModel>.convertToCountryDto(): List<PostCountryItemDto> {
-    val resultListDto = mutableListOf<PostCountryItemDto>()
+fun List<CountryModel>.convertToCountryDto(): List<CountryDto> {
+    val resultListDto = mutableListOf<CountryDto>()
     for (model in this) {
-        resultListDto.add(model.convertToPostCountryItemDto())
+        resultListDto.add(model.convertToCountryItemDto())
     }
     return resultListDto
 }
 
-data class PostCountryItemModel(
+data class CountryModel(
     val name: String?,
     val capital: String?,
     val population: Int?,
@@ -26,7 +24,7 @@ data class PostCountryItemModel(
     val area: Double?
 ) {
 
-    fun convertToPostCountryItemDto(): PostCountryItemDto {
+    fun convertToCountryItemDto(): CountryDto {
 
         var mDtoName = "No name"
         var mDtoCapital = "No capital"
@@ -34,6 +32,7 @@ data class PostCountryItemModel(
         val mDtoLanguages: MutableList<LanguageDto> = mutableListOf()
         var mDtoFlagUrl = ""
         var mDtoArea = 0.0
+        var mDtoLocation = mutableListOf<Double>()
 
         this.name?.let {
             if (it.isNotEmpty()) {
@@ -56,7 +55,10 @@ data class PostCountryItemModel(
             mDtoArea = it
         }
         this.languages.forEach { mDtoLanguages.add(it.convertToDto()) }
-        return PostCountryItemDto(mDtoName, mDtoCapital, mDtoPopulation, mDtoLanguages, mDtoFlagUrl, mDtoArea)
+        for(item in this.latlng){
+            item?.let{mDtoLocation.add(item)}
+        }
+        return CountryDto(mDtoName, mDtoCapital, mDtoPopulation, mDtoLanguages, mDtoFlagUrl, mDtoArea, mDtoLocation)
     }
 
     fun convertToLatLngDto(): LatLngDto {

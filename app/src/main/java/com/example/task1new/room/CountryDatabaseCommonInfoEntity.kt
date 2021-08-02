@@ -24,6 +24,9 @@ class CountryDatabaseCommonInfoEntity(
     val flag: String,
 
     @ColumnInfo
-    val area: Double
+    val area: Double,
+
+    @ColumnInfo
+    val location: String
 
 )

@@ -2,8 +2,7 @@ package com.example.task1new.transformer
 
 import com.example.task1new.ext.convertToLanguagesDto
 import com.example.task1new.dto.LanguageDto
-import com.example.task1new.dto.PostCountryItemDto
-import com.example.task1new.dto.convertLanguagesDtoToString
+import com.example.task1new.dto.CountryDto
 import com.example.task1new.room.CountryDatabaseCommonInfoEntity
 import com.example.task1new.room.CountryDatabaseLanguageInfoEntity
 
@@ -13,7 +12,7 @@ class DaoEntityToDtoTransformer {
             countryEntity: CountryDatabaseCommonInfoEntity,
             languageEntity: CountryDatabaseLanguageInfoEntity
 
-        ): PostCountryItemDto {
+        ): CountryDto {
 
             // Поля, которые нужно передать в конструктор для создания объекта PostCountryItem
             val mPostName: String = countryEntity.name
@@ -22,15 +21,24 @@ class DaoEntityToDtoTransformer {
             val mPostLanguages: MutableList<LanguageDto> = languageEntity.convertToLanguagesDto()
             val mPostFlag: String = countryEntity.flag
             val mPostArea: Double = countryEntity.area
+            val mPostLocation: List<Double> = countryEntity.location.convertStringLocationToListLocation()
 
-            return PostCountryItemDto(
+            return CountryDto(
                 mPostName,
                 mPostCapital,
                 mPostPopulation,
                 mPostLanguages,
                 mPostFlag,
-                mPostArea
+                mPostArea,
+                mPostLocation
             )
+        }
+        fun String.convertStringLocationToListLocation(): List<Double> {
+            val list = mutableListOf<Double>()
+            if (!this.contains(",")) {
+                return list
+            }
+            return this.split(",").map{it.toDouble()}.toMutableList()
         }
     }
 }

@@ -131,6 +131,9 @@ dependencies {
     //Leack Canary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 
+    //Range Bar
+    implementation 'com.google.android.material:material:1.4.0'
+
 }
 
 apply plugin: 'com.android.application'

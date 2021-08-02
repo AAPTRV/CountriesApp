@@ -18,7 +18,7 @@ abstract class DBInfo : RoomDatabase() {
 
     companion object {
 
-        const val LATEST_VERSION = 8
+        const val LATEST_VERSION = 11
 
         fun init(context: Context) =
             Room.databaseBuilder(context, DBInfo::class.java, "DB")

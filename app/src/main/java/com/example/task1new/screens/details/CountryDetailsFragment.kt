@@ -2,7 +2,6 @@ package com.example.task1new.screens.details
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +14,7 @@ import com.example.task1new.R
 import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.content.dialog.CustomDialog
 import com.example.task1new.databinding.FragmentCountryDetailsBinding
-import com.example.task1new.dto.PostCountryItemDto
+import com.example.task1new.dto.CountryDto
 import com.example.task1new.ext.loadSvg
 import com.example.task1new.ext.showSimpleDialogNetworkError
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -128,7 +127,7 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         return mPresenter
     }
 
-    override fun showCountryInfo(country: PostCountryItemDto, location: LatLng) {
+    override fun showCountryInfo(country: CountryDto, location: LatLng) {
         mLanguagesAdapter.addListOfItems(
             country.languages
         )

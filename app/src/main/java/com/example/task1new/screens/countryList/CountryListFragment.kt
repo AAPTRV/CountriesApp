@@ -1,12 +1,16 @@
 package com.example.task1new.screens.countryList
 
+import android.Manifest
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
@@ -17,8 +21,11 @@ import com.example.task1new.R
 import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.databinding.FragmentCountryListBinding
-import com.example.task1new.dto.PostCountryItemDto
+import com.example.task1new.dto.CountryDto
 import com.example.task1new.ext.showSimpleDialogNetworkError
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.Task
 import com.trendyol.bubblescrollbarlib.BubbleTextProvider
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -47,6 +54,8 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
 
     private lateinit var mLayoutManagerState: Parcelable
 
+    private var mLocationProviderClient: FusedLocationProviderClient? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -69,8 +78,11 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        getPresenter().attachView(this)
 
+        mLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.requireActivity())
+        getCurrentLocation()
+
+        getPresenter().attachView(this)
         getPresenter().getDataFromDBToRecycleAdapter()
         getPresenter().getDataFromRetrofitToRecycleAdapter(false)
 
@@ -154,11 +166,11 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         return super.onOptionsItemSelected(item)
     }
 
-    override fun repopulateFilteredDataListInAdapter(data: List<PostCountryItemDto>){
+    override fun repopulateFilteredDataListInAdapter(data: List<CountryDto>){
         myAdapter.repopulateFilteredDataList(data)
     }
 
-    override fun addNewUniqueItemsInRecycleAdapter(data: List<PostCountryItemDto>) {
+    override fun addNewUniqueItemsInRecycleAdapter(data: List<CountryDto>) {
         myAdapter.addNewUniqueItems(data)
     }
 
@@ -210,6 +222,19 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
             COUNTRY_DETAILS_LAYOUT_MANAGER_KEY,
             mLayoutManagerState
         )
+    }
+
+    private fun getCurrentLocation(){
+        if (ActivityCompat.checkSelfPermission(this.requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            val task: Task<Location>? = mLocationProviderClient?.lastLocation
+            task?.addOnSuccessListener { location ->
+                location?.let { myAdapter.attachCurrentLocation(location)}
+            }
+        } else {
+            val listPermissionsNeeded = ArrayList<String>()
+            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
+            ActivityCompat.requestPermissions(this.requireActivity(), listPermissionsNeeded.toTypedArray(), 44)
+        }
     }
 
     companion object {

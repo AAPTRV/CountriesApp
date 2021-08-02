@@ -1,12 +1,19 @@
 package com.example.task1new.ext
 
-import com.example.task1new.dto.LanguageDto
-import com.example.task1new.dto.LatLngDto
 import com.example.task1new.model.LanguageModel
-import com.example.task1new.model.PostCountryItemModel
 import java.lang.StringBuilder
 
 fun List<LanguageModel>.convertToCountryNameList(): String {
+    val sb = StringBuilder()
+    this.forEachIndexed { index, language ->
+        sb.append(language.toString())
+        if (index != this.size - 1 && this.size != 1)
+            sb.append(", ")
+    }
+    return sb.toString()
+}
+
+fun List<Double?>.convertToCountryLocationList(): String {
     val sb = StringBuilder()
     this.forEachIndexed { index, language ->
         sb.append(language.toString())

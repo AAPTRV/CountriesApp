@@ -2,7 +2,7 @@ package com.example.task1new.screens.countryList
 
 import com.example.task1new.Retrofit
 import com.example.task1new.base.mvp.BaseMvpPresenter
-import com.example.task1new.dto.PostCountryItemDto
+import com.example.task1new.dto.CountryDto
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
 import com.example.task1new.model.convertToCountryDto
@@ -27,7 +27,7 @@ class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView
         //BD reading data (initializing variables for entities)
         val mCountriesLanguageEntities = mutableListOf<CountryDatabaseLanguageInfoEntity>()
         val mCountriesInfoEntities = mutableListOf<CountryDatabaseCommonInfoEntity>()
-        val mPostCountriesData = mutableListOf<PostCountryItemDto>()
+        val mPostCountriesData = mutableListOf<CountryDto>()
         // Filling mCountriesInfoEntities list with items from DB
         mDaoCountryInfo.getAllInfo().forEach { entity ->
             mCountriesInfoEntities.add(entity)

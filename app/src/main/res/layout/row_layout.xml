@@ -93,6 +93,18 @@
                 app:layout_constraintStart_toEndOf="@+id/cardIcon"
                 app:layout_constraintTop_toBottomOf="@+id/text_area" />
 
+            <TextView
+                android:id="@+id/text_distance"
+                android:layout_width="@dimen/zero_size"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/common_margin"
+                android:layout_marginTop="@dimen/common_margin"
+                android:text="Distance"
+                android:textSize="@dimen/common_text_small"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/cardIcon"
+                app:layout_constraintTop_toBottomOf="@+id/text_languages" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
