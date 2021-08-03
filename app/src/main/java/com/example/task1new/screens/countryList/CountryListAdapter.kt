@@ -35,15 +35,17 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
     }
 
     private fun calculateDistanceToUser(dto: CountryDto): String {
-
-        val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
-            latitude = dto.location[0]
-            longitude = dto.location[1]
-        }
         var result = "calculateDistanceToUserError"
-        mUsersLocation?.let {
-            result =
-                (mUsersLocation!!.distanceTo(currentCountryLocation).toDouble() / 1000).toString()
+        if(dto.location.isNotEmpty()){
+            val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
+                latitude = dto.location[0]
+                longitude = dto.location[1]
+            }
+
+            mUsersLocation?.let {
+                result =
+                    (mUsersLocation!!.distanceTo(currentCountryLocation).toDouble() / 1000).toString()
+            }
         }
         return result
     }
@@ -120,146 +122,150 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
         notifyDataSetChanged()
     }
 
-    fun getMinimumArea(): Double {
+    fun getMinimumArea(): String {
         var mAreaMin: Double = Double.MAX_VALUE
         for (country in mDataListInAdapter) {
             if (country.area < mAreaMin) {
                 mAreaMin = country.area
             }
         }
-        return mAreaMin
+        return mAreaMin.toString()
     }
 
-    fun getMaximumArea(): Double {
+    fun getMaximumArea(): String {
         var mAreaMax: Double = Double.MIN_VALUE
         for (country in mDataListInAdapter) {
             if (country.area > mAreaMax) {
                 mAreaMax = country.area
             }
         }
-        return mAreaMax
+        return mAreaMax.toString()
     }
 
-    fun getMinimumPopulation(): Int {
+    fun getMinimumPopulation(): String {
         var mPopulationMin: Int = Int.MAX_VALUE
         for (country in mDataListInAdapter) {
             if (country.population < mPopulationMin) {
                 mPopulationMin = country.population
             }
         }
-        return mPopulationMin
+        return mPopulationMin.toString()
     }
 
-    fun getMaximumPopulation(): Int {
+    fun getMaximumPopulation(): String {
         var mPopulationMax: Int = Int.MIN_VALUE
         for (country in mDataListInAdapter) {
             if (country.population > mPopulationMax) {
                 mPopulationMax = country.population
             }
         }
-        return mPopulationMax
+        return mPopulationMax.toString()
     }
 
-    fun getMinimumDistance(): Double {
+    fun getMinimumDistance(): String {
         var mDistanceMin: Double = Double.MAX_VALUE
         for (country in mDataListInAdapter) {
-            if (calculateDistanceToUser(country).toDouble() < mDistanceMin) {
-                mDistanceMin = calculateDistanceToUser(country).toDouble()
+            if (country.location.isNotEmpty()) {
+                if (calculateDistanceToUser(country).toDouble() < mDistanceMin) {
+                    mDistanceMin = calculateDistanceToUser(country).toDouble()
+                }
             }
         }
-        return mDistanceMin
+        return mDistanceMin.toString()
     }
 
-    fun getMaximumDistance(): Double{
+    fun getMaximumDistance(): String {
         var mDistanceMax: Double = Double.MIN_VALUE
         for (country in mDataListInAdapter) {
-            if (calculateDistanceToUser(country).toDouble() > mDistanceMax) {
-                mDistanceMax = calculateDistanceToUser(country).toDouble()
+            if (country.location.isNotEmpty()) {
+                if (calculateDistanceToUser(country).toDouble() > mDistanceMax) {
+                    mDistanceMax = calculateDistanceToUser(country).toDouble()
+                }
             }
         }
-        return mDistanceMax
+        return mDistanceMax.toString()
     }
 
-        inner class CountryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            var itemImage: ImageView = itemView.findViewById(R.id.cardIcon)
-            var itemName: TextView = itemView.findViewById(R.id.text_name_title)
-            var itemTitle: TextView = itemView.findViewById(R.id.text_title)
-            var itemDetail: TextView = itemView.findViewById(R.id.text_description)
-            var languages: TextView = itemView.findViewById(R.id.text_languages)
-            var area: TextView = itemView.findViewById(R.id.text_area)
-            var distance: TextView = itemView.findViewById(R.id.text_distance)
-        }
+    inner class CountryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var itemImage: ImageView = itemView.findViewById(R.id.cardIcon)
+        var itemName: TextView = itemView.findViewById(R.id.text_name_title)
+        var itemTitle: TextView = itemView.findViewById(R.id.text_title)
+        var itemDetail: TextView = itemView.findViewById(R.id.text_description)
+        var languages: TextView = itemView.findViewById(R.id.text_languages)
+        var area: TextView = itemView.findViewById(R.id.text_area)
+        var distance: TextView = itemView.findViewById(R.id.text_distance)
+    }
 
-        fun filterByName(name: String) {
+    fun filterByName(name: String) {
+        mFilteredDataList.clear()
+        mFilteredDataList.addAll(mDataListInAdapter)
+        val filteredList = mutableListOf<CountryDto>()
+        for (country in mFilteredDataList) {
+            if (country.name.lowercase().contains(name.lowercase())) {
+                filteredList.add(country)
+            }
+        }
+        mFilteredDataList = filteredList
+        notifyDataSetChanged()
+    }
+
+    fun repopulateFilteredDataList(data: List<CountryDto>) {
+        mFilteredDataList.clear()
+        mFilteredDataList.addAll(data)
+        notifyDataSetChanged()
+    }
+
+    fun restoreFilteredListFromDataList() {
+        if (mFilteredDataList.size != mDataListInAdapter.size) {
             mFilteredDataList.clear()
             mFilteredDataList.addAll(mDataListInAdapter)
-            val filteredList = mutableListOf<CountryDto>()
-            for (country in mFilteredDataList) {
-                if (country.name.lowercase().contains(name.lowercase())) {
-                    filteredList.add(country)
-                }
-            }
-            mFilteredDataList = filteredList
             notifyDataSetChanged()
         }
-
-        fun repopulateFilteredDataList(data: List<CountryDto>) {
-            mFilteredDataList.clear()
-            mFilteredDataList.addAll(data)
-            notifyDataSetChanged()
-        }
-
-        fun restoreFilteredListFromDataList() {
-            if (mFilteredDataList.size != mDataListInAdapter.size) {
-                mFilteredDataList.clear()
-                mFilteredDataList.addAll(mDataListInAdapter)
-                notifyDataSetChanged()
-            }
-        }
-
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            if (holder is CountryViewHolder) {
-                holder.itemName.text =
-                    holder.itemName.context.getString(
-                        R.string.adapter_name,
-                        mFilteredDataList[position].name
-                    )
-                holder.itemTitle.text =
-                    holder.itemView.context.getString(
-                        R.string.adapter_capital,
-                        mFilteredDataList[position].capital
-                    )
-                holder.itemDetail.text =
-                    holder.itemView.context.getString(
-                        R.string.adapter_population,
-                        mFilteredDataList[position].population
-                    )
-                holder.area.text =
-                    holder.itemView.context.getString(
-                        R.string.adapter_area,
-                        mFilteredDataList[position].population
-                    )
-
-                holder.languages.text =
-                    holder.itemView.context.getString(
-                        R.string.adapter_languages,
-                        mFilteredDataList[position].languages.convertLanguagesDtoToString()
-                    )
-
-
-                holder.distance.text = "Failed to investigate users location"
-                mUsersLocation?.let {
-                    holder.distance.text = calculateDistanceToUser(mFilteredDataList[position])
-                }
-
-                holder.itemImage.loadSvg(mFilteredDataList[position].flag)
-
-                holder.itemView.setOnClickListener { mOnItemClickListener?.invoke(mFilteredDataList[position]) }
-
-
-
-                Log.d(TAG, "ON BIND VIEW HOLDER STAGE")
-            }
-        }
-//
     }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is CountryViewHolder) {
+            holder.itemName.text =
+                holder.itemName.context.getString(
+                    R.string.adapter_name,
+                    mFilteredDataList[position].name
+                )
+            holder.itemTitle.text =
+                holder.itemView.context.getString(
+                    R.string.adapter_capital,
+                    mFilteredDataList[position].capital
+                )
+            holder.itemDetail.text =
+                holder.itemView.context.getString(
+                    R.string.adapter_population,
+                    mFilteredDataList[position].population
+                )
+            holder.area.text =
+                holder.itemView.context.getString(
+                    R.string.adapter_area,
+                    mFilteredDataList[position].population
+                )
+
+            holder.languages.text =
+                holder.itemView.context.getString(
+                    R.string.adapter_languages,
+                    mFilteredDataList[position].languages.convertLanguagesDtoToString()
+                )
+
+
+            holder.distance.text = "Failed to investigate users location"
+            mUsersLocation?.let {
+                holder.distance.text = calculateDistanceToUser(mFilteredDataList[position])
+            }
+
+            holder.itemImage.loadSvg(mFilteredDataList[position].flag)
+
+            holder.itemView.setOnClickListener { mOnItemClickListener?.invoke(mFilteredDataList[position]) }
+
+
+
+            Log.d(TAG, "ON BIND VIEW HOLDER STAGE")
+        }
+    }
+//
+}

@@ -15,9 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.task1new.COUNTRY_DETAILS_LAYOUT_MANAGER_KEY
-import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
-import com.example.task1new.R
+import com.example.task1new.*
 import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.databinding.FragmentCountryListBinding
@@ -151,8 +149,15 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
                 .navigate(R.id.action_blankFragmentRV_to_mapsFragmentBlank2)
         }
         if(item.itemId == R.id.menu_filter_button){
+            val bundle = Bundle()
+            bundle.putString(ADAPTER_MAXIMUM_AREA_BUNDLE_KEY, myAdapter.getMaximumArea())
+            bundle.putString(ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY, myAdapter.getMaximumDistance())
+            bundle.putString(ADAPTER_MAXIMUM_POPULATION_BUNDLE_KEY, myAdapter.getMaximumPopulation())
+            bundle.putString(ADAPTER_MINIMUM_AREA_BUNDLE_KEY, myAdapter.getMinimumArea())
+            bundle.putString(ADAPTER_MINIMUM_DISTANCE_BUNDLE_KEY, myAdapter.getMinimumDistance())
+            bundle.putString(ADAPTER_MINIMUM_POPULATION_BUNDLE_KEY, myAdapter.getMinimumPopulation())
             Navigation.findNavController(requireView())
-                .navigate(R.id.action_blankFragmentRV_to_filterFragment)
+                .navigate(R.id.action_blankFragmentRV_to_filterFragment, bundle)
         }
         if (item.itemId == R.id.menu_sort_button) {
             updateMenuSortIconView(item)
