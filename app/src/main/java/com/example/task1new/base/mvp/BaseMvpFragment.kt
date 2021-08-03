@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 
-abstract class BaseMvpFragment<View: BaseMvpView, PresenterType: BaseMvpPresenter<View>> : Fragment() {
+abstract class BaseMvpFragment<View : BaseMvpView, PresenterType : BaseMvpPresenter<View>> : Fragment() {
 
     protected lateinit var mPresenter: PresenterType
 
@@ -16,4 +16,11 @@ abstract class BaseMvpFragment<View: BaseMvpView, PresenterType: BaseMvpPresente
         super.onCreate(savedInstanceState)
         createPresenter()
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        getPresenter().onDestroyView()
+        getPresenter().detachView()
+    }
+
 }
