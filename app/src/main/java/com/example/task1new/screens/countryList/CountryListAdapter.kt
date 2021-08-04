@@ -9,9 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.SavedStateHandle
 import androidx.recyclerview.widget.RecyclerView
 import com.example.task1new.R
+import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.adapter.BaseAdapter
+import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.dto.CountryDto
 import com.example.task1new.dto.convertLanguagesDtoToString
 import com.example.task1new.ext.loadSvg
@@ -36,7 +39,7 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
 
     private fun calculateDistanceToUser(dto: CountryDto): Double {
         var result = 0.0
-        if(dto.location.isNotEmpty()){
+        if (dto.location.isNotEmpty()) {
             val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
                 latitude = dto.location[0]
                 longitude = dto.location[1]
@@ -177,9 +180,9 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
     fun getMaximumDistance(): String {
         var mDistanceMax: Double = Double.MIN_VALUE
         for (country in mDataListInAdapter) {
-                if (calculateDistanceToUser(country) > mDistanceMax) {
-                    mDistanceMax = calculateDistanceToUser(country)
-                }
+            if (calculateDistanceToUser(country) > mDistanceMax) {
+                mDistanceMax = calculateDistanceToUser(country)
+            }
         }
         return mDistanceMax.toString()
     }
@@ -253,7 +256,8 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
 
             holder.distance.text = "Failed to investigate users location"
             mUsersLocation?.let {
-                holder.distance.text = calculateDistanceToUser(mFilteredDataList[position]).toString()
+                holder.distance.text =
+                    calculateDistanceToUser(mFilteredDataList[position]).toString()
             }
 
             holder.itemImage.loadSvg(mFilteredDataList[position].flag)

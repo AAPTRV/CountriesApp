@@ -7,9 +7,16 @@ import com.example.task1new.base.mvvm.BaseViewModel
 import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.base.mvvm.executeJob
 import com.example.task1new.dto.CountryDto
+import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
+import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
 import com.example.task1new.model.convertToCountryDto
+import com.example.task1new.room.*
+import com.example.task1new.transformer.DaoEntityToDtoTransformer
 
-class CountryListViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel(savedStateHandle) {
+class CountryListViewModel(savedStateHandle: SavedStateHandle, mDataBase: DBInfo) : BaseViewModel(savedStateHandle) {
+
+    private var mDaoCountryInfo: CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
+    private var mDaoLanguageInfo: CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
 
     private val mCountryItemLiveData =
         savedStateHandle.getLiveData<Outcome<CountryDto>>("countryDto")
@@ -22,7 +29,7 @@ class CountryListViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel(s
         return mCountryItemLiveData
     }
 
-    fun getCountriesListLiveData(): MutableLiveData<Outcome<List<CountryDto>>>{
+    fun getCountriesListLiveData(): MutableLiveData<Outcome<List<CountryDto>>> {
         return mCountriesListLiveData
     }
 
@@ -41,80 +48,27 @@ class CountryListViewModel(savedStateHandle: SavedStateHandle) : BaseViewModel(s
         mCompositeDisposable.add(
             executeJob(
                 Retrofit.jsonPlaceHolderApi.getPosts()
+                    .doOnNext {
+                        // DB inserting data
+                        val mCountriesInfoFromAPI = it.toMutableList()
+                        val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
+
+                        val mLanguagesFromApiToDB =
+                            mutableListOf<CountryDatabaseLanguageInfoEntity>()
+                        mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+                            mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
+                        }
+                        mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
+
+                        mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+                            mCountriesInfoToDB.add(
+                                item.convertCommonInfoAPIDatatoDBItem()
+                            )
+                            mDaoCountryInfo.addAll(mCountriesInfoToDB)
+                        }
+                    }
                     .map { it.convertToCountryDto() }, mCountriesListLiveData
             )
         )
     }
-
-//    fun getDataFromRetrofitToRecycleAdapter(isRefresh: Boolean) {
-//        if (!isRefresh) {
-//            getView()?.showProgress()
-//        }
-//        addDisposable(
-//            inBackground(
-//                Retrofit.jsonPlaceHolderApi.getPosts()
-//                    .doOnNext {
-//                        // DB inserting data
-//                        val mCountriesInfoFromAPI = it.toMutableList()
-//                        val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
-//
-//                        val mLanguagesFromApiToDB =
-//                            mutableListOf<CountryDatabaseLanguageInfoEntity>()
-//                        mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-//                            mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
-//                        }
-//                        mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
-//
-//                        mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-//                            mCountriesInfoToDB.add(
-//                                item.convertCommonInfoAPIDatatoDBItem()
-//                            )
-//                            mDaoCountryInfo.addAll(mCountriesInfoToDB)
-//                        }
-//                    }
-//                    .map { it.convertToCountryDto() }
-//            ).subscribe({ dto ->
-//                getView()?.addNewUniqueItemsInRecycleAdapter(dto)
-//                if (!isRefresh) {
-//                    getView()?.hideProgress()
-//                }
-//
-//            }, { throwable ->
-//                throwable.printStackTrace()
-//                if (!isRefresh) {
-//                    getView()?.hideProgress()
-//                }
-//            })
-//        )
-//    }
-
-//    fun getCountryByName(name: String, isRefresh: Boolean) {
-//        if (!isRefresh) {
-//            getView()?.showProgress()
-//        }
-//        addDisposable(
-//            inBackground(
-//                Retrofit.jsonPlaceHolderApi.getCountryByName(name)
-//            ).subscribe(
-//                {
-//                    getView()?.showCountryInfo(
-//                        it[0].convertToCountryItemDto(), LatLng(
-//                            it[0].convertToLatLngDto().mLatitude,
-//                            it[0].convertToLatLngDto().mLongitude
-//                        )
-//                    )
-//                    if (!isRefresh) {
-//                        getView()?.hideProgress()
-//                    }
-//                }, { throwable ->
-//                    throwable.message?.let { errorMessage ->
-//                        getView()?.showError(errorMessage, throwable)
-//                        if (!isRefresh) {
-//                            getView()?.hideProgress()
-//                        }
-//                    }
-//                }
-//            )
-//        )
-//    }
 }
