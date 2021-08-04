@@ -29,6 +29,7 @@
                 android:layout_marginTop="@dimen/common_margin"
                 android:layout_marginBottom="@dimen/common_margin"
                 android:scaleType="centerInside"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/icon"
@@ -69,16 +70,6 @@
                 app:layout_constraintStart_toEndOf="@+id/cardIcon"
                 app:layout_constraintTop_toBottomOf="@+id/text_title" />
 
-            <TextView
-                android:id="@+id/text_area"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/common_margin"
-                android:layout_marginTop="@dimen/common_margin"
-                android:text="@string/text_description"
-                android:textSize="@dimen/common_text_medium"
-                app:layout_constraintStart_toEndOf="@+id/cardIcon"
-                app:layout_constraintTop_toBottomOf="@+id/text_description" />
 
             <TextView
                 android:id="@+id/text_languages"
@@ -90,19 +81,7 @@
                 android:textSize="@dimen/common_text_small"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/cardIcon"
-                app:layout_constraintTop_toBottomOf="@+id/text_area" />
-
-            <TextView
-                android:id="@+id/text_distance"
-                android:layout_width="@dimen/zero_size"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/common_margin"
-                android:layout_marginTop="@dimen/common_margin"
-                android:text="Distance"
-                android:textSize="@dimen/common_text_small"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/cardIcon"
-                app:layout_constraintTop_toBottomOf="@+id/text_languages" />
+                app:layout_constraintTop_toBottomOf="@+id/text_description" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
