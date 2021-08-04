@@ -12,12 +12,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.task1new.*
 import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.mvp.BaseMvpFragment
+import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.databinding.FragmentCountryListBinding
 import com.example.task1new.dto.CountryDto
 import com.example.task1new.ext.showSimpleDialogNetworkError
@@ -54,6 +56,9 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
 
     private var mLocationProviderClient: FusedLocationProviderClient? = null
 
+    private val mViewModel = CountryListViewModel(SavedStateHandle())
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -84,9 +89,27 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         getPresenter().getDataFromDBToRecycleAdapter()
         getPresenter().getDataFromRetrofitToRecycleAdapter(false)
 
+        mViewModel.getCountryByName()
+
+        mViewModel.getLiveData().observe(viewLifecycleOwner, { outcome ->
+            when (outcome){
+                is Outcome.Progress -> {
+
+                }
+                is Outcome.Next -> {
+                    Toast.makeText(this.requireActivity(), "Data get from MVVM", Toast.LENGTH_SHORT).show()
+                    addNewUniqueItemsInRecycleAdapter(listOf(outcome.data))
+                }
+                is Outcome.Failure -> {
+
+                }
+                is Outcome.Success -> {
+                }
+            }
+        })
+
         binding?.recycleView?.setHasFixedSize(true)
         myAdapter.setItemClick {
-            myAdapter.notifyDataSetChanged()
             val bundle = Bundle()
             bundle.putString(COUNTRY_NAME_BUNDLE_KEY, it.name)
             findNavController().navigate(

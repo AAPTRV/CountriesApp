@@ -34,8 +34,8 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
         mUsersLocation = location
     }
 
-    private fun calculateDistanceToUser(dto: CountryDto): String {
-        var result = "calculateDistanceToUserError"
+    private fun calculateDistanceToUser(dto: CountryDto): Double {
+        var result = 0.0
         if(dto.location.isNotEmpty()){
             val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
                 latitude = dto.location[0]
@@ -44,7 +44,7 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
 
             mUsersLocation?.let {
                 result =
-                    (mUsersLocation!!.distanceTo(currentCountryLocation).toDouble() / 1000).toString()
+                    (mUsersLocation!!.distanceTo(currentCountryLocation).toDouble() / 1000)
             }
         }
         return result
@@ -177,11 +177,9 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
     fun getMaximumDistance(): String {
         var mDistanceMax: Double = Double.MIN_VALUE
         for (country in mDataListInAdapter) {
-            if (country.location.isNotEmpty()) {
-                if (calculateDistanceToUser(country).toDouble() > mDistanceMax) {
-                    mDistanceMax = calculateDistanceToUser(country).toDouble()
+                if (calculateDistanceToUser(country) > mDistanceMax) {
+                    mDistanceMax = calculateDistanceToUser(country)
                 }
-            }
         }
         return mDistanceMax.toString()
     }
@@ -255,7 +253,7 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
 
             holder.distance.text = "Failed to investigate users location"
             mUsersLocation?.let {
-                holder.distance.text = calculateDistanceToUser(mFilteredDataList[position])
+                holder.distance.text = calculateDistanceToUser(mFilteredDataList[position]).toString()
             }
 
             holder.itemImage.loadSvg(mFilteredDataList[position].flag)

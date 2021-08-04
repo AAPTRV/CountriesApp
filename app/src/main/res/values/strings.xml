@@ -40,6 +40,8 @@
     <string name="custom_dialog_ok_button_text">OK</string>
     <string name="custom_dialog_entry_hint">Enter your note here</string>
     <string name="custom_dialog_cancel_button_text">CANCEL</string>
+    <string name="area">Area</string>
+    <string name="distance">Distance</string>
 
 
 </resources>
