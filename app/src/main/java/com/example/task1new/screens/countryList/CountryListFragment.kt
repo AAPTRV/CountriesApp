@@ -85,20 +85,22 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         mLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.requireActivity())
         getCurrentLocation()
 
-        getPresenter().attachView(this)
-        getPresenter().getDataFromDBToRecycleAdapter()
-        getPresenter().getDataFromRetrofitToRecycleAdapter(false)
+        // FOR MVVM TESTING PUROSES
+//        getPresenter().attachView(this)
+//        getPresenter().getDataFromDBToRecycleAdapter()
+//        getPresenter().getDataFromRetrofitToRecycleAdapter(false)
 
         mViewModel.getCountryByName()
 
-        mViewModel.getLiveData().observe(viewLifecycleOwner, { outcome ->
+        mViewModel.getCountries()
+
+        mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { outcome ->
             when (outcome){
                 is Outcome.Progress -> {
 
                 }
                 is Outcome.Next -> {
-                    Toast.makeText(this.requireActivity(), "Data get from MVVM", Toast.LENGTH_SHORT).show()
-                    addNewUniqueItemsInRecycleAdapter(listOf(outcome.data))
+                    addNewUniqueItemsInRecycleAdapter(outcome.data)
                 }
                 is Outcome.Failure -> {
 
@@ -107,6 +109,24 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
                 }
             }
         })
+
+        // GET COUNTRY LIVE DATA FOR TEST PURPOSES
+//        mViewModel.getCountryLiveData().observe(viewLifecycleOwner, { outcome ->
+//            when (outcome){
+//                is Outcome.Progress -> {
+//
+//                }
+//                is Outcome.Next -> {
+//                    Toast.makeText(this.requireActivity(), "Data get from MVVM", Toast.LENGTH_SHORT).show()
+//                    addNewUniqueItemsInRecycleAdapter(listOf(outcome.data))
+//                }
+//                is Outcome.Failure -> {
+//
+//                }
+//                is Outcome.Success -> {
+//                }
+//            }
+//        })
 
         binding?.recycleView?.setHasFixedSize(true)
         myAdapter.setItemClick {
