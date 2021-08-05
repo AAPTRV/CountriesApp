@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.example.task1new.Retrofit
 import com.example.task1new.app.CountriesApp
+import com.example.task1new.base.filter.CountryDtoListFilterObject
 import com.example.task1new.base.mvvm.BaseViewModel
 import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.base.mvvm.executeJob
@@ -17,6 +18,7 @@ import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToDtoTransformer
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlin.math.min
 
 class CountryListViewModel(
     savedStateHandle: SavedStateHandle,
@@ -34,8 +36,30 @@ class CountryListViewModel(
     private val mCountriesFilteredListLiveData =
         savedStateHandle.getLiveData<List<CountryDto>>("countryFilteredListDto")
 
+    private val mCountriesFilterLiveData =
+        savedStateHandle.getLiveData<CountryDtoListFilterObject>("countryListDtoFilter")
+
     fun getCountryLiveData(): MutableLiveData<CountryDto> {
         return mCountryItemLiveData
+    }
+
+    fun applyFilter(
+        countryName: String,
+        minPopulation: Int,
+        maxPopulation: Int,
+        minArea: Double,
+        maxArea: Double,
+        maxDistance: Double
+    ) {
+        CountryDtoListFilterObject.filterSetupChangeOptions(
+            countryName = countryName,
+            minPopulation = minPopulation,
+            maxPopulation = maxPopulation,
+            minArea = minArea,
+            maxArea = maxArea,
+            maxDistance = maxDistance,
+        )
+        mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }
 
     fun getCountriesListLiveData(): MutableLiveData<List<CountryDto>> {
@@ -48,7 +72,7 @@ class CountryListViewModel(
         val mPostCountriesData = mutableListOf<CountryDto>()
         // Filling mCountriesInfoEntities list with items from DB
         mDaoCountryInfo.getAllInfo().forEach { entity ->
-                mCountriesInfoEntities.add(entity)
+            mCountriesInfoEntities.add(entity)
         }
         // Filling mCountriesLanguageEntities with items from DB
         mCountriesInfoEntities.forEach { entity ->
@@ -67,7 +91,10 @@ class CountryListViewModel(
             // Filling adapter with first 20 items from DB
             mCountriesListLiveData.value = mPostCountriesData
         }
-        Log.e(TAG, "GOT COUNTRIES FROM DB. SIZE = ${mPostCountriesData.size}.  LIVE DATA SIZE = ${mCountriesListLiveData.value?.size}" )
+        Log.e(
+            TAG,
+            "GOT COUNTRIES FROM DB. SIZE = ${mPostCountriesData.size}.  LIVE DATA SIZE = ${mCountriesListLiveData.value?.size}"
+        )
     }
 
     fun getCountriesFromAPI() {
@@ -91,14 +118,17 @@ class CountryListViewModel(
                         )
                         mDaoCountryInfo.addAll(mCountriesInfoToDB)
                     }
-                    Log.e(TAG, "GET COUNTRIES FROM API TO DB" )
+                    Log.e(TAG, "GET COUNTRIES FROM API TO DB")
                 }
                 .map { it.convertToCountryDto() }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ countriesDtoList ->
                     mCountriesListLiveData.value = countriesDtoList
-                    Log.e(TAG, "GOT COUNTRIES FROM API. SIZE = ${countriesDtoList.size}. LIVE DATA SIZE = ${mCountriesListLiveData.value?.size}" )
+                    Log.e(
+                        TAG,
+                        "GOT COUNTRIES FROM API. SIZE = ${countriesDtoList.size}. LIVE DATA SIZE = ${mCountriesListLiveData.value?.size}"
+                    )
 
                 }, { getCountriesFromDb() }
                 )
