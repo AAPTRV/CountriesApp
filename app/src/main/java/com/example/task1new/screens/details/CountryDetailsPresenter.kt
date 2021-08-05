@@ -1,6 +1,6 @@
 package com.example.task1new.screens.details
 
-import com.example.task1new.Retrofit
+import com.example.task1new.network.Retrofit
 import com.example.task1new.base.mvp.BaseMvpPresenter
 import com.google.android.gms.maps.model.LatLng
 
@@ -12,7 +12,7 @@ class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
         }
         addDisposable(
             inBackground(
-                Retrofit.jsonPlaceHolderApi.getCountryByName(name)
+                Retrofit.COUNTRY_SERVICE.getCountryByName(name)
             ).subscribe(
                 {
                     getView()?.showCountryInfo(

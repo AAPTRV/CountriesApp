@@ -64,6 +64,7 @@ def comGithubAkarnokdRxJava3RetrofitAdapterVersion = '3.0.0'
 def ioReactiveRxJava3RxJavaVersion = '3.0.13'
 def ioReactiveRxJava3RxAndroid = '3.0.0'
 def comGitHubTrendyolBubbleScrollBarVersion = '0.1'
+def koinVersion = '3.1.2'
 
 final maps = "3.1.0-beta"
 final gms = "18.0.0"
@@ -135,7 +136,14 @@ dependencies {
     //Range Bar
     implementation 'com.google.android.material:material:1.4.0'
 
-
+    //Koin
+    implementation "io.insert-koin:koin-core:$koinVersion"
+    // Koin main features for Android (Scope,ViewModel ...)
+    implementation "io.insert-koin:koin-android:$koinVersion"
+    // Koin Java Compatibility
+    implementation "io.insert-koin:koin-android-compat:$koinVersion"
+    // Koin for Jetpack WorkManager
+    implementation "io.insert-koin:koin-androidx-workmanager:$koinVersion"
 
 }
 

@@ -6,27 +6,28 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.task1new.*
 import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.mvp.BaseMvpFragment
-import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.databinding.FragmentCountryListBinding
 import com.example.task1new.dto.CountryDto
 import com.example.task1new.ext.showSimpleDialogNetworkError
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
-import com.trendyol.bubblescrollbarlib.BubbleTextProvider
+import com.repository.filter.FilterRepository
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -56,8 +57,9 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
 
     private var mLocationProviderClient: FusedLocationProviderClient? = null
 
-    private val mViewModel = CountryListViewModel(SavedStateHandle(), CountriesApp.mDatabase)
+    private val mViewModel: CountryListViewModel by stateViewModel()
 
+    private val mFilterRepository: FilterRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +68,7 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
     }
 
     override fun onCreateView(
@@ -81,6 +84,8 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
+
+        mFilterRepository.getFilterSubject().subscribe({ Log.e("hz frag", it.toString()) }, {})
 
         mLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.requireActivity())
         getCurrentLocation()
@@ -151,7 +156,7 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
             Navigation.findNavController(requireView())
                 .navigate(R.id.action_blankFragmentRV_to_mapsFragmentBlank2)
         }
-        if(item.itemId == R.id.menu_filter_button){
+        if (item.itemId == R.id.menu_filter_button) {
             val bundle = Bundle()
             bundle.putString(ADAPTER_MAXIMUM_AREA_BUNDLE_KEY, myAdapter.getMaximumArea())
             bundle.putString(ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY, myAdapter.getMaximumDistance())
@@ -174,7 +179,7 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         return super.onOptionsItemSelected(item)
     }
 
-    override fun repopulateFilteredDataListInAdapter(data: List<CountryDto>){
+    override fun repopulateFilteredDataListInAdapter(data: List<CountryDto>) {
         myAdapter.repopulateFilteredDataList(data)
     }
 
@@ -232,11 +237,15 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         )
     }
 
-    private fun getCurrentLocation(){
-        if (ActivityCompat.checkSelfPermission(this.requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+    private fun getCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this.requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             val task: Task<Location>? = mLocationProviderClient?.lastLocation
             task?.addOnSuccessListener { location ->
-                location?.let { myAdapter.attachCurrentLocation(location)}
+                location?.let { myAdapter.attachCurrentLocation(location) }
             }
         } else {
             val listPermissionsNeeded = ArrayList<String>()

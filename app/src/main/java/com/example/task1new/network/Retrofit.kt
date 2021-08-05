@@ -1,6 +1,5 @@
-package com.example.task1new
+package com.example.task1new.network
 
-import com.example.task1new.network.JsonPlaceHolderApi
 import com.example.task1new.utils.NetConstants
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
 import okhttp3.OkHttpClient
@@ -24,9 +23,9 @@ object Retrofit {
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .client(okHttpClient)
         .build()
-    val jsonPlaceHolderApi: JsonPlaceHolderApi = retrofitBuilder.create(JsonPlaceHolderApi::class.java)
+    val COUNTRY_SERVICE: CountryService = retrofitBuilder.create(CountryService::class.java)
 
-    fun getCountriesApi():JsonPlaceHolderApi = jsonPlaceHolderApi
+    fun getCountriesApi(): CountryService = COUNTRY_SERVICE
 
     init {
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
