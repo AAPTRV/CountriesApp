@@ -1,8 +1,11 @@
 package com.example.task1new.screens.countryList
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.example.task1new.Retrofit
+import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.mvvm.BaseViewModel
 import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.base.mvvm.executeJob
@@ -12,63 +15,93 @@ import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
 import com.example.task1new.model.convertToCountryDto
 import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToDtoTransformer
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 
-class CountryListViewModel(savedStateHandle: SavedStateHandle, mDataBase: DBInfo) : BaseViewModel(savedStateHandle) {
+class CountryListViewModel(
+    savedStateHandle: SavedStateHandle,
+    mDataBase: DBInfo = CountriesApp.mDatabase
+) :
+    BaseViewModel(savedStateHandle) {
 
     private var mDaoCountryInfo: CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
     private var mDaoLanguageInfo: CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
 
     private val mCountryItemLiveData =
-        savedStateHandle.getLiveData<Outcome<CountryDto>>("countryDto")
+        savedStateHandle.getLiveData<CountryDto>("countryDto")
     private val mCountriesListLiveData =
-        savedStateHandle.getLiveData<Outcome<List<CountryDto>>>("countryListDto")
+        savedStateHandle.getLiveData<List<CountryDto>>("countryListDto")
     private val mCountriesFilteredListLiveData =
-        savedStateHandle.getLiveData<Outcome<List<CountryDto>>>("countryFilteredListDto")
+        savedStateHandle.getLiveData<List<CountryDto>>("countryFilteredListDto")
 
-    fun getCountryLiveData(): MutableLiveData<Outcome<CountryDto>> {
+    fun getCountryLiveData(): MutableLiveData<CountryDto> {
         return mCountryItemLiveData
     }
 
-    fun getCountriesListLiveData(): MutableLiveData<Outcome<List<CountryDto>>> {
+    fun getCountriesListLiveData(): MutableLiveData<List<CountryDto>> {
         return mCountriesListLiveData
     }
 
-    fun getCountryByName() {
-        mCompositeDisposable.add(
-            executeJob(
-                Retrofit.jsonPlaceHolderApi.getCountryByName(
-                    "belarus"
+    fun getCountriesFromDb() {
+        val mCountriesLanguageEntities = mutableListOf<CountryDatabaseLanguageInfoEntity>()
+        val mCountriesInfoEntities = mutableListOf<CountryDatabaseCommonInfoEntity>()
+        val mPostCountriesData = mutableListOf<CountryDto>()
+        // Filling mCountriesInfoEntities list with items from DB
+        mDaoCountryInfo.getAllInfo().forEach { entity ->
+                mCountriesInfoEntities.add(entity)
+        }
+        // Filling mCountriesLanguageEntities with items from DB
+        mCountriesInfoEntities.forEach { entity ->
+            mCountriesLanguageEntities.add(mDaoLanguageInfo.getLanguageInfoByCountry(entity.name))
+        }
+        // Filling mPost Countries Data through transformer, using info and languages entities
+        mCountriesInfoEntities.forEachIndexed { index, infoEntity ->
+            mPostCountriesData.add(
+                DaoEntityToDtoTransformer.daoEntityToDtoTransformer(
+                    infoEntity,
+                    mCountriesLanguageEntities[index]
                 )
-                    .map { it[0].convertToCountryItemDto() }, mCountryItemLiveData
             )
-        )
+        }
+        if (mPostCountriesData.isNotEmpty()) {
+            // Filling adapter with first 20 items from DB
+            mCountriesListLiveData.value = mPostCountriesData
+        }
+        Log.e(TAG, "GOT COUNTRIES FROM DB. SIZE = ${mPostCountriesData.size}.  LIVE DATA SIZE = ${mCountriesListLiveData.value?.size}" )
     }
 
-    fun getCountries() {
+    fun getCountriesFromAPI() {
         mCompositeDisposable.add(
-            executeJob(
-                Retrofit.jsonPlaceHolderApi.getPosts()
-                    .doOnNext {
-                        // DB inserting data
-                        val mCountriesInfoFromAPI = it.toMutableList()
-                        val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
+            Retrofit.getCountriesApi().getPosts()
+                .doOnNext {
+                    // DB inserting data
+                    val mCountriesInfoFromAPI = it.toMutableList()
+                    val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
 
-                        val mLanguagesFromApiToDB =
-                            mutableListOf<CountryDatabaseLanguageInfoEntity>()
-                        mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                            mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
-                        }
-                        mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
-
-                        mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                            mCountriesInfoToDB.add(
-                                item.convertCommonInfoAPIDatatoDBItem()
-                            )
-                            mDaoCountryInfo.addAll(mCountriesInfoToDB)
-                        }
+                    val mLanguagesFromApiToDB =
+                        mutableListOf<CountryDatabaseLanguageInfoEntity>()
+                    mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+                        mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
                     }
-                    .map { it.convertToCountryDto() }, mCountriesListLiveData
-            )
+                    mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
+
+                    mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+                        mCountriesInfoToDB.add(
+                            item.convertCommonInfoAPIDatatoDBItem()
+                        )
+                        mDaoCountryInfo.addAll(mCountriesInfoToDB)
+                    }
+                    Log.e(TAG, "GET COUNTRIES FROM API TO DB" )
+                }
+                .map { it.convertToCountryDto() }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ countriesDtoList ->
+                    mCountriesListLiveData.value = countriesDtoList
+                    Log.e(TAG, "GOT COUNTRIES FROM API. SIZE = ${countriesDtoList.size}. LIVE DATA SIZE = ${mCountriesListLiveData.value?.size}" )
+
+                }, { getCountriesFromDb() }
+                )
         )
     }
 }

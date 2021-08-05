@@ -1,6 +1,7 @@
 package com.example.task1new.room
 
 import androidx.room.*
+import io.reactivex.rxjava3.core.Flowable
 
 @Dao
 interface CountryCommonInfoDAO {

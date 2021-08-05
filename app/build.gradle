@@ -114,6 +114,7 @@ dependencies {
     implementation "androidx.room:room-ktx:" + androidRoomKtxVersion
     androidTestImplementation "androidx.room:room-testing:" + androidRoomTestingVersion
     kapt 'androidx.room:room-compiler:' + androidRoomCompilerVersion
+    implementation "androidx.room:room-rxjava3:" + androidRoomRuntimeVersion
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:' + bumptechGlideVersion
@@ -133,6 +134,8 @@ dependencies {
 
     //Range Bar
     implementation 'com.google.android.material:material:1.4.0'
+
+
 
 }
 

@@ -26,6 +26,8 @@ object Retrofit {
         .build()
     val jsonPlaceHolderApi: JsonPlaceHolderApi = retrofitBuilder.create(JsonPlaceHolderApi::class.java)
 
+    fun getCountriesApi():JsonPlaceHolderApi = jsonPlaceHolderApi
+
     init {
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
     }

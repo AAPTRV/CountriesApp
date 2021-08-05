@@ -23,33 +23,33 @@ class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView
         setupSearchSubject()
     }
 
-    fun getDataFromDBToRecycleAdapter() {
-        //BD reading data (initializing variables for entities)
-        val mCountriesLanguageEntities = mutableListOf<CountryDatabaseLanguageInfoEntity>()
-        val mCountriesInfoEntities = mutableListOf<CountryDatabaseCommonInfoEntity>()
-        val mPostCountriesData = mutableListOf<CountryDto>()
-        // Filling mCountriesInfoEntities list with items from DB
-        mDaoCountryInfo.getAllInfo().forEach { entity ->
-            mCountriesInfoEntities.add(entity)
-        }
-        // Filling mCountriesLanguageEntities with items from DB
-        mCountriesInfoEntities.forEach { entity ->
-            mCountriesLanguageEntities.add(mDaoLanguageInfo.getLanguageInfoByCountry(entity.name))
-        }
-        // Filling mPost Countries Data through transformer, using info and languages entities
-        mCountriesInfoEntities.forEachIndexed { index, infoEntity ->
-            mPostCountriesData.add(
-                DaoEntityToDtoTransformer.daoEntityToDtoTransformer(
-                    infoEntity,
-                    mCountriesLanguageEntities[index]
-                )
-            )
-        }
-        if (mPostCountriesData.isNotEmpty()) {
-            // Filling adapter with first 20 items from DB
-            getView()?.addNewUniqueItemsInRecycleAdapter(mPostCountriesData)
-        }
-    }
+//    fun getDataFromDBToRecycleAdapter() {
+//        //BD reading data (initializing variables for entities)
+//        val mCountriesLanguageEntities = mutableListOf<CountryDatabaseLanguageInfoEntity>()
+//        val mCountriesInfoEntities = mutableListOf<CountryDatabaseCommonInfoEntity>()
+//        val mPostCountriesData = mutableListOf<CountryDto>()
+//        // Filling mCountriesInfoEntities list with items from DB
+//        mDaoCountryInfo.getAllInfo().forEach { entity ->
+//            mCountriesInfoEntities.add(entity)
+//        }
+//        // Filling mCountriesLanguageEntities with items from DB
+//        mCountriesInfoEntities.forEach { entity ->
+//            mCountriesLanguageEntities.add(mDaoLanguageInfo.getLanguageInfoByCountry(entity.name))
+//        }
+//        // Filling mPost Countries Data through transformer, using info and languages entities
+//        mCountriesInfoEntities.forEachIndexed { index, infoEntity ->
+//            mPostCountriesData.add(
+//                DaoEntityToDtoTransformer.daoEntityToDtoTransformer(
+//                    infoEntity,
+//                    mCountriesLanguageEntities[index]
+//                )
+//            )
+//        }
+//        if (mPostCountriesData.isNotEmpty()) {
+//            // Filling adapter with first 20 items from DB
+//            getView()?.addNewUniqueItemsInRecycleAdapter(mPostCountriesData)
+//        }
+//    }
 
     private fun setupSearchSubject() {
         addDisposable(mSearchSubject

@@ -85,25 +85,12 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         mLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.requireActivity())
         getCurrentLocation()
 
-        mViewModel.getCountries()
-
-        mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { outcome ->
-            when (outcome){
-                is Outcome.Progress -> {
-                    showProgress()
-                }
-                is Outcome.Next -> {
-                    addNewUniqueItemsInRecycleAdapter(outcome.data)
-                    hideProgress()
-                }
-                is Outcome.Failure -> {
-                    showError(outcome.e.toString(), outcome.e)
-                    hideProgress()
-                }
-                is Outcome.Success -> {
-                }
-            }
+        mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { data ->
+            myAdapter.addNewUniqueItems(data)
         })
+
+        mViewModel.getCountriesFromDb()
+        mViewModel.getCountriesFromAPI()
 
         binding?.recycleView?.setHasFixedSize(true)
         myAdapter.setItemClick {
@@ -116,10 +103,6 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         }
 
         binding?.recycleView?.adapter = myAdapter
-        binding?.bubbleScroll?.attachToRecyclerView(binding?.recycleView!!)
-        binding?.bubbleScroll?.bubbleTextProvider = BubbleTextProvider {
-            myAdapter.getDataListFromAdapter()[it].name
-        }
 
         if (savedInstanceState != null) {
             mLayoutManagerState =
