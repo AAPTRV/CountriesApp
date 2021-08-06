@@ -42,8 +42,7 @@ private const val SHARED_PREFS: String = "sharedPrefs"
 private const val MENU_SORT_ICON_STATE = "menu sort icon state"
 
 
-class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresenter>(),
-    CountryListView {
+class CountryListFragment : Fragment(){
 
     private var param1: String? = null
     private var param2: String? = null
@@ -57,7 +56,6 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
     private var mLocationProviderClient: FusedLocationProviderClient? = null
 
     private val mViewModel = CountryListViewModel(SavedStateHandle(), CountriesApp.mDatabase)
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,6 +85,11 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
 
         mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { data ->
             myAdapter.addNewUniqueItems(data)
+        })
+
+        mViewModel.getFilterLiveData().observe(viewLifecycleOwner, {
+            myAdapter.repopulateFilteredDataListWithFilter(it)
+            Toast.makeText(this.requireActivity(), "Filter updated", Toast.LENGTH_SHORT).show()
         })
 
         mViewModel.getCountriesFromDb()
@@ -131,13 +134,15 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
-                    getPresenter().getSearchSubject().onNext(query)
+                    mViewModel.updateFilter(it)
                 }
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                getPresenter().getSearchSubject().onNext(newText)
+                if(newText.length >= 3){
+                    mViewModel.updateFilter(countryName = newText)
+                }
                 if (newText.length == 2 && myAdapter.isFiltered()) {
                     myAdapter.restoreFilteredListFromDataList()
                 }
@@ -174,11 +179,11 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         return super.onOptionsItemSelected(item)
     }
 
-    override fun repopulateFilteredDataListInAdapter(data: List<CountryDto>){
+    fun repopulateFilteredDataListInAdapter(data: List<CountryDto>){
         myAdapter.repopulateFilteredDataList(data)
     }
 
-    override fun addNewUniqueItemsInRecycleAdapter(data: List<CountryDto>) {
+    fun addNewUniqueItemsInRecycleAdapter(data: List<CountryDto>) {
         myAdapter.addNewUniqueItems(data)
     }
 
@@ -221,7 +226,6 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
-        getPresenter().onDestroyView()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -267,23 +271,15 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
             }
     }
 
-    override fun createPresenter() {
-        mPresenter = CountryListPresenter(CountriesApp.mDatabase)
-    }
-
-    override fun getPresenter(): CountryListPresenter {
-        return mPresenter
-    }
-
-    override fun showError(error: String, throwable: Throwable) {
+    fun showError(error: String, throwable: Throwable) {
         activity?.showSimpleDialogNetworkError()
     }
 
-    override fun showProgress() {
+    fun showProgress() {
         binding?.progressList?.visibility = View.VISIBLE
     }
 
-    override fun hideProgress() {
+    fun hideProgress() {
         binding?.progressList?.visibility = View.GONE
     }
 }

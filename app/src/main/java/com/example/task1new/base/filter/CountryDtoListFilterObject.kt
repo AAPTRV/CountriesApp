@@ -16,6 +16,15 @@ object CountryDtoListFilterObject {
 
     private var mFilterIsEmpty: Boolean = true
 
+    const val mDefaultCountryName: String = "AnyCountry"
+
+    const val mDefaultMinPopulation: Int = Integer.MIN_VALUE
+    const val mDefaultMaxPopulation: Int = Integer.MAX_VALUE
+    const val mDefaultMinArea: Double = Double.MIN_VALUE
+    const val mDefaultMaxArea: Double = Double.MAX_VALUE
+    const val mDefaultMaxDistance: Double = Double.MAX_VALUE
+    const val mDefaultFilterIsEmpty: Boolean = true
+
     fun List<CountryDto>.applyFilter(filter: CountryDtoListFilterObject): MutableList<CountryDto> {
         val result = mutableListOf<CountryDto>()
         for (country in this) {

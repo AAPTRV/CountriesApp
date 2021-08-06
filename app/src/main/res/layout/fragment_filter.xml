@@ -28,8 +28,9 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/area_text_view"
-        android:text="Area filter"
+        android:text="Countries area:"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/filter_fragment_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,7 +53,8 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/population_text_view"
-        android:text="Population filter"
+        android:text="Countries population:"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/area_slider"
         android:layout_width="wrap_content"
@@ -77,8 +79,9 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/distance_text_view"
-        android:text="Distance filter"
+        android:text="Distance to countries:"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/population_slider"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.task1new.R
 import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.adapter.BaseAdapter
+import com.example.task1new.base.filter.CountryDtoListFilterObject
+import com.example.task1new.base.filter.CountryDtoListFilterObject.applyFilter
 import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.dto.CountryDto
 import com.example.task1new.dto.convertLanguagesDtoToString
@@ -69,6 +71,12 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
 
     fun isFiltered(): Boolean {
         return mFilteredDataList.size != mDataListInAdapter.size
+    }
+
+    fun repopulateFilteredDataListWithFilter(filter: CountryDtoListFilterObject){
+        mFilteredDataList.clear()
+        mFilteredDataList.addAll(mDataListInAdapter.applyFilter(filter))
+        notifyDataSetChanged()
     }
 
     fun addNewUniqueItems(newItemsDto: List<CountryDto>) {
@@ -248,7 +256,7 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
             holder.area.text =
                 holder.itemView.context.getString(
                     R.string.adapter_area,
-                    mFilteredDataList[position].population
+                    mFilteredDataList[position].area
                 )
 
             holder.languages.text =
@@ -261,7 +269,11 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
             holder.distance.text = "Failed to investigate users location"
             mUsersLocation?.let {
                 holder.distance.text =
-                    calculateDistanceToUser(mFilteredDataList[position]).toString()
+
+                holder.itemName.context.getString(
+                    R.string.adapter_distance,
+                    calculateDistanceToUser(mFilteredDataList[position])
+                )
             }
 
             holder.itemImage.loadSvg(mFilteredDataList[position].flag)

@@ -8,7 +8,19 @@
     android:background="@color/teal_200">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/zero_size"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/ic_free_mapa_mundi_vector_01"
+        app:layout_constraintBottom_toTopOf="@id/rv_button"/>
+
+
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,14 +31,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3" />
+        app:layout_constraintVertical_bias="0.4"
+        android:visibility="gone"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/rv_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/teal_row"
         android:layout_height="wrap_content"
         android:text="@string/blank_fragment_FR_button_RCV"
-        android:textSize="@dimen/common_text_medium"
+        android:textSize="@dimen/common_text_small"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,20 +51,28 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/dialog_test_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/teal_row"
+        android:layout_marginTop="8dp"
         android:text="@string/startFragment_dialog_text"
-        android:textSize="@dimen/common_text_medium"
+        android:textSize="@dimen/common_text_small"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rv_button" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/map_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/teal_row"
         android:text="@string/map_with_all_countries_button_text"
-        android:textSize="@dimen/common_text_medium"
+        android:textSize="@dimen/common_text_small"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dialog_test_button" />

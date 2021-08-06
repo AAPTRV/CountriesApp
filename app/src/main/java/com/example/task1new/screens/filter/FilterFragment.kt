@@ -86,6 +86,17 @@ class FilterFragment : Fragment() {
         binding?.distanceSlider?.stepSize = getStepSize(mMinDistance, mMaxDistance)
         binding?.distanceSlider?.values = mutableListOf(mMinDistance, mMaxDistance)
 
+        binding?.areaTextView?.text =
+            context?.getString(R.string.filter_area, mMinArea / 1000, mMaxArea / 1000)
+        binding?.populationTextView?.text =
+            context?.getString(
+                R.string.filter_population,
+                mMinPopulation / 1000000,
+                mMaxPopulation / 1000000
+            )
+        binding?.distanceTextView?.text =
+            context?.getString(R.string.filter_distance, mMinDistance, mMaxDistance)
+
         binding?.areaSlider?.addOnSliderTouchListener(object : RangeSlider.OnSliderTouchListener {
             override fun onStartTrackingTouch(slider: RangeSlider) {
                 mCurrentMaxArea = slider.values[1]

@@ -38,18 +38,27 @@ class CountryListViewModel(
 
     private val mCountriesFilterLiveData =
         savedStateHandle.getLiveData<CountryDtoListFilterObject>("countryListDtoFilter")
+    
+    private val mFilter = CountryDtoListFilterObject
 
     fun getCountryLiveData(): MutableLiveData<CountryDto> {
         return mCountryItemLiveData
     }
 
-    fun applyFilter(
-        countryName: String,
-        minPopulation: Int,
-        maxPopulation: Int,
-        minArea: Double,
-        maxArea: Double,
-        maxDistance: Double
+    fun getFilterLiveData(): MutableLiveData<CountryDtoListFilterObject>{
+        return mCountriesFilterLiveData
+    }
+
+    fun getFilter(): CountryDtoListFilterObject = mFilter
+
+
+    fun updateFilter(
+        countryName: String = CountryDtoListFilterObject.mDefaultCountryName,
+        minPopulation: Int = CountryDtoListFilterObject.mDefaultMinPopulation,
+        maxPopulation: Int = CountryDtoListFilterObject.mDefaultMaxPopulation,
+        minArea: Double = CountryDtoListFilterObject.mDefaultMinArea,
+        maxArea: Double = CountryDtoListFilterObject.mDefaultMaxArea,
+        maxDistance: Double = CountryDtoListFilterObject.mDefaultMaxDistance
     ) {
         CountryDtoListFilterObject.filterSetupChangeOptions(
             countryName = countryName,
