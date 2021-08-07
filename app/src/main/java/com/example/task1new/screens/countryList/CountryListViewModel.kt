@@ -1,17 +1,13 @@
 package com.example.task1new.screens.countryList
 
-import android.content.ContentValues.TAG
 import android.location.Location
 import android.location.LocationManager
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.example.task1new.Retrofit
 import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.filter.CountryDtoListFilterObject
 import com.example.task1new.base.mvvm.BaseViewModel
-import com.example.task1new.base.mvvm.Outcome
-import com.example.task1new.base.mvvm.executeJob
 import com.example.task1new.dto.CountryDto
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
@@ -20,8 +16,6 @@ import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToDtoTransformer
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlin.math.max
-import kotlin.math.min
 
 class CountryListViewModel(
     savedStateHandle: SavedStateHandle,
@@ -45,7 +39,7 @@ class CountryListViewModel(
         mUsersLocation = location
     }
 
-    fun addDistanceToCountriesLiveData() {
+    private fun addDistanceToCountriesLiveData() {
         val result: MutableList<CountryDto> = mutableListOf()
         mCountriesListLiveData.value?.let { result.addAll(it) }
         for (dto in result) {
@@ -91,23 +85,7 @@ class CountryListViewModel(
                 }
             }
         }
-        Log.e("HZ", "VIEW MODEL GET MAXIMUM DISTANCE RESULT = $mDistanceMax")
         return mDistanceMax.toString()
-    }
-
-    fun getMinimumDistance(): String {
-        var mDistanceMin: Double = Double.MAX_VALUE
-        mCountriesListLiveData.value.let {
-            for (country in mCountriesListLiveData.value!!) {
-                if (country.location.isNotEmpty()) {
-                    if (calculateDistanceToUser(country).toDouble() < mDistanceMin) {
-                        mDistanceMin = calculateDistanceToUser(country).toDouble()
-                    }
-                }
-            }
-        }
-
-        return mDistanceMin.toString()
     }
 
     fun getMinimumArea(): String {
@@ -228,10 +206,6 @@ class CountryListViewModel(
             // Filling adapter with first 20 items from DB
             mCountriesListLiveData.value = mPostCountriesData
         }
-        Log.e(
-            TAG,
-            "GOT COUNTRIES FROM DB. SIZE = ${mPostCountriesData.size}.  LIVE DATA SIZE = ${mCountriesListLiveData.value?.size}"
-        )
     }
 
     fun getCountriesFromAPI() {
@@ -255,18 +229,12 @@ class CountryListViewModel(
                         )
                         mDaoCountryInfo.addAll(mCountriesInfoToDB)
                     }
-                    Log.e(TAG, "GET COUNTRIES FROM API TO DB")
                 }
                 .map { it.convertToCountryDto() }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ countriesDtoList ->
+                .subscribe({
                     addDistanceToCountriesLiveData()
-                    Log.e(
-                        TAG,
-                        "GOT COUNTRIES FROM API. SIZE = ${countriesDtoList.size}. LIVE DATA SIZE = ${mCountriesListLiveData.value?.size}"
-                    )
-
                 }, { getCountriesFromDb() }
                 )
         )

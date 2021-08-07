@@ -1,5 +1,7 @@
 package com.example.task1new.dto
 
+import com.example.task1new.DTO_DEFAULT_DISTANCE_VALUE
+
 data class CountryDto(
     val name: String,
     val capital: String,
@@ -8,5 +10,5 @@ data class CountryDto(
     val flag: String,
     val area: Double,
     val location: List<Double>,
-    var distance: String = "Failed to investigate users location"
+    var distance: String = DTO_DEFAULT_DISTANCE_VALUE
 )

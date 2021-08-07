@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.task1new.*
 import com.example.task1new.app.CountriesApp
 import com.example.task1new.databinding.FragmentCountryListBinding
-import com.example.task1new.dto.CountryDto
 import com.example.task1new.ext.showSimpleDialogNetworkError
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -150,7 +149,7 @@ class CountryListFragment : Fragment() {
                     mViewModel.setFilterCountryName(newText)
                 }
                 if (newText.length in 0..2 && myAdapter.isFiltered()) {
-                    mViewModel.setFilterCountryName("AnyCountry")
+                    mViewModel.setFilterCountryName(FILTER_ANY_COUNTRY_VALUE)
                 }
                 return true
             }
@@ -179,11 +178,6 @@ class CountryListFragment : Fragment() {
                     ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY,
                     mViewModel.getMaximumDistance()
                 )
-//                bundle.putString(
-//                    ADAPTER_MINIMUM_DISTANCE_BUNDLE_KEY,
-//                    mViewModel.getMinimumDistance()
-//                )
-
                 filterIconClipped = true
                 saveMenuFilterIconState()
                 Navigation.findNavController(requireView())
