@@ -94,6 +94,7 @@ class CountryListFragment : Fragment() {
             mViewModel.setFilterMinArea(result[1])
             mViewModel.setFilterMaxPopulation(result[2].toInt())
             mViewModel.setFilterMinPopulation(result[3].toInt())
+            mViewModel.setFilterMaxDistance(result[4])
         }
 
         mViewModel.getCountriesFromDb()
@@ -176,12 +177,12 @@ class CountryListFragment : Fragment() {
                 bundle.putString(ADAPTER_MINIMUM_AREA_BUNDLE_KEY, mViewModel.getMinimumArea())
                 bundle.putString(
                     ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY,
-                    myAdapter.getMaximumDistance()
+                    mViewModel.getMaximumDistance()
                 )
-                bundle.putString(
-                    ADAPTER_MINIMUM_DISTANCE_BUNDLE_KEY,
-                    myAdapter.getMinimumDistance()
-                )
+//                bundle.putString(
+//                    ADAPTER_MINIMUM_DISTANCE_BUNDLE_KEY,
+//                    mViewModel.getMinimumDistance()
+//                )
 
                 filterIconClipped = true
                 saveMenuFilterIconState()

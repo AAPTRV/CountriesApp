@@ -1,7 +1,6 @@
 package com.example.task1new.screens.filter
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,13 +9,9 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.Navigation
 import com.example.task1new.*
-import com.example.task1new.base.filter.BaseFilterFragment
 import com.example.task1new.databinding.FragmentFilterBinding
-import com.example.task1new.screens.countryList.CountryListAdapter
-import com.example.task1new.screens.countryList.CountryListFragment
 import com.google.android.material.slider.RangeSlider
-import kotlinx.android.synthetic.main.fragment_filter.*
-import kotlin.properties.Delegates
+import com.google.android.material.slider.Slider
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -79,15 +74,15 @@ class FilterFragment : Fragment() {
         binding?.populationSlider?.stepSize = getStepSize(mMinPopulation, mMaxPopulation)
         binding?.populationSlider?.values = mutableListOf(mMinPopulation, mMaxPopulation)
 
-        var mMinDistance =
-            arguments?.getString(ADAPTER_MINIMUM_DISTANCE_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
+//        var mMinDistance =
+//            arguments?.getString(ADAPTER_MINIMUM_DISTANCE_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
         var mMaxDistance =
             arguments?.getString(ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
 
-        binding?.distanceSlider?.valueFrom = mMinDistance
+        binding?.distanceSlider?.valueFrom = 0F
         binding?.distanceSlider?.valueTo = mMaxDistance
-        binding?.distanceSlider?.stepSize = getStepSize(mMinDistance, mMaxDistance)
-        binding?.distanceSlider?.values = mutableListOf(mMinDistance, mMaxDistance)
+        binding?.distanceSlider?.stepSize = getStepSize(0F, mMaxDistance)
+//        binding?.distanceSlider?.values = mutableListOf(mMinDistance, mMaxDistance)
 
         binding?.areaTextView?.text =
             context?.getString(R.string.filter_area, mMinArea / 1000, mMaxArea / 1000)
@@ -98,7 +93,7 @@ class FilterFragment : Fragment() {
                 mMaxPopulation / 1000000
             )
         binding?.distanceTextView?.text =
-            context?.getString(R.string.filter_distance, mMinDistance, mMaxDistance)
+            context?.getString(R.string.filter_distance, mMaxDistance)
 
         binding?.areaSlider?.addOnSliderTouchListener(object : RangeSlider.OnSliderTouchListener {
             override fun onStartTrackingTouch(slider: RangeSlider) {
@@ -136,19 +131,18 @@ class FilterFragment : Fragment() {
         })
 
         binding?.distanceSlider?.addOnSliderTouchListener(object :
-            RangeSlider.OnSliderTouchListener {
-            override fun onStartTrackingTouch(slider: RangeSlider) {
-                mMaxDistance = slider.values[1]
-                mMinDistance = slider.values[0]
+            Slider.OnSliderTouchListener {
+            override fun onStartTrackingTouch(slider: Slider) {
+                mMaxDistance = slider.value
+//                mMinDistance = slider.values[0]
             }
 
-            override fun onStopTrackingTouch(slider: RangeSlider) {
-                mMaxDistance = slider.values[1]
-                mMinDistance = slider.values[0]
+            override fun onStopTrackingTouch(slider: Slider) {
+                mMaxDistance = slider.value
+//                mMinDistance = slider.values[0]
                 binding?.distanceTextView?.text =
                     context?.getString(
                         R.string.filter_distance,
-                        mMinDistance,
                         mMaxDistance
                     )
             }
@@ -161,7 +155,8 @@ class FilterFragment : Fragment() {
             result.add(mMinArea.toDouble())
             result.add(mMaxPopulation.toDouble())
             result.add(mMinPopulation.toDouble())
-            result.add(mMinDistance.toDouble())
+//            result.add(mMinDistance.toDouble())
+            result.add(mMaxDistance.toDouble())
 
             setFragmentResult("filterKey", bundleOf("resultList" to result))
 

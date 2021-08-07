@@ -152,6 +152,7 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
                 mDistanceMax = calculateDistanceToUser(country)
             }
         }
+        Log.e("HZ", "ADAPTER GET MAXIMUM DISTANCE RESULT = $mDistanceMax")
         return mDistanceMax.toString()
     }
 

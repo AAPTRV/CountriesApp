@@ -54,9 +54,11 @@ class CountryListViewModel(
                     latitude = dto.location[0]
                     longitude = dto.location[1]
                 }
-                dto.distance =
-                    (mUsersLocation!!.distanceTo(currentCountryLocation)
-                        .toDouble() / 1000).toString()
+                mUsersLocation?.let {
+                    dto.distance =
+                        (mUsersLocation!!.distanceTo(currentCountryLocation)
+                            .toDouble() / 1000).toString()
+                }
             }
         }
         mCountriesListLiveData.value = result
@@ -82,11 +84,14 @@ class CountryListViewModel(
         var mDistanceMax: Double = Double.MIN_VALUE
         mCountriesListLiveData.value.let {
             for (country in mCountriesListLiveData.value!!) {
-                if (calculateDistanceToUser(country) > mDistanceMax) {
-                    mDistanceMax = calculateDistanceToUser(country)
+                if (country.location.isNotEmpty()) {
+                    if (calculateDistanceToUser(country) > mDistanceMax) {
+                        mDistanceMax = calculateDistanceToUser(country)
+                    }
                 }
             }
         }
+        Log.e("HZ", "VIEW MODEL GET MAXIMUM DISTANCE RESULT = $mDistanceMax")
         return mDistanceMax.toString()
     }
 
