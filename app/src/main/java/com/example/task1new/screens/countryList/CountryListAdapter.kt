@@ -124,16 +124,12 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
     }
 
     fun sortAscendingDataListInAdapter() {
-        mDataListInAdapter.sortBy { it.population }
-        mFilteredDataList.clear()
-        mFilteredDataList.addAll(mDataListInAdapter)
+        mFilteredDataList.sortBy { it.population }
         notifyDataSetChanged()
     }
 
     fun sortDescendingDataListInAdapter() {
-        mDataListInAdapter.sortByDescending { it.population }
-        mFilteredDataList.clear()
-        mFilteredDataList.addAll(mDataListInAdapter)
+        mFilteredDataList.sortByDescending { it.population }
         notifyDataSetChanged()
     }
 

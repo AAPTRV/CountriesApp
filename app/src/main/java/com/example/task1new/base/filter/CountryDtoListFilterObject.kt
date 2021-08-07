@@ -1,6 +1,7 @@
 package com.example.task1new.base.filter
 
 import com.example.task1new.dto.CountryDto
+import kotlin.math.max
 
 object CountryDtoListFilterObject {
 
@@ -33,6 +34,33 @@ object CountryDtoListFilterObject {
             }
         }
         return result
+    }
+
+    fun filterClearExceptName(){
+        mMaxPopulation = mDefaultMaxPopulation
+        mMinPopulation = mDefaultMinPopulation
+        mMaxArea = mDefaultMaxArea
+        mMinArea = mDefaultMinArea
+        mMaxDistance = mDefaultMaxDistance
+    }
+
+    fun filterCountryNameChange(countryName: String){
+        mCountryName = countryName
+    }
+    fun filterMaxPopulationChange(maxPopulation: Int){
+        mMaxPopulation = maxPopulation
+    }
+    fun filterMinPopulationChange(minPopulation: Int){
+        mMinPopulation = minPopulation
+    }
+    fun filterMaxAreaChange(maxArea: Double){
+        mMaxArea = maxArea
+    }
+    fun filterMinAreaChange(minArea: Double){
+        mMinArea = minArea
+    }
+    fun filterMaxDistanceChange(maxDistance: Double){
+        mMaxDistance = maxDistance
     }
 
     fun showFilterInfo() {
@@ -83,32 +111,32 @@ object CountryDtoListFilterObject {
         mFilterIsEmpty = true
     }
 
-    private fun setUpCountryName(countryName: String) {
+    fun setUpCountryName(countryName: String) {
         mCountryName = countryName
         mFilterIsEmpty = false
     }
 
-    private fun setUpMinPopulation(value: Int) {
+    fun setUpMinPopulation(value: Int) {
         mMinPopulation = value
         mFilterIsEmpty = false
     }
 
-    private fun setUpMaxPopulation(value: Int) {
+    fun setUpMaxPopulation(value: Int) {
         mMaxPopulation = value
         mFilterIsEmpty = false
     }
 
-    private fun setUpMinArea(value: Double) {
+    fun setUpMinArea(value: Double) {
         mMinArea = value
         mFilterIsEmpty = false
     }
 
-    private fun setUpMaxArea(value: Double) {
+    fun setUpMaxArea(value: Double) {
         mMaxArea = value
         mFilterIsEmpty = false
     }
 
-    private fun setUpMaxDistance(value: Double) {
+    fun setUpMaxDistance(value: Double) {
         mMaxDistance = value
         mFilterIsEmpty = false
     }

@@ -18,6 +18,7 @@ import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToDtoTransformer
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlin.math.max
 import kotlin.math.min
 
 class CountryListViewModel(
@@ -33,8 +34,6 @@ class CountryListViewModel(
         savedStateHandle.getLiveData<CountryDto>("countryDto")
     private val mCountriesListLiveData =
         savedStateHandle.getLiveData<List<CountryDto>>("countryListDto")
-    private val mCountriesFilteredListLiveData =
-        savedStateHandle.getLiveData<List<CountryDto>>("countryFilteredListDto")
 
     private val mCountriesFilterLiveData =
         savedStateHandle.getLiveData<CountryDtoListFilterObject>("countryListDtoFilter")
@@ -49,25 +48,40 @@ class CountryListViewModel(
         return mCountriesFilterLiveData
     }
 
-    fun getFilter(): CountryDtoListFilterObject = mFilter
+    private fun getFilter(): CountryDtoListFilterObject = mFilter
 
+    fun clearFilterExceptName(){
+        getFilter().filterClearExceptName()
+        mCountriesFilterLiveData.value = CountryDtoListFilterObject
+    }
 
-    fun updateFilter(
-        countryName: String = CountryDtoListFilterObject.mDefaultCountryName,
-        minPopulation: Int = CountryDtoListFilterObject.mDefaultMinPopulation,
-        maxPopulation: Int = CountryDtoListFilterObject.mDefaultMaxPopulation,
-        minArea: Double = CountryDtoListFilterObject.mDefaultMinArea,
-        maxArea: Double = CountryDtoListFilterObject.mDefaultMaxArea,
-        maxDistance: Double = CountryDtoListFilterObject.mDefaultMaxDistance
-    ) {
-        CountryDtoListFilterObject.filterSetupChangeOptions(
-            countryName = countryName,
-            minPopulation = minPopulation,
-            maxPopulation = maxPopulation,
-            minArea = minArea,
-            maxArea = maxArea,
-            maxDistance = maxDistance,
-        )
+    fun setFilterCountryName(countryName: String){
+        getFilter().filterCountryNameChange(countryName)
+        mCountriesFilterLiveData.value = CountryDtoListFilterObject
+    }
+
+    fun setFilterMinPopulation(minPopulation: Int){
+        getFilter().filterMinPopulationChange(minPopulation)
+        mCountriesFilterLiveData.value = CountryDtoListFilterObject
+    }
+
+    fun setFilterMaxPopulation(maxPopulation: Int){
+        getFilter().filterMaxPopulationChange(maxPopulation)
+        mCountriesFilterLiveData.value = CountryDtoListFilterObject
+    }
+
+    fun setFilterMinArea(minArea: Double){
+        getFilter().filterMinAreaChange(minArea)
+        mCountriesFilterLiveData.value = CountryDtoListFilterObject
+    }
+
+    fun setFilterMaxArea(maxArea: Double){
+        getFilter().filterMaxAreaChange(maxArea)
+        mCountriesFilterLiveData.value = CountryDtoListFilterObject
+    }
+
+    fun setFilterMaxDistance(maxDistance: Double){
+        getFilter().filterMaxDistanceChange(maxDistance)
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }
 
