@@ -7,5 +7,6 @@ data class CountryDto(
     val languages: MutableList<LanguageDto>,
     val flag: String,
     val area: Double,
-    val location: List<Double>
+    val location: List<Double>,
+    val distance: Double = 999.0
 )

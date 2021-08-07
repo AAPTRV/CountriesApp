@@ -1,6 +1,8 @@
 package com.example.task1new.screens.countryList
 
 import android.content.ContentValues.TAG
+import android.location.Location
+import android.location.LocationManager
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -27,60 +29,150 @@ class CountryListViewModel(
 ) :
     BaseViewModel(savedStateHandle) {
 
+    private var mUsersLocation: Location? = null
+
     private var mDaoCountryInfo: CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
     private var mDaoLanguageInfo: CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
-
-    private val mCountryItemLiveData =
-        savedStateHandle.getLiveData<CountryDto>("countryDto")
     private val mCountriesListLiveData =
         savedStateHandle.getLiveData<List<CountryDto>>("countryListDto")
 
     private val mCountriesFilterLiveData =
         savedStateHandle.getLiveData<CountryDtoListFilterObject>("countryListDtoFilter")
-    
+
     private val mFilter = CountryDtoListFilterObject
 
-    fun getCountryLiveData(): MutableLiveData<CountryDto> {
-        return mCountryItemLiveData
+    fun attachCurrentLocation(location: Location) {
+        mUsersLocation = location
     }
 
-    fun getFilterLiveData(): MutableLiveData<CountryDtoListFilterObject>{
+    private fun calculateDistanceToUser(dto: CountryDto): Double {
+        var result = 0.0
+        if (dto.location.isNotEmpty()) {
+            val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
+                latitude = dto.location[0]
+                longitude = dto.location[1]
+            }
+
+            mUsersLocation?.let {
+                result =
+                    (mUsersLocation!!.distanceTo(currentCountryLocation).toDouble() / 1000)
+            }
+        }
+        return result
+    }
+
+//    fun getMaximumDistance(): String {
+//        var mDistanceMax: Double = Double.MIN_VALUE
+//        mCountriesListLiveData.value.let {
+//            for (country in mCountriesListLiveData.value!!) {
+//                if (calculateDistanceToUser(country) > mDistanceMax) {
+//                    mDistanceMax = calculateDistanceToUser(country)
+//                }
+//            }
+//        }
+//        return mDistanceMax.toString()
+//    }
+//
+//    fun getMinimumDistance(): String {
+//        var mDistanceMin: Double = Double.MAX_VALUE
+//        mCountriesListLiveData.value.let {
+//            for (country in mCountriesListLiveData.value!!) {
+//                if (country.location.isNotEmpty()) {
+//                    if (calculateDistanceToUser(country).toDouble() < mDistanceMin) {
+//                        mDistanceMin = calculateDistanceToUser(country).toDouble()
+//                    }
+//                }
+//            }
+//        }
+//
+//        return mDistanceMin.toString()
+//    }
+//
+//    fun getMinimumArea(): String {
+//        var mAreaMin: Double = Double.MAX_VALUE
+//        mCountriesListLiveData.value.let {
+//            for (country in mCountriesListLiveData.value!!) {
+//                if (country.area < mAreaMin) {
+//                    mAreaMin = country.area
+//                }
+//            }
+//        }
+//        return mAreaMin.toString()
+//    }
+//
+//    fun getMaximumArea(): String {
+//        var mAreaMax: Double = Double.MIN_VALUE
+//        mCountriesListLiveData.value.let {
+//            for (country in mCountriesListLiveData.value!!) {
+//                if (country.area > mAreaMax) {
+//                    mAreaMax = country.area
+//                }
+//            }
+//        }
+//        return mAreaMax.toString()
+//    }
+//
+//    fun getMinimumPopulation(): String {
+//        var mPopulationMin: Int = Int.MAX_VALUE
+//        mCountriesListLiveData.value.let {
+//            for (country in mCountriesListLiveData.value!!) {
+//                if (country.population < mPopulationMin) {
+//                    mPopulationMin = country.population
+//                }
+//            }
+//        }
+//        return mPopulationMin.toString()
+//    }
+//
+//    fun getMaximumPopulation(): String {
+//        var mPopulationMax: Int = Int.MIN_VALUE
+//        mCountriesListLiveData.value.let {
+//            for (country in mCountriesListLiveData.value!!) {
+//                if (country.population > mPopulationMax) {
+//                    mPopulationMax = country.population
+//                }
+//            }
+//        }
+//        return mPopulationMax.toString()
+//    }
+
+    fun getFilterLiveData(): MutableLiveData<CountryDtoListFilterObject> {
         return mCountriesFilterLiveData
     }
 
     private fun getFilter(): CountryDtoListFilterObject = mFilter
 
-    fun clearFilterExceptName(){
+    fun clearFilterExceptName() {
         getFilter().filterClearExceptName()
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }
 
-    fun setFilterCountryName(countryName: String){
+    fun setFilterCountryName(countryName: String) {
         getFilter().filterCountryNameChange(countryName)
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }
 
-    fun setFilterMinPopulation(minPopulation: Int){
+    fun setFilterMinPopulation(minPopulation: Int) {
         getFilter().filterMinPopulationChange(minPopulation)
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }
 
-    fun setFilterMaxPopulation(maxPopulation: Int){
+    fun setFilterMaxPopulation(maxPopulation: Int) {
         getFilter().filterMaxPopulationChange(maxPopulation)
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }
 
-    fun setFilterMinArea(minArea: Double){
+    fun setFilterMinArea(minArea: Double) {
         getFilter().filterMinAreaChange(minArea)
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }
 
-    fun setFilterMaxArea(maxArea: Double){
+    fun setFilterMaxArea(maxArea: Double) {
         getFilter().filterMaxAreaChange(maxArea)
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }
 
-    fun setFilterMaxDistance(maxDistance: Double){
+    fun setFilterMaxDistance(maxDistance: Double) {
         getFilter().filterMaxDistanceChange(maxDistance)
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }

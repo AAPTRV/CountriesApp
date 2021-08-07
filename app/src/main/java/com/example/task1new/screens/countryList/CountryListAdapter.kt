@@ -261,19 +261,11 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
                     mFilteredDataList[position].languages.convertLanguagesDtoToString()
                 )
 
-
-            holder.distance.text = "Failed to investigate users location"
-            mUsersLocation?.let {
-                holder.distance.text =
-
-                holder.itemName.context.getString(
-                    R.string.adapter_distance,
-                    calculateDistanceToUser(mFilteredDataList[position])
-                )
-            }
-
+            holder.distance.text = holder.itemName.context.getString(
+                R.string.adapter_distance,
+                mFilteredDataList[position].distance.toString()
+            )
             holder.itemImage.loadSvg(mFilteredDataList[position].flag)
-
             holder.itemView.setOnClickListener { mOnItemClickListener?.invoke(mFilteredDataList[position]) }
 
 

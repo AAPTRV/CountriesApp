@@ -45,16 +45,11 @@ class CountryListFragment : Fragment() {
 
     private var param1: String? = null
     private var param2: String? = null
-
     private var binding: FragmentCountryListBinding? = null
-
     private var sortIconClipped = false
     private var filterIconClipped = false
-
     private lateinit var mLayoutManagerState: Parcelable
-
     private var mLocationProviderClient: FusedLocationProviderClient? = null
-
     private val mViewModel = CountryListViewModel(SavedStateHandle(), CountriesApp.mDatabase)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,7 +98,6 @@ class CountryListFragment : Fragment() {
 
         mViewModel.getCountriesFromDb()
         mViewModel.getCountriesFromAPI()
-
 
         binding?.recycleView?.setHasFixedSize(true)
         myAdapter.setItemClick {
