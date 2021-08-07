@@ -8,5 +8,5 @@ data class CountryDto(
     val flag: String,
     val area: Double,
     val location: List<Double>,
-    val distance: String = "Failed to investigate users location"
+    var distance: String = "Failed to investigate users location"
 )

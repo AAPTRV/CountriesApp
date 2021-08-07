@@ -45,6 +45,23 @@ class CountryListViewModel(
         mUsersLocation = location
     }
 
+    fun addDistanceToCountriesLiveData() {
+        val result: MutableList<CountryDto> = mutableListOf()
+        mCountriesListLiveData.value?.let { result.addAll(it) }
+        for (dto in result) {
+            if (dto.location.isNotEmpty()) {
+                val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
+                    latitude = dto.location[0]
+                    longitude = dto.location[1]
+                }
+                dto.distance =
+                    (mUsersLocation!!.distanceTo(currentCountryLocation)
+                        .toDouble() / 1000).toString()
+            }
+        }
+        mCountriesListLiveData.value = result
+    }
+
     private fun calculateDistanceToUser(dto: CountryDto): Double {
         var result = 0.0
         if (dto.location.isNotEmpty()) {
@@ -239,7 +256,7 @@ class CountryListViewModel(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ countriesDtoList ->
-                    mCountriesListLiveData.value = countriesDtoList
+                    addDistanceToCountriesLiveData()
                     Log.e(
                         TAG,
                         "GOT COUNTRIES FROM API. SIZE = ${countriesDtoList.size}. LIVE DATA SIZE = ${mCountriesListLiveData.value?.size}"
