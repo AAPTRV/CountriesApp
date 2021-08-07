@@ -61,80 +61,80 @@ class CountryListViewModel(
         return result
     }
 
-//    fun getMaximumDistance(): String {
-//        var mDistanceMax: Double = Double.MIN_VALUE
-//        mCountriesListLiveData.value.let {
-//            for (country in mCountriesListLiveData.value!!) {
-//                if (calculateDistanceToUser(country) > mDistanceMax) {
-//                    mDistanceMax = calculateDistanceToUser(country)
-//                }
-//            }
-//        }
-//        return mDistanceMax.toString()
-//    }
-//
-//    fun getMinimumDistance(): String {
-//        var mDistanceMin: Double = Double.MAX_VALUE
-//        mCountriesListLiveData.value.let {
-//            for (country in mCountriesListLiveData.value!!) {
-//                if (country.location.isNotEmpty()) {
-//                    if (calculateDistanceToUser(country).toDouble() < mDistanceMin) {
-//                        mDistanceMin = calculateDistanceToUser(country).toDouble()
-//                    }
-//                }
-//            }
-//        }
-//
-//        return mDistanceMin.toString()
-//    }
-//
-//    fun getMinimumArea(): String {
-//        var mAreaMin: Double = Double.MAX_VALUE
-//        mCountriesListLiveData.value.let {
-//            for (country in mCountriesListLiveData.value!!) {
-//                if (country.area < mAreaMin) {
-//                    mAreaMin = country.area
-//                }
-//            }
-//        }
-//        return mAreaMin.toString()
-//    }
-//
-//    fun getMaximumArea(): String {
-//        var mAreaMax: Double = Double.MIN_VALUE
-//        mCountriesListLiveData.value.let {
-//            for (country in mCountriesListLiveData.value!!) {
-//                if (country.area > mAreaMax) {
-//                    mAreaMax = country.area
-//                }
-//            }
-//        }
-//        return mAreaMax.toString()
-//    }
-//
-//    fun getMinimumPopulation(): String {
-//        var mPopulationMin: Int = Int.MAX_VALUE
-//        mCountriesListLiveData.value.let {
-//            for (country in mCountriesListLiveData.value!!) {
-//                if (country.population < mPopulationMin) {
-//                    mPopulationMin = country.population
-//                }
-//            }
-//        }
-//        return mPopulationMin.toString()
-//    }
-//
-//    fun getMaximumPopulation(): String {
-//        var mPopulationMax: Int = Int.MIN_VALUE
-//        mCountriesListLiveData.value.let {
-//            for (country in mCountriesListLiveData.value!!) {
-//                if (country.population > mPopulationMax) {
-//                    mPopulationMax = country.population
-//                }
-//            }
-//        }
-//        return mPopulationMax.toString()
-//    }
+    fun getMaximumDistance(): String {
+        var mDistanceMax: Double = Double.MIN_VALUE
+        mCountriesListLiveData.value.let {
+            for (country in mCountriesListLiveData.value!!) {
+                if (calculateDistanceToUser(country) > mDistanceMax) {
+                    mDistanceMax = calculateDistanceToUser(country)
+                }
+            }
+        }
+        return mDistanceMax.toString()
+    }
+
+    fun getMinimumDistance(): String {
+        var mDistanceMin: Double = Double.MAX_VALUE
+        mCountriesListLiveData.value.let {
+            for (country in mCountriesListLiveData.value!!) {
+                if (country.location.isNotEmpty()) {
+                    if (calculateDistanceToUser(country).toDouble() < mDistanceMin) {
+                        mDistanceMin = calculateDistanceToUser(country).toDouble()
+                    }
+                }
+            }
+        }
+
+        return mDistanceMin.toString()
+    }
+
+    fun getMinimumArea(): String {
+        var mAreaMin: Double = Double.MAX_VALUE
+        mCountriesListLiveData.value.let {
+            for (country in mCountriesListLiveData.value!!) {
+                if (country.area < mAreaMin) {
+                    mAreaMin = country.area
+                }
+            }
+        }
+        return mAreaMin.toString()
+    }
+
+    fun getMaximumArea(): String {
+        var mAreaMax: Double = Double.MIN_VALUE
+        mCountriesListLiveData.value.let {
+            for (country in mCountriesListLiveData.value!!) {
+                if (country.area > mAreaMax) {
+                    mAreaMax = country.area
+                }
+            }
+        }
+        return mAreaMax.toString()
+    }
+
+    fun getMinimumPopulation(): String {
+        var mPopulationMin: Int = Int.MAX_VALUE
+        mCountriesListLiveData.value.let {
+            for (country in mCountriesListLiveData.value!!) {
+                if (country.population < mPopulationMin) {
+                    mPopulationMin = country.population
+                }
+            }
+        }
+        return mPopulationMin.toString()
+    }
+
+    fun getMaximumPopulation(): String {
+        var mPopulationMax: Int = Int.MIN_VALUE
+        mCountriesListLiveData.value.let {
+            for (country in mCountriesListLiveData.value!!) {
+                if (country.population > mPopulationMax) {
+                    mPopulationMax = country.population
+                }
+            }
+        }
+        return mPopulationMax.toString()
+    }
 
     fun getFilterLiveData(): MutableLiveData<CountryDtoListFilterObject> {
         return mCountriesFilterLiveData

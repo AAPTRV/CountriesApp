@@ -164,24 +164,25 @@ class CountryListFragment : Fragment() {
         if (item.itemId == R.id.menu_filter_button) {
             if (!filterIconClipped) {
                 val bundle = Bundle()
-                bundle.putString(ADAPTER_MAXIMUM_AREA_BUNDLE_KEY, myAdapter.getMaximumArea())
+                bundle.putString(
+                    ADAPTER_MAXIMUM_POPULATION_BUNDLE_KEY,
+                    mViewModel.getMaximumPopulation()
+                )
+                bundle.putString(
+                    ADAPTER_MINIMUM_POPULATION_BUNDLE_KEY,
+                    mViewModel.getMinimumPopulation()
+                )
+                bundle.putString(ADAPTER_MAXIMUM_AREA_BUNDLE_KEY, mViewModel.getMaximumArea())
+                bundle.putString(ADAPTER_MINIMUM_AREA_BUNDLE_KEY, mViewModel.getMinimumArea())
                 bundle.putString(
                     ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY,
                     myAdapter.getMaximumDistance()
                 )
                 bundle.putString(
-                    ADAPTER_MAXIMUM_POPULATION_BUNDLE_KEY,
-                    myAdapter.getMaximumPopulation()
-                )
-                bundle.putString(ADAPTER_MINIMUM_AREA_BUNDLE_KEY, myAdapter.getMinimumArea())
-                bundle.putString(
                     ADAPTER_MINIMUM_DISTANCE_BUNDLE_KEY,
                     myAdapter.getMinimumDistance()
                 )
-                bundle.putString(
-                    ADAPTER_MINIMUM_POPULATION_BUNDLE_KEY,
-                    myAdapter.getMinimumPopulation()
-                )
+
                 filterIconClipped = true
                 saveMenuFilterIconState()
                 Navigation.findNavController(requireView())
@@ -287,7 +288,8 @@ private fun getCurrentLocation() {
     ) {
         val task: Task<Location>? = mLocationProviderClient?.lastLocation
         task?.addOnSuccessListener { location ->
-            location?.let { myAdapter.attachCurrentLocation(location) }
+            location?.let { myAdapter.attachCurrentLocation(location)
+            mViewModel.attachCurrentLocation(location)}
         }
     } else {
         val listPermissionsNeeded = ArrayList<String>()

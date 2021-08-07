@@ -133,46 +133,6 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
         notifyDataSetChanged()
     }
 
-    fun getMinimumArea(): String {
-        var mAreaMin: Double = Double.MAX_VALUE
-        for (country in mDataListInAdapter) {
-            if (country.area < mAreaMin) {
-                mAreaMin = country.area
-            }
-        }
-        return mAreaMin.toString()
-    }
-
-    fun getMaximumArea(): String {
-        var mAreaMax: Double = Double.MIN_VALUE
-        for (country in mDataListInAdapter) {
-            if (country.area > mAreaMax) {
-                mAreaMax = country.area
-            }
-        }
-        return mAreaMax.toString()
-    }
-
-    fun getMinimumPopulation(): String {
-        var mPopulationMin: Int = Int.MAX_VALUE
-        for (country in mDataListInAdapter) {
-            if (country.population < mPopulationMin) {
-                mPopulationMin = country.population
-            }
-        }
-        return mPopulationMin.toString()
-    }
-
-    fun getMaximumPopulation(): String {
-        var mPopulationMax: Int = Int.MIN_VALUE
-        for (country in mDataListInAdapter) {
-            if (country.population > mPopulationMax) {
-                mPopulationMax = country.population
-            }
-        }
-        return mPopulationMax.toString()
-    }
-
     fun getMinimumDistance(): String {
         var mDistanceMin: Double = Double.MAX_VALUE
         for (country in mDataListInAdapter) {
@@ -275,3 +235,43 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
     }
 //
 }
+
+//    fun getMinimumArea(): String {
+//        var mAreaMin: Double = Double.MAX_VALUE
+//        for (country in mDataListInAdapter) {
+//            if (country.area < mAreaMin) {
+//                mAreaMin = country.area
+//            }
+//        }
+//        return mAreaMin.toString()
+//    }
+//
+//    fun getMaximumArea(): String {
+//        var mAreaMax: Double = Double.MIN_VALUE
+//        for (country in mDataListInAdapter) {
+//            if (country.area > mAreaMax) {
+//                mAreaMax = country.area
+//            }
+//        }
+//        return mAreaMax.toString()
+//    }
+
+//    fun getMinimumPopulation(): String {
+//        var mPopulationMin: Int = Int.MAX_VALUE
+//        for (country in mDataListInAdapter) {
+//            if (country.population < mPopulationMin) {
+//                mPopulationMin = country.population
+//            }
+//        }
+//        return mPopulationMin.toString()
+//    }
+//
+//    fun getMaximumPopulation(): String {
+//        var mPopulationMax: Int = Int.MIN_VALUE
+//        for (country in mDataListInAdapter) {
+//            if (country.population > mPopulationMax) {
+//                mPopulationMax = country.population
+//            }
+//        }
+//        return mPopulationMax.toString()
+//    }
