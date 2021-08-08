@@ -2,6 +2,7 @@ package com.example.task1new.screens.details
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.setFragmentResultListener
+import com.example.task1new.COUNTRY_DETAILS_BUNDLE_ERROR
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
 import com.example.task1new.R
 import com.example.task1new.base.mvp.BaseMvpFragment
@@ -35,14 +37,18 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
     private var mGoogleMap: GoogleMap? = null
     private var binding: FragmentCountryDetailsBinding? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mCountryName = arguments?.getString(COUNTRY_NAME_BUNDLE_KEY) ?: COUNTRY_DETAILS_BUNDLE_ERROR
+        Log.e("HZ", "DETAILS COUNTRY NAME = $mCountryName")
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         binding = FragmentCountryDetailsBinding.inflate(inflater, container, false)
-        mCountryName = arguments?.getString(COUNTRY_NAME_BUNDLE_KEY, "") ?: ""
         binding?.mvCountryDetails?.onCreate(savedInstanceState)
         return binding?.root
     }

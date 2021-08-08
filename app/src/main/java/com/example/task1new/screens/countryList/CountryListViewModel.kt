@@ -112,7 +112,7 @@ class CountryListViewModel(
         return mAreaMax.toString()
     }
 
-    fun getMinimumPopulation(): String {
+    fun getMinimumPopulation(): Int {
         var mPopulationMin: Int = Int.MAX_VALUE
         mCountriesListLiveData.value.let {
             for (country in mCountriesListLiveData.value!!) {
@@ -121,10 +121,10 @@ class CountryListViewModel(
                 }
             }
         }
-        return mPopulationMin.toString()
+        return mPopulationMin
     }
 
-    fun getMaximumPopulation(): String {
+    fun getMaximumPopulation(): Int {
         var mPopulationMax: Int = Int.MIN_VALUE
         mCountriesListLiveData.value.let {
             for (country in mCountriesListLiveData.value!!) {
@@ -133,7 +133,7 @@ class CountryListViewModel(
                 }
             }
         }
-        return mPopulationMax.toString()
+        return mPopulationMax
     }
 
     fun getFilterLiveData(): MutableLiveData<CountryDtoListFilterObject> {
@@ -233,7 +233,8 @@ class CountryListViewModel(
                 .map { it.convertToCountryDto() }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
+                .subscribe({countryDtoList ->
+                    mCountriesListLiveData.value = countryDtoList
                     addDistanceToCountriesLiveData()
                 }, { getCountriesFromDb() }
                 )

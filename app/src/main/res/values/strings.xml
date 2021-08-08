@@ -46,7 +46,7 @@
 
     //Filter
     <string name="filter_area">Countries area: %1$.1f - %2$.1f thousand km </string>
-    <string name="filter_population">Countries population: %1$.0f - %2$.0f million people </string>
+    <string name="filter_population">Countries population: %1$d - %2$d million people </string>
     <string name="filter_distance">Maximum distance: %1$.1f km </string>
     <string name="distance_to_countries">Distance to countries:</string>
     <string name="countries_population">Countries population:</string>

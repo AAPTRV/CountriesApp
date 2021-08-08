@@ -73,7 +73,7 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
         return mFilteredDataList.size != mDataListInAdapter.size
     }
 
-    fun repopulateFilteredDataListWithFilter(filter: CountryDtoListFilterObject){
+    fun repopulateFilteredDataListWithFilter(filter: CountryDtoListFilterObject) {
         mFilteredDataList.clear()
         mFilteredDataList.addAll(mDataListInAdapter.applyFilter(filter))
         notifyDataSetChanged()
@@ -95,7 +95,7 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
         else if (mDataListInAdapter.containsAll(newItemsDto)) {
             Log.e(
                 TAG,
-                " CASE 2 : NO DATA TO ADD, NO NEW ELEMENTS mData.size = ${mDataListInAdapter.size}"
+                " CASE 2 : NO DATA TO ADD, NO NEW ELEMENTS mData.size = ${mDataListInAdapter.size}. newItemsDtoSize = ${newItemsDto.size}"
             )
         } // case #3 -> adding new unique elements
         else {
@@ -131,29 +131,6 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
     fun sortDescendingDataListInAdapter() {
         mFilteredDataList.sortByDescending { it.population }
         notifyDataSetChanged()
-    }
-
-    fun getMinimumDistance(): String {
-        var mDistanceMin: Double = Double.MAX_VALUE
-        for (country in mDataListInAdapter) {
-            if (country.location.isNotEmpty()) {
-                if (calculateDistanceToUser(country).toDouble() < mDistanceMin) {
-                    mDistanceMin = calculateDistanceToUser(country).toDouble()
-                }
-            }
-        }
-        return mDistanceMin.toString()
-    }
-
-    fun getMaximumDistance(): String {
-        var mDistanceMax: Double = Double.MIN_VALUE
-        for (country in mDataListInAdapter) {
-            if (calculateDistanceToUser(country) > mDistanceMax) {
-                mDistanceMax = calculateDistanceToUser(country)
-            }
-        }
-        Log.e("HZ", "ADAPTER GET MAXIMUM DISTANCE RESULT = $mDistanceMax")
-        return mDistanceMax.toString()
     }
 
     inner class CountryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
@@ -39,7 +40,6 @@ private const val SHARED_PREFS: String = "sharedPrefs"
 private const val MENU_SORT_ICON_STATE = "menu sort icon state"
 private const val MENU_FILTER_ICON_STATE = "menu filter icon state"
 
-
 class CountryListFragment : Fragment() {
 
     private var param1: String? = null
@@ -68,7 +68,6 @@ class CountryListFragment : Fragment() {
         // Inflate the layout for this fragment
         return binding?.root
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -102,9 +101,10 @@ class CountryListFragment : Fragment() {
         binding?.recycleView?.setHasFixedSize(true)
         myAdapter.setItemClick {
             val bundle = Bundle()
+            Log.e("HZ", "COUNTRY NAME = ${it.name}")
             bundle.putString(COUNTRY_NAME_BUNDLE_KEY, it.name)
             findNavController().navigate(
-                R.id.action_blankFragmentRV_to_countryDetailsFragment,
+                R.id.action_blankFragmentRV_to_countryDetailsFragment, bundle
             )
         }
 
@@ -164,18 +164,18 @@ class CountryListFragment : Fragment() {
         if (item.itemId == R.id.menu_filter_button) {
             if (!filterIconClipped) {
                 val bundle = Bundle()
-                bundle.putString(
-                    ADAPTER_MAXIMUM_POPULATION_BUNDLE_KEY,
+                bundle.putInt(
+                    FILTER_MAXIMUM_POPULATION_BUNDLE_KEY,
                     mViewModel.getMaximumPopulation()
                 )
-                bundle.putString(
-                    ADAPTER_MINIMUM_POPULATION_BUNDLE_KEY,
+                bundle.putInt(
+                    FILTER_MINIMUM_POPULATION_BUNDLE_KEY,
                     mViewModel.getMinimumPopulation()
                 )
-                bundle.putString(ADAPTER_MAXIMUM_AREA_BUNDLE_KEY, mViewModel.getMaximumArea())
-                bundle.putString(ADAPTER_MINIMUM_AREA_BUNDLE_KEY, mViewModel.getMinimumArea())
+                bundle.putString(FILTER_MAXIMUM_AREA_BUNDLE_KEY, mViewModel.getMaximumArea())
+                bundle.putString(FILTER_MINIMUM_AREA_BUNDLE_KEY, mViewModel.getMinimumArea())
                 bundle.putString(
-                    ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY,
+                    FILTER_MAXIMUM_DISTANCE_BUNDLE_KEY,
                     mViewModel.getMaximumDistance()
                 )
                 filterIconClipped = true
@@ -225,109 +225,109 @@ class CountryListFragment : Fragment() {
         }
     }
 
-
-private fun loadMenuSortIconState() {
-    val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
-        SHARED_PREFS,
-        AppCompatActivity.MODE_PRIVATE
-    )
-    sortIconClipped = sharedPreferences.getBoolean(MENU_SORT_ICON_STATE, false)
-}
-
-private fun saveMenuSortIconState() {
-    val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
-        SHARED_PREFS, AppCompatActivity.MODE_PRIVATE
-    )
-    val editor: SharedPreferences.Editor = sharedPreferences.edit()
-    editor.putBoolean(MENU_SORT_ICON_STATE, sortIconClipped)
-    editor.apply()
-    Toast.makeText(this.requireActivity(), "Data Saved", Toast.LENGTH_SHORT).show()
-}
-
-private fun initializeMenuSortIconSet(item: MenuItem) {
-    if (sortIconClipped) {
-        item.setIcon(R.drawable.ic_ascending_sort)
-    } else {
-        item.setIcon(R.drawable.ic_descending_sort)
+    private fun loadMenuSortIconState() {
+        val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
+            SHARED_PREFS,
+            AppCompatActivity.MODE_PRIVATE
+        )
+        sortIconClipped = sharedPreferences.getBoolean(MENU_SORT_ICON_STATE, false)
     }
-}
 
-private fun updateMenuSortIconView(item: MenuItem) {
-    sortIconClipped = if (!sortIconClipped) {
-        item.setIcon(R.drawable.ic_ascending_sort)
-        true
-    } else {
-        item.setIcon(R.drawable.ic_descending_sort)
-        false
+    private fun saveMenuSortIconState() {
+        val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
+            SHARED_PREFS, AppCompatActivity.MODE_PRIVATE
+        )
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putBoolean(MENU_SORT_ICON_STATE, sortIconClipped)
+        editor.apply()
+        Toast.makeText(this.requireActivity(), "Data Saved", Toast.LENGTH_SHORT).show()
     }
-}
 
-override fun onDestroyView() {
-    super.onDestroyView()
-    binding = null
-}
-
-override fun onSaveInstanceState(outState: Bundle) {
-    super.onSaveInstanceState(outState)
-    outState.putParcelable(
-        COUNTRY_DETAILS_LAYOUT_MANAGER_KEY,
-        mLayoutManagerState
-    )
-}
-
-private fun getCurrentLocation() {
-    if (ActivityCompat.checkSelfPermission(
-            this.requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-    ) {
-        val task: Task<Location>? = mLocationProviderClient?.lastLocation
-        task?.addOnSuccessListener { location ->
-            location?.let { myAdapter.attachCurrentLocation(location)
-            mViewModel.attachCurrentLocation(location)}
+    private fun initializeMenuSortIconSet(item: MenuItem) {
+        if (sortIconClipped) {
+            item.setIcon(R.drawable.ic_ascending_sort)
+        } else {
+            item.setIcon(R.drawable.ic_descending_sort)
         }
-    } else {
-        val listPermissionsNeeded = ArrayList<String>()
-        listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
-        ActivityCompat.requestPermissions(
-            this.requireActivity(),
-            listPermissionsNeeded.toTypedArray(),
-            44
+    }
+
+    private fun updateMenuSortIconView(item: MenuItem) {
+        sortIconClipped = if (!sortIconClipped) {
+            item.setIcon(R.drawable.ic_ascending_sort)
+            true
+        } else {
+            item.setIcon(R.drawable.ic_descending_sort)
+            false
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(
+            COUNTRY_DETAILS_LAYOUT_MANAGER_KEY,
+            mLayoutManagerState
         )
     }
-}
 
-companion object {
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment BlankFragmentRV.
-     */
-
-    var myAdapter: CountryListAdapter = CountryListAdapter()
-
-    @JvmStatic
-    fun newInstance(param1: String, param2: String) =
-        CountryListFragment().apply {
-            arguments = Bundle().apply {
-                putString(ARG_PARAM1, param1)
-                putString(ARG_PARAM2, param2)
+    private fun getCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this.requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            val task: Task<Location>? = mLocationProviderClient?.lastLocation
+            task?.addOnSuccessListener { location ->
+                location?.let {
+                    myAdapter.attachCurrentLocation(location)
+                    mViewModel.attachCurrentLocation(location)
+                }
             }
+        } else {
+            val listPermissionsNeeded = ArrayList<String>()
+            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
+            ActivityCompat.requestPermissions(
+                this.requireActivity(),
+                listPermissionsNeeded.toTypedArray(),
+                44
+            )
         }
-}
+    }
 
-fun showError(error: String, throwable: Throwable) {
-    activity?.showSimpleDialogNetworkError()
-}
+    companion object {
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+         *
+         * @param param1 Parameter 1.
+         * @return A new instance of fragment BlankFragmentRV.
+         */
 
-fun showProgress() {
-    binding?.progressList?.visibility = View.VISIBLE
-}
+        var myAdapter: CountryListAdapter = CountryListAdapter()
 
-fun hideProgress() {
-    binding?.progressList?.visibility = View.GONE
-}
+        @JvmStatic
+        fun newInstance(param1: String, param2: String) =
+            CountryListFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_PARAM1, param1)
+                    putString(ARG_PARAM2, param2)
+                }
+            }
+    }
+
+    fun showError(error: String, throwable: Throwable) {
+        activity?.showSimpleDialogNetworkError()
+    }
+
+    fun showProgress() {
+        binding?.progressList?.visibility = View.VISIBLE
+    }
+
+    fun hideProgress() {
+        binding?.progressList?.visibility = View.GONE
+    }
 }
