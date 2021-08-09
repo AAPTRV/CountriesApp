@@ -78,10 +78,6 @@ class CountryListFragment : Fragment() {
             LocationServices.getFusedLocationProviderClient(this.requireActivity())
         getCurrentLocation()
 
-//        mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { data ->
-//            myAdapter.addNewUniqueItems(data)
-//        })
-
         mViewModel.getCountriesFromDbRxSimple()
         mViewModel.getCountriesFromAPIRx()
 
@@ -93,6 +89,7 @@ class CountryListFragment : Fragment() {
                 is Outcome.Next -> {
                     myAdapter.addNewUniqueItems(outcome.data)
                     hideProgress()
+                    Log.e("HZ", "DATA SET CHANGED")
                 }
                 is Outcome.Failure -> {
 

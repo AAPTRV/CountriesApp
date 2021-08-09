@@ -2,14 +2,13 @@ package com.example.task1new.screens.countryList
 
 import android.location.Location
 import android.location.LocationManager
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.example.task1new.Retrofit
 import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.filter.CountryDtoListFilterObject
-import com.example.task1new.base.mvvm.BaseViewModel
-import com.example.task1new.base.mvvm.Outcome
-import com.example.task1new.base.mvvm.executeJob
+import com.example.task1new.base.mvvm.*
 import com.example.task1new.dto.CountryDto
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
@@ -40,13 +39,44 @@ class CountryListViewModel(
     private val mCountriesListLiveDataRx =
         savedStateHandle.getLiveData<Outcome<List<CountryDto>>>("countryListDto")
 
+    private val mCountriesList: MutableList<CountryDto> = mutableListOf()
+
     fun getCountriesLiveDataRx(): MutableLiveData<Outcome<List<CountryDto>>> {
         return mCountriesListLiveDataRx
     }
 
 
     fun attachCurrentLocation(location: Location) {
+        val result: MutableList<CountryDto> = mutableListOf()
         mUsersLocation = location
+
+    }
+
+    private fun addDistanceToCountriesLiveDataRx() {
+        val result: MutableList<CountryDto> = mutableListOf()
+        result.addAll(mCountriesList)
+        for (dto in result) {
+            if (dto.location.isNotEmpty()) {
+                val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
+                    latitude = dto.location[0]
+                    longitude = dto.location[1]
+                }
+                mUsersLocation?.let {
+                    dto.distance =
+                        (mUsersLocation!!.distanceTo(currentCountryLocation)
+                            .toDouble() / 1000).toString()
+                }
+            }
+        }
+        mCompositeDisposable.add(
+            executeJob(
+                Flowable.just(result),
+                mCountriesListLiveDataRx
+            )
+        )
+        mCountriesList.clear()
+        mCountriesList.addAll(result)
+        Log.e("HZ", "DONE")
     }
 
     private fun addDistanceToCountriesLiveData() {
@@ -187,28 +217,6 @@ class CountryListViewModel(
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }
 
-    fun getCountriesListLiveData(): MutableLiveData<List<CountryDto>> {
-        return mCountriesListLiveData
-    }
-
-    fun getCountriesFromDbRx() {
-        mCompositeDisposable.add(
-            Flowable.fromIterable(mDaoCountryInfo.getAllInfo())
-                .map { entity ->
-                    mDaoLanguageInfo.getLanguageInfoByCountry(entity.name)
-                }
-                .collect(
-                    { mutableListOf<CountryDatabaseLanguageInfoEntity>() },
-                    { entityList, entity ->
-                        entityList.add(entity)
-                    })
-                .map { languageEntitiesList -> }
-                .subscribe({ it ->
-
-                }, {})
-        )
-    }
-
     fun getCountriesFromDbRxSimple() {
         val mCountriesLanguageEntities = mutableListOf<CountryDatabaseLanguageInfoEntity>()
         val mCountriesInfoEntities = mutableListOf<CountryDatabaseCommonInfoEntity>()
@@ -236,6 +244,9 @@ class CountryListViewModel(
                 mCountriesListLiveDataRx
             )
         )
+        mCountriesList.addAll(mPostCountriesData)
+        addDistanceToCountriesLiveDataRx()
+        Log.e("HZ", "GET COUNTRIES FROM DB...")
     }
 
     fun getCountriesFromAPIRx() {
@@ -261,69 +272,41 @@ class CountryListViewModel(
                     }
                 }
                 .map { it.convertToCountryDto() }
+                .doOnNext { mCountriesList.addAll(it) }
+//                .flatMap { Flowable.fromIterable(it) }
+//                .map { dto ->
+//                    if (dto.location.isNotEmpty()) {
+//                        val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
+//                            latitude = dto.location[0]
+//                            longitude = dto.location[1]
+//                        }
+//                        mUsersLocation?.let {
+//                            dto.distance =
+//                                (mUsersLocation!!.distanceTo(currentCountryLocation)
+//                                    .toDouble() / 1000).toString()
+//                        }
+//                    }
+//                }
+//                .collect({ mutableListOf<CountryDto>()}, { b, t -> b.put(t.key, t.count???)}
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()), mCountriesListLiveDataRx
         )
-    }
-
-    fun getCountriesFromAPI() {
-        mCompositeDisposable.add(
-            Retrofit.getCountriesApi().getPosts()
-                .doOnNext {
-                    // DB inserting data
-                    val mCountriesInfoFromAPI = it.toMutableList()
-                    val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
-
-                    val mLanguagesFromApiToDB =
-                        mutableListOf<CountryDatabaseLanguageInfoEntity>()
-                    mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                        mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
-                    }
-                    mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
-
-                    mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                        mCountriesInfoToDB.add(
-                            item.convertCommonInfoAPIDatatoDBItem()
-                        )
-                        mDaoCountryInfo.addAll(mCountriesInfoToDB)
-                    }
-                }
-                .map { it.convertToCountryDto() }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    mCountriesListLiveData.value
-                    addDistanceToCountriesLiveData()
-                }, {}
-                )
-        )
+        Log.e("HZ", "GET COUNTRIES FROM API")
     }
 }
 
-
-//fun getCountriesFromDb() {
-//    val mCountriesLanguageEntities = mutableListOf<CountryDatabaseLanguageInfoEntity>()
-//    val mCountriesInfoEntities = mutableListOf<CountryDatabaseCommonInfoEntity>()
-//    val mPostCountriesData = mutableListOf<CountryDto>()
-//    // Filling mCountriesInfoEntities list with items from DB +
-//    mDaoCountryInfo.getAllInfo().forEach { entity ->
-//        mCountriesInfoEntities.add(entity)
-//    }
-//    // Filling mCountriesLanguageEntities with items from DB
-//    mCountriesInfoEntities.forEach { entity ->
-//        mCountriesLanguageEntities.add(mDaoLanguageInfo.getLanguageInfoByCountry(entity.name))
-//    }
-//    // Filling mPost Countries Data through transformer, using info and languages entities
-//    mCountriesInfoEntities.forEachIndexed { index, infoEntity ->
-//        mPostCountriesData.add(
-//            DaoEntityToDtoTransformer.daoEntityToDtoTransformer(
-//                infoEntity,
-//                mCountriesLanguageEntities[index]
-//            )
-//        )
-//    }
-//    if (mPostCountriesData.isNotEmpty()) {
-//        // Filling adapter with first 20 items from DB
-//        mCountriesListLiveData.value = mPostCountriesData
+//val result: MutableList<CountryDto> = mutableListOf()
+//mCountriesListLiveData.value?.let { result.addAll(it) }
+//for (dto in result) {
+//    if (dto.location.isNotEmpty()) {
+//        val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
+//            latitude = dto.location[0]
+//            longitude = dto.location[1]
+//        }
+//        mUsersLocation?.let {
+//            dto.distance =
+//                (mUsersLocation!!.distanceTo(currentCountryLocation)
+//                    .toDouble() / 1000).toString()
+//        }
 //    }
 //}
