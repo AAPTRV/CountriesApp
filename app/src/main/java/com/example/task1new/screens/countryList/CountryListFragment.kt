@@ -20,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.task1new.*
 import com.example.task1new.app.CountriesApp
+import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.databinding.FragmentCountryListBinding
 import com.example.task1new.ext.showSimpleDialogNetworkError
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -77,9 +78,30 @@ class CountryListFragment : Fragment() {
             LocationServices.getFusedLocationProviderClient(this.requireActivity())
         getCurrentLocation()
 
-        mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { data ->
-            myAdapter.addNewUniqueItems(data)
+//        mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { data ->
+//            myAdapter.addNewUniqueItems(data)
+//        })
+
+        mViewModel.getCountriesFromDbRxSimple()
+        mViewModel.getCountriesFromAPIRx()
+
+        mViewModel.getCountriesLiveDataRx().observe(viewLifecycleOwner, { outcome ->
+            when (outcome) {
+                is Outcome.Progress -> {
+                    showProgress()
+                }
+                is Outcome.Next -> {
+                    myAdapter.addNewUniqueItems(outcome.data)
+                    hideProgress()
+                }
+                is Outcome.Failure -> {
+
+                }
+                is Outcome.Success -> {
+                }
+            }
         })
+
 
         mViewModel.getFilterLiveData().observe(viewLifecycleOwner, {
             myAdapter.repopulateFilteredDataListWithFilter(it)
@@ -95,8 +117,8 @@ class CountryListFragment : Fragment() {
             mViewModel.setFilterMaxDistance(result[4])
         }
 
-        mViewModel.getCountriesFromDb()
-        mViewModel.getCountriesFromAPI()
+//        mViewModel.getCountriesFromDb()
+//        mViewModel.getCountriesFromAPI()
 
         binding?.recycleView?.setHasFixedSize(true)
         myAdapter.setItemClick {
