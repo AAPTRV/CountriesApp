@@ -1,19 +1,17 @@
 package com.example.task1new.screens.filter
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
+import androidx.navigation.Navigation
 import com.example.task1new.*
-import com.example.task1new.base.filter.BaseFilterFragment
 import com.example.task1new.databinding.FragmentFilterBinding
-import com.example.task1new.screens.countryList.CountryListAdapter
-import com.example.task1new.screens.countryList.CountryListFragment
 import com.google.android.material.slider.RangeSlider
-import kotlinx.android.synthetic.main.fragment_filter.*
-import kotlin.properties.Delegates
+import com.google.android.material.slider.Slider
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,15 +32,6 @@ class FilterFragment : Fragment() {
 
     private var binding: FragmentFilterBinding? = null
 
-    private var mCurrentMinArea by Delegates.notNull<Float>()
-    private var mCurrentMaxArea by Delegates.notNull<Float>()
-
-    private var mCurrentMinPopulation by Delegates.notNull<Float>()
-    private var mCurrentMaxPopulation by Delegates.notNull<Float>()
-
-    private var mCurrentMinDistance by Delegates.notNull<Float>()
-    private var mCurrentMaxDistance by Delegates.notNull<Float>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -55,74 +44,9 @@ class FilterFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         binding = FragmentFilterBinding.inflate(inflater, container, false)
         // Inflate the layout for this fragment
-
-        val mMinArea = arguments?.getString(ADAPTER_MINIMUM_AREA_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
-        val mMaxArea = arguments?.getString(ADAPTER_MAXIMUM_AREA_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
-
-        binding?.areaSlider?.valueFrom = mMinArea
-        binding?.areaSlider?.valueTo = mMaxArea
-        binding?.areaSlider?.stepSize = getStepSize(mMinArea, mMaxArea)
-        binding?.areaSlider?.values = mutableListOf(mMinArea, mMaxArea)
-
-        val mMinPopulation =
-            arguments?.getString(ADAPTER_MINIMUM_POPULATION_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
-        val mMaxPopulation =
-            arguments?.getString(ADAPTER_MAXIMUM_POPULATION_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
-
-        binding?.populationSlider?.valueFrom = mMinPopulation
-        binding?.populationSlider?.valueTo = mMaxPopulation
-        binding?.populationSlider?.stepSize = getStepSize(mMinPopulation, mMaxPopulation)
-        binding?.populationSlider?.values = mutableListOf(mMinPopulation, mMaxPopulation)
-
-        val mMinDistance =
-            arguments?.getString(ADAPTER_MINIMUM_DISTANCE_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
-        val mMaxDistance =
-            arguments?.getString(ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
-
-        binding?.distanceSlider?.valueFrom = mMinDistance
-        binding?.distanceSlider?.valueTo = mMaxDistance
-        binding?.distanceSlider?.stepSize = getStepSize(mMinDistance, mMaxDistance)
-        binding?.distanceSlider?.values = mutableListOf(mMinDistance, mMaxDistance)
-
-        binding?.areaSlider?.addOnSliderTouchListener(object : RangeSlider.OnSliderTouchListener {
-            override fun onStartTrackingTouch(slider: RangeSlider) {
-                mCurrentMaxArea = slider.values[1]
-                mCurrentMinArea = slider.values[0]
-            }
-
-            override fun onStopTrackingTouch(slider: RangeSlider) {
-                mCurrentMaxArea = slider.values[1]
-                mCurrentMinArea = slider.values[0]
-            }
-        })
-
-        binding?.populationSlider?.addOnSliderTouchListener(object :
-            RangeSlider.OnSliderTouchListener {
-            override fun onStartTrackingTouch(slider: RangeSlider) {
-                mCurrentMaxPopulation = slider.values[1]
-                mCurrentMinPopulation = slider.values[0]
-            }
-
-            override fun onStopTrackingTouch(slider: RangeSlider) {
-                mCurrentMaxPopulation = slider.values[1]
-                mCurrentMinPopulation = slider.values[0]
-            }
-        })
-
-        binding?.distanceSlider?.addOnSliderTouchListener(object :
-            RangeSlider.OnSliderTouchListener {
-            override fun onStartTrackingTouch(slider: RangeSlider) {
-                mCurrentMaxDistance = slider.values[1]
-                mCurrentMinDistance = slider.values[0]
-            }
-
-            override fun onStopTrackingTouch(slider: RangeSlider) {
-                mCurrentMaxDistance = slider.values[1]
-                mCurrentMinDistance = slider.values[0]
-            }
-        })
 
         return binding?.root
     }
@@ -133,6 +57,112 @@ class FilterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        var mMinArea = arguments?.getString(ADAPTER_MINIMUM_AREA_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
+        var mMaxArea = arguments?.getString(ADAPTER_MAXIMUM_AREA_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
+        binding?.areaSlider?.valueFrom = mMinArea
+        binding?.areaSlider?.valueTo = mMaxArea
+        binding?.areaSlider?.stepSize = getStepSize(mMinArea, mMaxArea)
+        binding?.areaSlider?.values = mutableListOf(mMinArea, mMaxArea)
+
+        var mMinPopulation =
+            arguments?.getString(ADAPTER_MINIMUM_POPULATION_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
+        var mMaxPopulation =
+            arguments?.getString(ADAPTER_MAXIMUM_POPULATION_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
+        binding?.populationSlider?.valueFrom = mMinPopulation
+        binding?.populationSlider?.valueTo = mMaxPopulation
+        binding?.populationSlider?.stepSize = getStepSize(mMinPopulation, mMaxPopulation)
+        binding?.populationSlider?.values = mutableListOf(mMinPopulation, mMaxPopulation)
+
+//        var mMinDistance =
+//            arguments?.getString(ADAPTER_MINIMUM_DISTANCE_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
+        var mMaxDistance =
+            arguments?.getString(ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
+
+        binding?.distanceSlider?.valueFrom = 0F
+        binding?.distanceSlider?.valueTo = mMaxDistance
+        binding?.distanceSlider?.stepSize = getStepSize(0F, mMaxDistance)
+//        binding?.distanceSlider?.values = mutableListOf(mMinDistance, mMaxDistance)
+
+        binding?.areaTextView?.text =
+            context?.getString(R.string.filter_area, mMinArea / 1000, mMaxArea / 1000)
+        binding?.populationTextView?.text =
+            context?.getString(
+                R.string.filter_population,
+                mMinPopulation / 1000000,
+                mMaxPopulation / 1000000
+            )
+        binding?.distanceTextView?.text =
+            context?.getString(R.string.filter_distance, mMaxDistance)
+
+        binding?.areaSlider?.addOnSliderTouchListener(object : RangeSlider.OnSliderTouchListener {
+            override fun onStartTrackingTouch(slider: RangeSlider) {
+            }
+
+            override fun onStopTrackingTouch(slider: RangeSlider) {
+                mMaxArea = slider.values[1]
+                mMinArea = slider.values[0]
+                binding?.areaTextView?.text =
+                    context?.getString(
+                        R.string.filter_area,
+                        mMinArea / 1000,
+                        mMaxArea / 1000
+                    )
+            }
+        })
+
+        binding?.populationSlider?.addOnSliderTouchListener(object :
+            RangeSlider.OnSliderTouchListener {
+            override fun onStartTrackingTouch(slider: RangeSlider) {
+                mMaxPopulation = slider.values[1]
+                mMinPopulation = slider.values[0]
+            }
+
+            override fun onStopTrackingTouch(slider: RangeSlider) {
+                mMaxPopulation = slider.values[1]
+                mMinPopulation = slider.values[0]
+                binding?.populationTextView?.text =
+                    context?.getString(
+                        R.string.filter_population,
+                        mMinPopulation / 1000000,
+                        mMaxPopulation / 1000000
+                    )
+            }
+        })
+
+        binding?.distanceSlider?.addOnSliderTouchListener(object :
+            Slider.OnSliderTouchListener {
+            override fun onStartTrackingTouch(slider: Slider) {
+                mMaxDistance = slider.value
+//                mMinDistance = slider.values[0]
+            }
+
+            override fun onStopTrackingTouch(slider: Slider) {
+                mMaxDistance = slider.value
+//                mMinDistance = slider.values[0]
+                binding?.distanceTextView?.text =
+                    context?.getString(
+                        R.string.filter_distance,
+                        mMaxDistance
+                    )
+            }
+        })
+
+        binding?.filterFragmentButton?.setOnClickListener {
+
+            val result = mutableListOf<Double>()
+            result.add(mMaxArea.toDouble())
+            result.add(mMinArea.toDouble())
+            result.add(mMaxPopulation.toDouble())
+            result.add(mMinPopulation.toDouble())
+//            result.add(mMinDistance.toDouble())
+            result.add(mMaxDistance.toDouble())
+
+            setFragmentResult("filterKey", bundleOf("resultList" to result))
+
+            Navigation.findNavController(requireView())
+                .navigate(R.id.action_filterFragment_to_blankFragmentRV)
+        }
     }
 
     override fun onDestroyView() {

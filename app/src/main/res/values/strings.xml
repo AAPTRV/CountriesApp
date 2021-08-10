@@ -26,9 +26,10 @@
 
     //adapter
     <string name="adapter_name">Name: %1$s</string>
+    <string name="adapter_distance">Distance: %1$s km</string>
     <string name="adapter_capital">Capital: %1$s</string>
     <string name="adapter_population">Population: %1$d </string>
-    <string name="adapter_area">Area: %1$d km </string>
+    <string name="adapter_area">Area: %1$.1f km </string>
     <string name="adapter_languages">Languages: %1$s</string>
     <string name="ok">ok</string>
     <string name="startFragment_dialog_text">Dialog test</string>
@@ -43,5 +44,14 @@
     <string name="area">Area</string>
     <string name="distance">Distance</string>
 
+    //Filter
+    <string name="filter_area">Countries area: %1$.1f - %2$.1f thousand km </string>
+    <string name="filter_population">Countries population: %1$.0f - %2$.0f million people </string>
+    <string name="filter_distance">Maximum distance: %1$.1f km </string>
+    <string name="distance_to_countries">Distance to countries:</string>
+    <string name="countries_population">Countries population:</string>
+    <string name="countries_area">Countries area:</string>
+    <string name="reset_filter">RESET FILTER</string>
+    <string name="search">Search</string>
 
 </resources>

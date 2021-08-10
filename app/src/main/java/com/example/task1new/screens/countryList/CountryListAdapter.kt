@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.task1new.R
 import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.adapter.BaseAdapter
+import com.example.task1new.base.filter.CountryDtoListFilterObject
+import com.example.task1new.base.filter.CountryDtoListFilterObject.applyFilter
 import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.dto.CountryDto
 import com.example.task1new.dto.convertLanguagesDtoToString
@@ -71,6 +73,12 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
         return mFilteredDataList.size != mDataListInAdapter.size
     }
 
+    fun repopulateFilteredDataListWithFilter(filter: CountryDtoListFilterObject){
+        mFilteredDataList.clear()
+        mFilteredDataList.addAll(mDataListInAdapter.applyFilter(filter))
+        notifyDataSetChanged()
+    }
+
     fun addNewUniqueItems(newItemsDto: List<CountryDto>) {
 
         // case #1 -> Data loading (initially)
@@ -116,57 +124,13 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
     }
 
     fun sortAscendingDataListInAdapter() {
-        mDataListInAdapter.sortBy { it.population }
-        mFilteredDataList.clear()
-        mFilteredDataList.addAll(mDataListInAdapter)
+        mFilteredDataList.sortBy { it.population }
         notifyDataSetChanged()
     }
 
     fun sortDescendingDataListInAdapter() {
-        mDataListInAdapter.sortByDescending { it.population }
-        mFilteredDataList.clear()
-        mFilteredDataList.addAll(mDataListInAdapter)
+        mFilteredDataList.sortByDescending { it.population }
         notifyDataSetChanged()
-    }
-
-    fun getMinimumArea(): String {
-        var mAreaMin: Double = Double.MAX_VALUE
-        for (country in mDataListInAdapter) {
-            if (country.area < mAreaMin) {
-                mAreaMin = country.area
-            }
-        }
-        return mAreaMin.toString()
-    }
-
-    fun getMaximumArea(): String {
-        var mAreaMax: Double = Double.MIN_VALUE
-        for (country in mDataListInAdapter) {
-            if (country.area > mAreaMax) {
-                mAreaMax = country.area
-            }
-        }
-        return mAreaMax.toString()
-    }
-
-    fun getMinimumPopulation(): String {
-        var mPopulationMin: Int = Int.MAX_VALUE
-        for (country in mDataListInAdapter) {
-            if (country.population < mPopulationMin) {
-                mPopulationMin = country.population
-            }
-        }
-        return mPopulationMin.toString()
-    }
-
-    fun getMaximumPopulation(): String {
-        var mPopulationMax: Int = Int.MIN_VALUE
-        for (country in mDataListInAdapter) {
-            if (country.population > mPopulationMax) {
-                mPopulationMax = country.population
-            }
-        }
-        return mPopulationMax.toString()
     }
 
     fun getMinimumDistance(): String {
@@ -188,6 +152,7 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
                 mDistanceMax = calculateDistanceToUser(country)
             }
         }
+        Log.e("HZ", "ADAPTER GET MAXIMUM DISTANCE RESULT = $mDistanceMax")
         return mDistanceMax.toString()
     }
 
@@ -248,7 +213,7 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
             holder.area.text =
                 holder.itemView.context.getString(
                     R.string.adapter_area,
-                    mFilteredDataList[position].population
+                    mFilteredDataList[position].area
                 )
 
             holder.languages.text =
@@ -257,15 +222,11 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
                     mFilteredDataList[position].languages.convertLanguagesDtoToString()
                 )
 
-
-            holder.distance.text = "Failed to investigate users location"
-            mUsersLocation?.let {
-                holder.distance.text =
-                    calculateDistanceToUser(mFilteredDataList[position]).toString()
-            }
-
+            holder.distance.text = holder.itemName.context.getString(
+                R.string.adapter_distance,
+                mFilteredDataList[position].distance.toString()
+            )
             holder.itemImage.loadSvg(mFilteredDataList[position].flag)
-
             holder.itemView.setOnClickListener { mOnItemClickListener?.invoke(mFilteredDataList[position]) }
 
 
@@ -275,3 +236,43 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
     }
 //
 }
+
+//    fun getMinimumArea(): String {
+//        var mAreaMin: Double = Double.MAX_VALUE
+//        for (country in mDataListInAdapter) {
+//            if (country.area < mAreaMin) {
+//                mAreaMin = country.area
+//            }
+//        }
+//        return mAreaMin.toString()
+//    }
+//
+//    fun getMaximumArea(): String {
+//        var mAreaMax: Double = Double.MIN_VALUE
+//        for (country in mDataListInAdapter) {
+//            if (country.area > mAreaMax) {
+//                mAreaMax = country.area
+//            }
+//        }
+//        return mAreaMax.toString()
+//    }
+
+//    fun getMinimumPopulation(): String {
+//        var mPopulationMin: Int = Int.MAX_VALUE
+//        for (country in mDataListInAdapter) {
+//            if (country.population < mPopulationMin) {
+//                mPopulationMin = country.population
+//            }
+//        }
+//        return mPopulationMin.toString()
+//    }
+//
+//    fun getMaximumPopulation(): String {
+//        var mPopulationMax: Int = Int.MIN_VALUE
+//        for (country in mDataListInAdapter) {
+//            if (country.population > mPopulationMax) {
+//                mPopulationMax = country.population
+//            }
+//        }
+//        return mPopulationMax.toString()
+//    }

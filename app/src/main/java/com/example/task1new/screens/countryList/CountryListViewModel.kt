@@ -1,72 +1,179 @@
 package com.example.task1new.screens.countryList
 
-import android.content.ContentValues.TAG
-import android.util.Log
+import android.location.Location
+import android.location.LocationManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
+import com.example.task1new.Retrofit
+import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.filter.CountryDtoListFilterObject
 import com.example.task1new.base.mvvm.BaseViewModel
 import com.example.task1new.dto.CountryDto
+import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
+import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
+import com.example.task1new.model.convertToCountryDto
 import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToDtoTransformer
-import com.repository.database.DatabaseRepository
-import com.repository.filter.FilterRepository
-import com.repository.networkRepo.NetworkRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class CountryListViewModel(
     savedStateHandle: SavedStateHandle,
-    mDataBase: DBInfo,
-    private val mDatabaseRepository: DatabaseRepository,
-    private val mNetworkRepository: NetworkRepository,
-    private val mFilterRepository: FilterRepository
-) : BaseViewModel(savedStateHandle) {
+    mDataBase: DBInfo = CountriesApp.mDatabase
+) :
+    BaseViewModel(savedStateHandle) {
+
+    private var mUsersLocation: Location? = null
 
     private var mDaoCountryInfo: CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
     private var mDaoLanguageInfo: CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
-
-    private val mCountryItemLiveData =
-        savedStateHandle.getLiveData<CountryDto>("countryDto")
     private val mCountriesListLiveData =
         savedStateHandle.getLiveData<List<CountryDto>>("countryListDto")
-    private val mCountriesFilteredListLiveData =
-        savedStateHandle.getLiveData<List<CountryDto>>("countryFilteredListDto")
 
     private val mCountriesFilterLiveData =
         savedStateHandle.getLiveData<CountryDtoListFilterObject>("countryListDtoFilter")
 
-    init {
-        mFilterRepository.getFilterSubject().subscribe({
-            Log.e("hz",it.toString())
-        }, {
+    private val mFilter = CountryDtoListFilterObject
 
-        })
-
-        mFilterRepository.processNewQuery("abc")
-        mFilterRepository.processNewQuery("bcd")
+    fun attachCurrentLocation(location: Location) {
+        mUsersLocation = location
     }
 
-    fun getCountryLiveData(): MutableLiveData<CountryDto> {
-        return mCountryItemLiveData
+    private fun addDistanceToCountriesLiveData() {
+        val result: MutableList<CountryDto> = mutableListOf()
+        mCountriesListLiveData.value?.let { result.addAll(it) }
+        for (dto in result) {
+            if (dto.location.isNotEmpty()) {
+                val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
+                    latitude = dto.location[0]
+                    longitude = dto.location[1]
+                }
+                mUsersLocation?.let {
+                    dto.distance =
+                        (mUsersLocation!!.distanceTo(currentCountryLocation)
+                            .toDouble() / 1000).toString()
+                }
+            }
+        }
+        mCountriesListLiveData.value = result
     }
 
-    fun applyFilter(
-        countryName: String,
-        minPopulation: Int,
-        maxPopulation: Int,
-        minArea: Double,
-        maxArea: Double,
-        maxDistance: Double
-    ) {
-        CountryDtoListFilterObject.filterSetupChangeOptions(
-            countryName = countryName,
-            minPopulation = minPopulation,
-            maxPopulation = maxPopulation,
-            minArea = minArea,
-            maxArea = maxArea,
-            maxDistance = maxDistance,
-        )
+    private fun calculateDistanceToUser(dto: CountryDto): Double {
+        var result = 0.0
+        if (dto.location.isNotEmpty()) {
+            val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
+                latitude = dto.location[0]
+                longitude = dto.location[1]
+            }
+
+            mUsersLocation?.let {
+                result =
+                    (mUsersLocation!!.distanceTo(currentCountryLocation).toDouble() / 1000)
+            }
+        }
+        return result
+    }
+
+    fun getMaximumDistance(): String {
+        var mDistanceMax: Double = Double.MIN_VALUE
+        mCountriesListLiveData.value.let {
+            for (country in mCountriesListLiveData.value!!) {
+                if (country.location.isNotEmpty()) {
+                    if (calculateDistanceToUser(country) > mDistanceMax) {
+                        mDistanceMax = calculateDistanceToUser(country)
+                    }
+                }
+            }
+        }
+        return mDistanceMax.toString()
+    }
+
+    fun getMinimumArea(): String {
+        var mAreaMin: Double = Double.MAX_VALUE
+        mCountriesListLiveData.value.let {
+            for (country in mCountriesListLiveData.value!!) {
+                if (country.area < mAreaMin) {
+                    mAreaMin = country.area
+                }
+            }
+        }
+        return mAreaMin.toString()
+    }
+
+    fun getMaximumArea(): String {
+        var mAreaMax: Double = Double.MIN_VALUE
+        mCountriesListLiveData.value.let {
+            for (country in mCountriesListLiveData.value!!) {
+                if (country.area > mAreaMax) {
+                    mAreaMax = country.area
+                }
+            }
+        }
+        return mAreaMax.toString()
+    }
+
+    fun getMinimumPopulation(): String {
+        var mPopulationMin: Int = Int.MAX_VALUE
+        mCountriesListLiveData.value.let {
+            for (country in mCountriesListLiveData.value!!) {
+                if (country.population < mPopulationMin) {
+                    mPopulationMin = country.population
+                }
+            }
+        }
+        return mPopulationMin.toString()
+    }
+
+    fun getMaximumPopulation(): String {
+        var mPopulationMax: Int = Int.MIN_VALUE
+        mCountriesListLiveData.value.let {
+            for (country in mCountriesListLiveData.value!!) {
+                if (country.population > mPopulationMax) {
+                    mPopulationMax = country.population
+                }
+            }
+        }
+        return mPopulationMax.toString()
+    }
+
+    fun getFilterLiveData(): MutableLiveData<CountryDtoListFilterObject> {
+        return mCountriesFilterLiveData
+    }
+
+    private fun getFilter(): CountryDtoListFilterObject = mFilter
+
+    fun clearFilterExceptName() {
+        getFilter().filterClearExceptName()
+        mCountriesFilterLiveData.value = CountryDtoListFilterObject
+    }
+
+    fun setFilterCountryName(countryName: String) {
+        getFilter().filterCountryNameChange(countryName)
+        mCountriesFilterLiveData.value = CountryDtoListFilterObject
+    }
+
+    fun setFilterMinPopulation(minPopulation: Int) {
+        getFilter().filterMinPopulationChange(minPopulation)
+        mCountriesFilterLiveData.value = CountryDtoListFilterObject
+    }
+
+    fun setFilterMaxPopulation(maxPopulation: Int) {
+        getFilter().filterMaxPopulationChange(maxPopulation)
+        mCountriesFilterLiveData.value = CountryDtoListFilterObject
+    }
+
+    fun setFilterMinArea(minArea: Double) {
+        getFilter().filterMinAreaChange(minArea)
+        mCountriesFilterLiveData.value = CountryDtoListFilterObject
+    }
+
+    fun setFilterMaxArea(maxArea: Double) {
+        getFilter().filterMaxAreaChange(maxArea)
+        mCountriesFilterLiveData.value = CountryDtoListFilterObject
+    }
+
+    fun setFilterMaxDistance(maxDistance: Double) {
+        getFilter().filterMaxDistanceChange(maxDistance)
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }
 
@@ -99,15 +206,11 @@ class CountryListViewModel(
             // Filling adapter with first 20 items from DB
             mCountriesListLiveData.value = mPostCountriesData
         }
-        Log.e(
-            TAG,
-            "GOT COUNTRIES FROM DB. SIZE = ${mPostCountriesData.size}.  LIVE DATA SIZE = ${mCountriesListLiveData.value?.size}"
-        )
     }
 
     fun getCountriesFromAPI() {
         mCompositeDisposable.add(
-            mNetworkRepository.getCountryList()
+            Retrofit.getCountriesApi().getPosts()
                 .doOnNext {
                     // DB inserting data
                     val mCountriesInfoFromAPI = it.toMutableList()
@@ -115,29 +218,23 @@ class CountryListViewModel(
 
                     val mLanguagesFromApiToDB =
                         mutableListOf<CountryDatabaseLanguageInfoEntity>()
-//                    mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-//                        mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
-//                    }
-                    mDatabaseRepository.addAll(mLanguagesFromApiToDB)
+                    mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+                        mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
+                    }
+                    mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
 
                     mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-//                        mCountriesInfoToDB.add(
-//                            item.convertCommonInfoAPIDatatoDBItem()
-//                        )
+                        mCountriesInfoToDB.add(
+                            item.convertCommonInfoAPIDatatoDBItem()
+                        )
                         mDaoCountryInfo.addAll(mCountriesInfoToDB)
                     }
-                    Log.e(TAG, "GET COUNTRIES FROM API TO DB")
                 }
-                //.map { it.convertToCountryDto() }
+                .map { it.convertToCountryDto() }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ countriesDtoList ->
-                    mCountriesListLiveData.value = countriesDtoList
-                    Log.e(
-                        TAG,
-                        "GOT COUNTRIES FROM API. SIZE = ${countriesDtoList.size}. LIVE DATA SIZE = ${mCountriesListLiveData.value?.size}"
-                    )
-
+                .subscribe({
+                    addDistanceToCountriesLiveData()
                 }, { getCountriesFromDb() }
                 )
         )

@@ -6,28 +6,24 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.os.Parcelable
-import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.task1new.*
 import com.example.task1new.app.CountriesApp
-import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.databinding.FragmentCountryListBinding
-import com.example.task1new.dto.CountryDto
 import com.example.task1new.ext.showSimpleDialogNetworkError
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
-import com.repository.filter.FilterRepository
-import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -41,25 +37,19 @@ private const val ARG_PARAM2 = "param2"
 
 private const val SHARED_PREFS: String = "sharedPrefs"
 private const val MENU_SORT_ICON_STATE = "menu sort icon state"
+private const val MENU_FILTER_ICON_STATE = "menu filter icon state"
 
 
-class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresenter>(),
-    CountryListView {
+class CountryListFragment : Fragment() {
 
     private var param1: String? = null
     private var param2: String? = null
-
     private var binding: FragmentCountryListBinding? = null
-
     private var sortIconClipped = false
-
+    private var filterIconClipped = false
     private lateinit var mLayoutManagerState: Parcelable
-
     private var mLocationProviderClient: FusedLocationProviderClient? = null
-
-    private val mViewModel: CountryListViewModel by stateViewModel()
-
-    private val mFilterRepository: FilterRepository by inject()
+    private val mViewModel = CountryListViewModel(SavedStateHandle(), CountriesApp.mDatabase)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +58,6 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-
     }
 
     override fun onCreateView(
@@ -85,14 +74,27 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
 
-        mFilterRepository.getFilterSubject().subscribe({ Log.e("hz frag", it.toString()) }, {})
-
-        mLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.requireActivity())
+        mLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(this.requireActivity())
         getCurrentLocation()
 
         mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { data ->
             myAdapter.addNewUniqueItems(data)
         })
+
+        mViewModel.getFilterLiveData().observe(viewLifecycleOwner, {
+            myAdapter.repopulateFilteredDataListWithFilter(it)
+            Toast.makeText(this.requireActivity(), "Filter updated", Toast.LENGTH_SHORT).show()
+        })
+
+        setFragmentResultListener("filterKey") { _, bundle ->
+            val result = bundle.getParcelableArrayList<Parcelable>("resultList") as List<Double>
+            mViewModel.setFilterMaxArea(result[0])
+            mViewModel.setFilterMinArea(result[1])
+            mViewModel.setFilterMaxPopulation(result[2].toInt())
+            mViewModel.setFilterMinPopulation(result[3].toInt())
+            mViewModel.setFilterMaxDistance(result[4])
+        }
 
         mViewModel.getCountriesFromDb()
         mViewModel.getCountriesFromAPI()
@@ -103,7 +105,6 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
             bundle.putString(COUNTRY_NAME_BUNDLE_KEY, it.name)
             findNavController().navigate(
                 R.id.action_blankFragmentRV_to_countryDetailsFragment,
-                bundle
             )
         }
 
@@ -127,7 +128,9 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         inflater.inflate(R.menu.countries_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
         loadMenuSortIconState()
-        initialMenuSortIconSet(menu.findItem(R.id.menu_sort_button))
+        loadMenuFilterIconState()
+        initializeMenuSortIconSet(menu.findItem(R.id.menu_sort_button))
+        initializeFilterIconSet(menu.findItem(R.id.menu_filter_button))
 
         //Initialize menu search button
         val menuSearchItem = menu.findItem(R.id.menu_search_button)
@@ -136,15 +139,17 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
-                    getPresenter().getSearchSubject().onNext(query)
+                    mViewModel.setFilterCountryName(query)
                 }
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                getPresenter().getSearchSubject().onNext(newText)
-                if (newText.length == 2 && myAdapter.isFiltered()) {
-                    myAdapter.restoreFilteredListFromDataList()
+                if (newText.length >= 3) {
+                    mViewModel.setFilterCountryName(newText)
+                }
+                if (newText.length in 0..2 && myAdapter.isFiltered()) {
+                    mViewModel.setFilterCountryName(FILTER_ANY_COUNTRY_VALUE)
                 }
                 return true
             }
@@ -157,15 +162,31 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
                 .navigate(R.id.action_blankFragmentRV_to_mapsFragmentBlank2)
         }
         if (item.itemId == R.id.menu_filter_button) {
-            val bundle = Bundle()
-            bundle.putString(ADAPTER_MAXIMUM_AREA_BUNDLE_KEY, myAdapter.getMaximumArea())
-            bundle.putString(ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY, myAdapter.getMaximumDistance())
-            bundle.putString(ADAPTER_MAXIMUM_POPULATION_BUNDLE_KEY, myAdapter.getMaximumPopulation())
-            bundle.putString(ADAPTER_MINIMUM_AREA_BUNDLE_KEY, myAdapter.getMinimumArea())
-            bundle.putString(ADAPTER_MINIMUM_DISTANCE_BUNDLE_KEY, myAdapter.getMinimumDistance())
-            bundle.putString(ADAPTER_MINIMUM_POPULATION_BUNDLE_KEY, myAdapter.getMinimumPopulation())
-            Navigation.findNavController(requireView())
-                .navigate(R.id.action_blankFragmentRV_to_filterFragment, bundle)
+            if (!filterIconClipped) {
+                val bundle = Bundle()
+                bundle.putString(
+                    ADAPTER_MAXIMUM_POPULATION_BUNDLE_KEY,
+                    mViewModel.getMaximumPopulation()
+                )
+                bundle.putString(
+                    ADAPTER_MINIMUM_POPULATION_BUNDLE_KEY,
+                    mViewModel.getMinimumPopulation()
+                )
+                bundle.putString(ADAPTER_MAXIMUM_AREA_BUNDLE_KEY, mViewModel.getMaximumArea())
+                bundle.putString(ADAPTER_MINIMUM_AREA_BUNDLE_KEY, mViewModel.getMinimumArea())
+                bundle.putString(
+                    ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY,
+                    mViewModel.getMaximumDistance()
+                )
+                filterIconClipped = true
+                saveMenuFilterIconState()
+                Navigation.findNavController(requireView())
+                    .navigate(R.id.action_blankFragmentRV_to_filterFragment, bundle)
+            } else {
+                item.setIcon(R.drawable.ic_baseline_filter_alt_24)
+                mViewModel.clearFilterExceptName()
+                filterIconClipped = false
+            }
         }
         if (item.itemId == R.id.menu_sort_button) {
             updateMenuSortIconView(item)
@@ -179,120 +200,134 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
         return super.onOptionsItemSelected(item)
     }
 
-    override fun repopulateFilteredDataListInAdapter(data: List<CountryDto>) {
-        myAdapter.repopulateFilteredDataList(data)
-    }
-
-    override fun addNewUniqueItemsInRecycleAdapter(data: List<CountryDto>) {
-        myAdapter.addNewUniqueItems(data)
-    }
-
-    private fun loadMenuSortIconState() {
+    private fun loadMenuFilterIconState() {
         val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
-            SHARED_PREFS,
-            AppCompatActivity.MODE_PRIVATE
+            SHARED_PREFS, AppCompatActivity.MODE_PRIVATE
         )
-        sortIconClipped = sharedPreferences.getBoolean(MENU_SORT_ICON_STATE, false)
+        filterIconClipped = sharedPreferences.getBoolean(MENU_FILTER_ICON_STATE, false)
     }
 
-    private fun saveMenuSortIconState() {
+    private fun saveMenuFilterIconState() {
         val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
             SHARED_PREFS, AppCompatActivity.MODE_PRIVATE
         )
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
-        editor.putBoolean(MENU_SORT_ICON_STATE, sortIconClipped)
+        editor.putBoolean(MENU_FILTER_ICON_STATE, filterIconClipped)
         editor.apply()
         Toast.makeText(this.requireActivity(), "Data Saved", Toast.LENGTH_SHORT).show()
     }
 
-    private fun initialMenuSortIconSet(item: MenuItem) {
-        if (sortIconClipped) {
-            item.setIcon(R.drawable.ic_ascending_sort)
+    private fun initializeFilterIconSet(item: MenuItem) {
+        if (filterIconClipped) {
+            item.setIcon(R.drawable.ic_baseline_filter_off_alt_24)
         } else {
-            item.setIcon(R.drawable.ic_descending_sort)
+            item.setIcon(R.drawable.ic_baseline_filter_alt_24)
         }
     }
 
-    private fun updateMenuSortIconView(item: MenuItem) {
-        sortIconClipped = if (!sortIconClipped) {
-            item.setIcon(R.drawable.ic_ascending_sort)
-            true
-        } else {
-            item.setIcon(R.drawable.ic_descending_sort)
-            false
+
+private fun loadMenuSortIconState() {
+    val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
+        SHARED_PREFS,
+        AppCompatActivity.MODE_PRIVATE
+    )
+    sortIconClipped = sharedPreferences.getBoolean(MENU_SORT_ICON_STATE, false)
+}
+
+private fun saveMenuSortIconState() {
+    val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
+        SHARED_PREFS, AppCompatActivity.MODE_PRIVATE
+    )
+    val editor: SharedPreferences.Editor = sharedPreferences.edit()
+    editor.putBoolean(MENU_SORT_ICON_STATE, sortIconClipped)
+    editor.apply()
+    Toast.makeText(this.requireActivity(), "Data Saved", Toast.LENGTH_SHORT).show()
+}
+
+private fun initializeMenuSortIconSet(item: MenuItem) {
+    if (sortIconClipped) {
+        item.setIcon(R.drawable.ic_ascending_sort)
+    } else {
+        item.setIcon(R.drawable.ic_descending_sort)
+    }
+}
+
+private fun updateMenuSortIconView(item: MenuItem) {
+    sortIconClipped = if (!sortIconClipped) {
+        item.setIcon(R.drawable.ic_ascending_sort)
+        true
+    } else {
+        item.setIcon(R.drawable.ic_descending_sort)
+        false
+    }
+}
+
+override fun onDestroyView() {
+    super.onDestroyView()
+    binding = null
+}
+
+override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    outState.putParcelable(
+        COUNTRY_DETAILS_LAYOUT_MANAGER_KEY,
+        mLayoutManagerState
+    )
+}
+
+private fun getCurrentLocation() {
+    if (ActivityCompat.checkSelfPermission(
+            this.requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    ) {
+        val task: Task<Location>? = mLocationProviderClient?.lastLocation
+        task?.addOnSuccessListener { location ->
+            location?.let { myAdapter.attachCurrentLocation(location)
+            mViewModel.attachCurrentLocation(location)}
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding = null
-        getPresenter().onDestroyView()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelable(
-            COUNTRY_DETAILS_LAYOUT_MANAGER_KEY,
-            mLayoutManagerState
+    } else {
+        val listPermissionsNeeded = ArrayList<String>()
+        listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        ActivityCompat.requestPermissions(
+            this.requireActivity(),
+            listPermissionsNeeded.toTypedArray(),
+            44
         )
     }
+}
 
-    private fun getCurrentLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                this.requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            val task: Task<Location>? = mLocationProviderClient?.lastLocation
-            task?.addOnSuccessListener { location ->
-                location?.let { myAdapter.attachCurrentLocation(location) }
+companion object {
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment BlankFragmentRV.
+     */
+
+    var myAdapter: CountryListAdapter = CountryListAdapter()
+
+    @JvmStatic
+    fun newInstance(param1: String, param2: String) =
+        CountryListFragment().apply {
+            arguments = Bundle().apply {
+                putString(ARG_PARAM1, param1)
+                putString(ARG_PARAM2, param2)
             }
-        } else {
-            val listPermissionsNeeded = ArrayList<String>()
-            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
-            ActivityCompat.requestPermissions(this.requireActivity(), listPermissionsNeeded.toTypedArray(), 44)
         }
-    }
+}
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment BlankFragmentRV.
-         */
+fun showError(error: String, throwable: Throwable) {
+    activity?.showSimpleDialogNetworkError()
+}
 
-        var myAdapter: CountryListAdapter = CountryListAdapter()
+fun showProgress() {
+    binding?.progressList?.visibility = View.VISIBLE
+}
 
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CountryListFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
-
-    override fun createPresenter() {
-        mPresenter = CountryListPresenter(CountriesApp.mDatabase)
-    }
-
-    override fun getPresenter(): CountryListPresenter {
-        return mPresenter
-    }
-
-    override fun showError(error: String, throwable: Throwable) {
-        activity?.showSimpleDialogNetworkError()
-    }
-
-    override fun showProgress() {
-        binding?.progressList?.visibility = View.VISIBLE
-    }
-
-    override fun hideProgress() {
-        binding?.progressList?.visibility = View.GONE
-    }
+fun hideProgress() {
+    binding?.progressList?.visibility = View.GONE
+}
 }
