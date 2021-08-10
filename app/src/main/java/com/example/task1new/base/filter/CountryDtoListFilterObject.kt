@@ -1,6 +1,6 @@
 package com.example.task1new.base.filter
 
-import com.example.task1new.dto.CountryDto
+import com.example.domain.dto.CountryDto
 
 object CountryDtoListFilterObject {
 

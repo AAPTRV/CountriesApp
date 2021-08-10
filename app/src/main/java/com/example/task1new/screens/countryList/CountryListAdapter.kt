@@ -15,8 +15,8 @@ import com.example.task1new.R
 import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.adapter.BaseAdapter
 import com.example.task1new.base.mvvm.Outcome
-import com.example.task1new.dto.CountryDto
-import com.example.task1new.dto.convertLanguagesDtoToString
+import com.example.domain.dto.CountryDto
+import com.example.domain.dto.convertLanguagesDtoToString
 import com.example.task1new.ext.loadSvg
 
 //var dataList: MutableList<PostCountryItemDto>

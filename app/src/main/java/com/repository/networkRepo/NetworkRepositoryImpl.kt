@@ -1,11 +1,11 @@
 package com.repository.networkRepo
 
-import com.example.task1new.dto.CountryDto
-import com.example.task1new.model.convertToCountryDto
-import com.example.task1new.network.CountryService
+import com.example.domain.dto.CountryDto
+import com.example.data.model.convertToCountryDto
+import com.example.data.network.CountryService
 import io.reactivex.rxjava3.core.Flowable
 
-class NetworkRepositoryImpl(private val mService: CountryService) : NetworkRepository {
+class NetworkRepositoryImpl(private val mService: com.example.data.network.CountryService) : com.example.domain.repository.NetworkRepository {
 
     override fun getCountryList(): Flowable<List<CountryDto>> = mService.getCountryList().map { it.convertToCountryDto() }
 

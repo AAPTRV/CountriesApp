@@ -1,13 +1,12 @@
 package com.example.task1new.di
 
-import com.example.task1new.BuildConfig
-import com.example.task1new.network.Retrofit
+import com.example.data.network.Retrofit
 import com.example.task1new.room.DBInfo
-import com.repository.database.DatabaseRepository
+import com.example.domain.repository.DatabaseRepository
 import com.repository.database.DatabaseRepositoryImpl
-import com.repository.filter.FilterRepository
-import com.repository.filter.FilterRepositoryImpl
-import com.repository.networkRepo.NetworkRepository
+import com.example.domain.repository.FilterRepository
+import com.example.domain.filter.FilterRepositoryImpl
+import com.example.domain.repository.NetworkRepository
 import com.repository.networkRepo.NetworkRepositoryImpl
 import org.koin.core.qualifier.named
 import org.koin.dsl.module

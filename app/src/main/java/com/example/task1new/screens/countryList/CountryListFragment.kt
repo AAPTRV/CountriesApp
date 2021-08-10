@@ -18,14 +18,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.task1new.*
 import com.example.task1new.app.CountriesApp
-import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.databinding.FragmentCountryListBinding
-import com.example.task1new.dto.CountryDto
+import com.example.domain.dto.CountryDto
 import com.example.task1new.ext.showSimpleDialogNetworkError
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
-import com.repository.filter.FilterRepository
+import com.example.task1new.base.mvp.BaseKoinMvpFragment
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
@@ -43,7 +42,7 @@ private const val SHARED_PREFS: String = "sharedPrefs"
 private const val MENU_SORT_ICON_STATE = "menu sort icon state"
 
 
-class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresenter>(),
+class CountryListFragment : BaseKoinMvpFragment<CountryListView, CountryListPresenter>(),
     CountryListView {
 
     private var param1: String? = null
@@ -59,7 +58,7 @@ class CountryListFragment : BaseMvpFragment<CountryListView, CountryListPresente
 
     private val mViewModel: CountryListViewModel by stateViewModel()
 
-    private val mFilterRepository: FilterRepository by inject()
+    private val mFilterRepository: com.example.domain.repository.FilterRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -9,7 +9,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.task1new.R
 import com.example.task1new.base.adapter.BaseAdapter
-import com.example.task1new.dto.LanguageDto
+import com.example.domain.dto.LanguageDto
 
 class LanguageAdapter : BaseAdapter<LanguageDto>() {
 

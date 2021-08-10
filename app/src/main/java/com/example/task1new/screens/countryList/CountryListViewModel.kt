@@ -6,12 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.example.task1new.base.filter.CountryDtoListFilterObject
 import com.example.task1new.base.mvvm.BaseViewModel
-import com.example.task1new.dto.CountryDto
+import com.example.domain.dto.CountryDto
 import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToDtoTransformer
-import com.repository.database.DatabaseRepository
-import com.repository.filter.FilterRepository
-import com.repository.networkRepo.NetworkRepository
+import com.example.domain.repository.DatabaseRepository
+import com.example.domain.repository.FilterRepository
+import com.example.domain.repository.NetworkRepository
+import com.example.domain.usecase.impl.GetAllCountriesUseCase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
@@ -19,7 +20,7 @@ class CountryListViewModel(
     savedStateHandle: SavedStateHandle,
     mDataBase: DBInfo,
     private val mDatabaseRepository: DatabaseRepository,
-    private val mNetworkRepository: NetworkRepository,
+    private val mGetAllCountriesUseCase: GetAllCountriesUseCase,
     private val mFilterRepository: FilterRepository
 ) : BaseViewModel(savedStateHandle) {
 
@@ -38,7 +39,7 @@ class CountryListViewModel(
 
     init {
         mFilterRepository.getFilterSubject().subscribe({
-            Log.e("hz",it.toString())
+            Log.e("hz", it.toString())
         }, {
 
         })
@@ -107,7 +108,7 @@ class CountryListViewModel(
 
     fun getCountriesFromAPI() {
         mCompositeDisposable.add(
-            mNetworkRepository.getCountryList()
+            mGetAllCountriesUseCase.execute()
                 .doOnNext {
                     // DB inserting data
                     val mCountriesInfoFromAPI = it.toMutableList()
@@ -118,7 +119,8 @@ class CountryListViewModel(
 //                    mCountriesInfoFromAPI.slice(1..20).forEach { item ->
 //                        mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
 //                    }
-                    mDatabaseRepository.addAll(mLanguagesFromApiToDB)
+                    //todo add dto related method to repo
+                    //mDatabaseRepository.addAll(mLanguagesFromApiToDB)
 
                     mCountriesInfoFromAPI.slice(1..20).forEach { item ->
 //                        mCountriesInfoToDB.add(

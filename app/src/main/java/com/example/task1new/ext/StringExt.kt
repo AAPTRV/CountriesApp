@@ -1,9 +1,9 @@
 package com.example.task1new.ext
 
-import com.example.task1new.model.LanguageModel
+import com.example.data.model.LanguageModel
 import java.lang.StringBuilder
 
-fun List<LanguageModel>.convertToCountryNameList(): String {
+fun List<com.example.data.model.LanguageModel>.convertToCountryNameList(): String {
     val sb = StringBuilder()
     this.forEachIndexed { index, language ->
         sb.append(language.toString())

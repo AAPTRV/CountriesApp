@@ -1,10 +1,16 @@
 package com.example.task1new.screens.details
 
-import com.example.task1new.network.Retrofit
+import com.example.data.network.Retrofit
+import com.example.domain.repository.NetworkRepository
+import com.example.domain.usecase.impl.GetCountryListByNameUseCase
 import com.example.task1new.base.mvp.BaseMvpPresenter
 import com.google.android.gms.maps.model.LatLng
+import com.repository.networkRepo.NetworkRepositoryImpl
 
 class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
+
+    private val mNetworkRepository: NetworkRepository = NetworkRepositoryImpl(Retrofit.getCountriesApi())
+    private val mGetCountryListByNameUseCase: GetCountryListByNameUseCase = GetCountryListByNameUseCase(mNetworkRepository)
 
     fun getCountryByName(name: String, isRefresh: Boolean) {
         if (!isRefresh) {

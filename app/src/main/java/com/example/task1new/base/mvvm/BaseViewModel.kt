@@ -4,7 +4,7 @@ import androidx.annotation.CallSuper
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.example.task1new.dto.CountryDto
+import com.example.domain.dto.CountryDto
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 
 open class BaseViewModel(protected  val savedStateHandle: SavedStateHandle): ViewModel() {

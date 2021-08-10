@@ -1,10 +1,10 @@
 package com.example.task1new.screens.countryList
 
-import com.example.task1new.network.Retrofit
+import com.example.data.network.Retrofit
 import com.example.task1new.base.mvp.BaseMvpPresenter
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
-import com.example.task1new.model.convertToCountryDto
+import com.example.data.model.convertToCountryDto
 import com.example.task1new.room.*
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -77,7 +77,7 @@ class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView
         }
         addDisposable(
             inBackground(
-                Retrofit.COUNTRY_SERVICE.getCountryList()
+                com.example.data.network.Retrofit.COUNTRY_SERVICE.getCountryList()
                     .doOnNext {
                         // DB inserting data
                         val mCountriesInfoFromAPI = it.toMutableList()

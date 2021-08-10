@@ -1,8 +1,9 @@
 package com.example.task1new.ext
 
-import com.example.task1new.model.CountryModel
+import com.example.data.model.CountryModel
 import com.example.task1new.room.CountryDatabaseCommonInfoEntity
 import com.example.task1new.room.CountryDatabaseLanguageInfoEntity
+import org.koin.android.ext.koin.ERROR_MSG
 import java.lang.StringBuilder
 
 fun CountryModel.convertCommonInfoAPIDatatoDBItem(): CountryDatabaseCommonInfoEntity {
@@ -15,9 +16,9 @@ fun CountryModel.convertCommonInfoAPIDatatoDBItem(): CountryDatabaseCommonInfoEn
     var mEntityArea = 0.0
     var mEntityLocation = ""
 
-    this.name?.let { mEntityName = this.name }
-    this.capital?.let { mEntityCapital = this.capital }
-    this.population?.let { mEntityPopulation = this.population }
+    this.name?.let { mEntityName = it }
+    this.capital?.let { mEntityCapital = it }
+    this.population?.let { mEntityPopulation = it }
     if (this.languages.isNotEmpty()) {
         mEntityLanguages = this.languages.convertToCountryNameList()
     }
@@ -25,7 +26,7 @@ fun CountryModel.convertCommonInfoAPIDatatoDBItem(): CountryDatabaseCommonInfoEn
     this.area?.let { mEntityArea = it }
 
 
-    if(this.latlng.isNotEmpty()){
+    if (this.latlng.isNotEmpty()) {
         mEntityLocation = this.latlng.convertToCountryLocationList()
     }
 
@@ -40,7 +41,7 @@ fun CountryModel.convertCommonInfoAPIDatatoDBItem(): CountryDatabaseCommonInfoEn
     )
 }
 
-fun CountryModel.convertLanguagesAPIDataToDBItem(): CountryDatabaseLanguageInfoEntity {
+fun com.example.data.model.CountryModel.convertLanguagesAPIDataToDBItem(): CountryDatabaseLanguageInfoEntity {
 
     fun MutableList<String>.convertListToString(): String {
         val sb = StringBuilder()
@@ -61,22 +62,23 @@ fun CountryModel.convertLanguagesAPIDataToDBItem(): CountryDatabaseLanguageInfoE
     val mEntityName = mutableListOf<String>()
     val mEntityNativeName = mutableListOf<String>()
 
+    // TODO: 10.08.2021 remove ""
     if (!this.name.isNullOrEmpty()) {
-        mEntityCountryName = this.name
+        mEntityCountryName = this.name ?: ""
     }
 
     for (LanguageModel in this.languages) {
         if (!LanguageModel.iso639_1.isNullOrEmpty()) {
-            mEntityIso6391.add(LanguageModel.iso639_1)
+            mEntityIso6391.add(LanguageModel.iso639_1 ?: "")
         }
         if (!LanguageModel.iso639_2.isNullOrEmpty()) {
-            mEntityIso6392.add(LanguageModel.iso639_2)
+            mEntityIso6392.add(LanguageModel.iso639_2 ?: "")
         }
         if (!LanguageModel.name.isNullOrEmpty()) {
-            mEntityName.add(LanguageModel.name)
+            mEntityName.add(LanguageModel.name ?: "")
         }
         if (!LanguageModel.nativeName.isNullOrEmpty()) {
-            mEntityNativeName.add(LanguageModel.nativeName)
+            mEntityNativeName.add(LanguageModel.nativeName ?: "")
         }
     }
 

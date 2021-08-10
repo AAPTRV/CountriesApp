@@ -1,0 +1,56 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+}
+
+android {
+    compileSdkVersion 30
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+def comSquareUpOkHTTP3Version = '3.12.1'
+def comSquareUpOkHTTP3fInterceptorVersion = '3.12.1'
+def comSquareUpRetrofit2Version = '2.4.0'
+def comSquareUpRetrofit2ConverterGSONVersion = '2.4.0'
+def comGithubAkarnokdRxJava3RetrofitAdapterVersion = '3.0.0'
+
+dependencies {
+
+    implementation project(':domain')
+
+    implementation 'androidx.core:core-ktx:1.6.0'
+
+    //Network
+    implementation 'com.squareup.okhttp3:okhttp:' + comSquareUpOkHTTP3Version
+    implementation 'com.squareup.okhttp3:logging-interceptor:' + comSquareUpOkHTTP3fInterceptorVersion
+    implementation 'com.squareup.retrofit2:retrofit:' + comSquareUpRetrofit2Version
+    implementation 'com.squareup.retrofit2:converter-gson:' + comSquareUpRetrofit2ConverterGSONVersion
+    implementation "com.github.akarnokd:rxjava3-retrofit-adapter:" + comGithubAkarnokdRxJava3RetrofitAdapterVersion
+
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}

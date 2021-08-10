@@ -14,7 +14,7 @@ import com.example.task1new.R
 import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.content.dialog.CustomDialog
 import com.example.task1new.databinding.FragmentCountryDetailsBinding
-import com.example.task1new.dto.CountryDto
+import com.example.domain.dto.CountryDto
 import com.example.task1new.ext.loadSvg
 import com.example.task1new.ext.showSimpleDialogNetworkError
 import com.google.android.gms.maps.CameraUpdateFactory
