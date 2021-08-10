@@ -4,7 +4,6 @@ import android.location.Location
 import android.location.LocationManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import com.example.task1new.Retrofit
 import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.filter.CountryDtoListFilterObject
 import com.example.task1new.base.mvvm.BaseViewModel
@@ -12,6 +11,7 @@ import com.example.task1new.dto.CountryDto
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
 import com.example.task1new.model.convertToCountryDto
+import com.example.task1new.network.Retrofit
 import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToDtoTransformer
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -210,7 +210,7 @@ class CountryListViewModel(
 
     fun getCountriesFromAPI() {
         mCompositeDisposable.add(
-            Retrofit.getCountriesApi().getPosts()
+            Retrofit.getCountriesApi().getCountryList()
                 .doOnNext {
                     // DB inserting data
                     val mCountriesInfoFromAPI = it.toMutableList()
