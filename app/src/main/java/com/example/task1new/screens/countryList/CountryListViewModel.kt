@@ -24,6 +24,7 @@ class CountryListViewModel(
     private val mFilterRepository: FilterRepository
 ) : BaseViewModel(savedStateHandle) {
 
+
     private var mDaoCountryInfo: CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
     private var mDaoLanguageInfo: CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
 
