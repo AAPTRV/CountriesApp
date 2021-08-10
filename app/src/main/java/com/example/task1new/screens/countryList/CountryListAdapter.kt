@@ -27,32 +27,10 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
 
     private var mFilteredDataList: MutableList<CountryDto> = mutableListOf()
 
-    private var mUsersLocation: Location? = null
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.row_layout, parent, false)
         Log.d(TAG, " ON CREATE VIEW HOLDER STAGE")
         return CountryViewHolder(v)
-    }
-
-    fun attachCurrentLocation(location: Location) {
-        mUsersLocation = location
-    }
-
-    private fun calculateDistanceToUser(dto: CountryDto): Double {
-        var result = 0.0
-        if (dto.location.isNotEmpty()) {
-            val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
-                latitude = dto.location[0]
-                longitude = dto.location[1]
-            }
-
-            mUsersLocation?.let {
-                result =
-                    (mUsersLocation!!.distanceTo(currentCountryLocation).toDouble() / 1000)
-            }
-        }
-        return result
     }
 
     fun getDataListFromAdapter(): MutableList<CountryDto> {
@@ -72,6 +50,13 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
     fun isFiltered(): Boolean {
         return mFilteredDataList.size != mDataListInAdapter.size
     }
+
+    fun updateFilteredDataList(mDtoList: List<CountryDto>){
+        mFilteredDataList.clear()
+        mFilteredDataList.addAll(mDtoList)
+        notifyDataSetChanged()
+    }
+
 
     fun repopulateFilteredDataListWithFilter(filter: CountryDtoListFilterObject){
         mFilteredDataList.clear()
@@ -131,29 +116,6 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
     fun sortDescendingDataListInAdapter() {
         mFilteredDataList.sortByDescending { it.population }
         notifyDataSetChanged()
-    }
-
-    fun getMinimumDistance(): String {
-        var mDistanceMin: Double = Double.MAX_VALUE
-        for (country in mDataListInAdapter) {
-            if (country.location.isNotEmpty()) {
-                if (calculateDistanceToUser(country).toDouble() < mDistanceMin) {
-                    mDistanceMin = calculateDistanceToUser(country).toDouble()
-                }
-            }
-        }
-        return mDistanceMin.toString()
-    }
-
-    fun getMaximumDistance(): String {
-        var mDistanceMax: Double = Double.MIN_VALUE
-        for (country in mDataListInAdapter) {
-            if (calculateDistanceToUser(country) > mDistanceMax) {
-                mDistanceMax = calculateDistanceToUser(country)
-            }
-        }
-        Log.e("HZ", "ADAPTER GET MAXIMUM DISTANCE RESULT = $mDistanceMax")
-        return mDistanceMax.toString()
     }
 
     inner class CountryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

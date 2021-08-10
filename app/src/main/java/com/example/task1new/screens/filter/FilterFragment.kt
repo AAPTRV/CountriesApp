@@ -134,12 +134,10 @@ class FilterFragment : Fragment() {
             Slider.OnSliderTouchListener {
             override fun onStartTrackingTouch(slider: Slider) {
                 mMaxDistance = slider.value
-//                mMinDistance = slider.values[0]
             }
 
             override fun onStopTrackingTouch(slider: Slider) {
                 mMaxDistance = slider.value
-//                mMinDistance = slider.values[0]
                 binding?.distanceTextView?.text =
                     context?.getString(
                         R.string.filter_distance,
@@ -155,7 +153,6 @@ class FilterFragment : Fragment() {
             result.add(mMinArea.toDouble())
             result.add(mMaxPopulation.toDouble())
             result.add(mMinPopulation.toDouble())
-//            result.add(mMinDistance.toDouble())
             result.add(mMaxDistance.toDouble())
 
             setFragmentResult("filterKey", bundleOf("resultList" to result))

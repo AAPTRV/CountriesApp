@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.example.task1new.Retrofit
 import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.filter.CountryDtoListFilterObject
+import com.example.task1new.base.filter.CountryDtoListFilterObject.applyFilter
 import com.example.task1new.base.mvvm.BaseViewModel
 import com.example.task1new.dto.CountryDto
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
@@ -39,6 +40,11 @@ class CountryListViewModel(
         mUsersLocation = location
     }
 
+    fun updateCountriesLiveDataWithFilter(){
+        val result: MutableList<CountryDto> = mutableListOf()
+        mCountriesListLiveData.value?.let { result.addAll(it) }
+        mCountriesListLiveData.value = result.applyFilter(getFilter())
+    }
     private fun addDistanceToCountriesLiveData() {
         val result: MutableList<CountryDto> = mutableListOf()
         mCountriesListLiveData.value?.let { result.addAll(it) }
