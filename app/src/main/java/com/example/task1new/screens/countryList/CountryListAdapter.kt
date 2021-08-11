@@ -25,7 +25,7 @@ import com.example.task1new.ext.loadSvg
 
 class CountryListAdapter : BaseAdapter<CountryDto>() {
 
-    private var mFilteredDataList: MutableList<CountryDto> = mutableListOf()
+//    private var mFilteredDataList: MutableList<CountryDto> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.row_layout, parent, false)
@@ -33,43 +33,43 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
         return CountryViewHolder(v)
     }
 
-    fun getDataListFromAdapter(): MutableList<CountryDto> {
-        return mFilteredDataList
-    }
+//    fun getDataListFromAdapter(): MutableList<CountryDto> {
+//        return mFilteredDataList
+//    }
 
     fun clearAdapter() {
         mDataListInAdapter.clear()
-        mFilteredDataList.clear()
+//        mFilteredDataList.clear()
     }
 
     override fun getItemCount(): Int {
         Log.d(TAG, "GET ITEM COUNT STAGE")
-        return mFilteredDataList.size
+        return mDataListInAdapter.size
     }
 
-    fun isFiltered(): Boolean {
-        return mFilteredDataList.size != mDataListInAdapter.size
-    }
+//    fun isFiltered(): Boolean {
+//        return mFilteredDataList.size != mDataListInAdapter.size
+//    }
 
-    fun updateFilteredDataList(mDtoList: List<CountryDto>){
-        mFilteredDataList.clear()
-        mFilteredDataList.addAll(mDtoList)
-        notifyDataSetChanged()
-    }
+//    fun updateFilteredDataList(mDtoList: List<CountryDto>){
+//        mFilteredDataList.clear()
+//        mFilteredDataList.addAll(mDtoList)
+//        notifyDataSetChanged()
+//    }
 
 
-    fun repopulateFilteredDataListWithFilter(filter: CountryDtoListFilterObject){
-        mFilteredDataList.clear()
-        mFilteredDataList.addAll(mDataListInAdapter.applyFilter(filter))
-        notifyDataSetChanged()
-    }
+//    fun repopulateFilteredDataListWithFilter(filter: CountryDtoListFilterObject){
+//        mFilteredDataList.clear()
+//        mFilteredDataList.addAll(mDataListInAdapter.applyFilter(filter))
+//        notifyDataSetChanged()
+//    }
 
     fun repopulateAdapterData(newItemsDto: List<CountryDto>) {
 
         mDataListInAdapter.clear()
         mDataListInAdapter.addAll(newItemsDto)
-        mFilteredDataList.clear()
-        mFilteredDataList.addAll(newItemsDto)
+//        mFilteredDataList.clear()
+//        mFilteredDataList.addAll(newItemsDto)
         notifyDataSetChanged()
 
         // case #1 -> Data loading (initially)
@@ -115,12 +115,14 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
     }
 
     fun sortAscendingDataListInAdapter() {
-        mFilteredDataList.sortBy { it.population }
+//        mFilteredDataList.sortBy { it.population }
+        mDataListInAdapter.sortBy { it.population }
         notifyDataSetChanged()
     }
 
     fun sortDescendingDataListInAdapter() {
-        mFilteredDataList.sortByDescending { it.population }
+//        mFilteredDataList.sortByDescending { it.population }
+        mDataListInAdapter.sortByDescending { it.population }
         notifyDataSetChanged()
     }
 
@@ -134,68 +136,68 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
         var distance: TextView = itemView.findViewById(R.id.text_distance)
     }
 
-    fun filterByName(name: String) {
-        mFilteredDataList.clear()
-        mFilteredDataList.addAll(mDataListInAdapter)
-        val filteredList = mutableListOf<CountryDto>()
-        for (country in mFilteredDataList) {
-            if (country.name.lowercase().contains(name.lowercase())) {
-                filteredList.add(country)
-            }
-        }
-        mFilteredDataList = filteredList
-        notifyDataSetChanged()
-    }
+//    fun filterByName(name: String) {
+//        mFilteredDataList.clear()
+//        mFilteredDataList.addAll(mDataListInAdapter)
+//        val filteredList = mutableListOf<CountryDto>()
+//        for (country in mFilteredDataList) {
+//            if (country.name.lowercase().contains(name.lowercase())) {
+//                filteredList.add(country)
+//            }
+//        }
+//        mFilteredDataList = filteredList
+//        notifyDataSetChanged()
+//    }
 
-    fun repopulateFilteredDataList(data: List<CountryDto>) {
-        mFilteredDataList.clear()
-        mFilteredDataList.addAll(data)
-        notifyDataSetChanged()
-    }
+//    fun repopulateFilteredDataList(data: List<CountryDto>) {
+//        mFilteredDataList.clear()
+//        mFilteredDataList.addAll(data)
+//        notifyDataSetChanged()
+//    }
 
-    fun restoreFilteredListFromDataList() {
-        if (mFilteredDataList.size != mDataListInAdapter.size) {
-            mFilteredDataList.clear()
-            mFilteredDataList.addAll(mDataListInAdapter)
-            notifyDataSetChanged()
-        }
-    }
+//    fun restoreFilteredListFromDataList() {
+//        if (mFilteredDataList.size != mDataListInAdapter.size) {
+//            mFilteredDataList.clear()
+//            mFilteredDataList.addAll(mDataListInAdapter)
+//            notifyDataSetChanged()
+//        }
+//    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is CountryViewHolder) {
             holder.itemName.text =
                 holder.itemName.context.getString(
                     R.string.adapter_name,
-                    mFilteredDataList[position].name
+                    mDataListInAdapter[position].name
                 )
             holder.itemTitle.text =
                 holder.itemView.context.getString(
                     R.string.adapter_capital,
-                    mFilteredDataList[position].capital
+                    mDataListInAdapter[position].capital
                 )
             holder.itemDetail.text =
                 holder.itemView.context.getString(
                     R.string.adapter_population,
-                    mFilteredDataList[position].population
+                    mDataListInAdapter[position].population
                 )
             holder.area.text =
                 holder.itemView.context.getString(
                     R.string.adapter_area,
-                    mFilteredDataList[position].area
+                    mDataListInAdapter[position].area
                 )
 
             holder.languages.text =
                 holder.itemView.context.getString(
                     R.string.adapter_languages,
-                    mFilteredDataList[position].languages.convertLanguagesDtoToString()
+                    mDataListInAdapter[position].languages.convertLanguagesDtoToString()
                 )
 
             holder.distance.text = holder.itemName.context.getString(
                 R.string.adapter_distance,
-                mFilteredDataList[position].distance.toString()
+                mDataListInAdapter[position].distance.toString()
             )
-            holder.itemImage.loadSvg(mFilteredDataList[position].flag)
-            holder.itemView.setOnClickListener { mOnItemClickListener?.invoke(mFilteredDataList[position]) }
+            holder.itemImage.loadSvg(mDataListInAdapter[position].flag)
+            holder.itemView.setOnClickListener { mOnItemClickListener?.invoke(mDataListInAdapter[position]) }
 
 
 

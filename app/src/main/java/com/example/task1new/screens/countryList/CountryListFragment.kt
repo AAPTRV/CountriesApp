@@ -43,7 +43,6 @@ private const val MENU_FILTER_ICON_STATE = "menu filter icon state"
 
 class CountryListFragment : Fragment() {
 
-    private var mInitialDataProcessing: Boolean = true
     private var param1: String? = null
     private var param2: String? = null
     private var binding: FragmentCountryListBinding? = null
@@ -293,12 +292,7 @@ class CountryListFragment : Fragment() {
             COUNTRY_DETAILS_LAYOUT_MANAGER_KEY,
             mLayoutManagerState
         )
-        mInitialDataProcessing?.let {
-            outState.putBoolean(COUNTRY_LIST_INITIAL_DATA_PROCESSING_STATE,
-                it
-            )
         }
-    }
 
     private fun getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(
