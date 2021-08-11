@@ -2,6 +2,7 @@ package com.example.task1new.screens.countryList
 
 import android.location.Location
 import android.location.LocationManager
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.example.task1new.Retrofit
@@ -42,8 +43,35 @@ class CountryListViewModel(
 
     fun updateCountriesLiveDataWithFilter(){
         val result: MutableList<CountryDto> = mutableListOf()
+        Log.e("HZ", "Updating Live data ... Current live data value = ${mCountriesListLiveData.value}")
         mCountriesListLiveData.value?.let { result.addAll(it) }
         mCountriesListLiveData.value = result.applyFilter(getFilter())
+    }
+
+    fun getFilteredDataFromCountriesLiveData(): List<CountryDto>{
+        val result: MutableList<CountryDto> = mutableListOf()
+        mCountriesListLiveData.value?.let { result.addAll(it) }
+        return result.applyFilter(mFilter)
+    }
+
+    private fun addDistanceToCountriesDtoList(dtoList: List<CountryDto>): List<CountryDto>{
+        val result: MutableList<CountryDto> = mutableListOf()
+        result.addAll(dtoList)
+        for (dto in result) {
+            if (dto.location.isNotEmpty()) {
+                val currentCountryLocation = Location(LocationManager.GPS_PROVIDER).apply {
+                    latitude = dto.location[0]
+                    longitude = dto.location[1]
+                }
+                mUsersLocation?.let {
+                    dto.distance =
+                        (mUsersLocation!!.distanceTo(currentCountryLocation)
+                            .toDouble() / 1000).toString()
+                }
+            }
+        }
+        Log.e("HZ", "Data size after appliing distance: ${result.size}")
+        return result
     }
     private fun addDistanceToCountriesLiveData() {
         val result: MutableList<CountryDto> = mutableListOf()
@@ -61,6 +89,7 @@ class CountryListViewModel(
                 }
             }
         }
+        Log.e("HZ", "Data size after appliing distance: ${result.size}")
         mCountriesListLiveData.value = result
     }
 
@@ -218,6 +247,7 @@ class CountryListViewModel(
         mCompositeDisposable.add(
             Retrofit.getCountriesApi().getPosts()
                 .doOnNext {
+                    Log.e("hz", "DO ON NEXT")
                     // DB inserting data
                     val mCountriesInfoFromAPI = it.toMutableList()
                     val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
@@ -235,13 +265,17 @@ class CountryListViewModel(
                         )
                         mDaoCountryInfo.addAll(mCountriesInfoToDB)
                     }
+//                    addDistanceToCountriesLiveData()
                 }
                 .map { it.convertToCountryDto() }
+                .map{addDistanceToCountriesDtoList(it)}
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    addDistanceToCountriesLiveData()
-                }, { getCountriesFromDb() }
+                    Log.e("hz", "RX JAVA GET COUNTRIES FROM API GET SIZE = ${it.size}")
+                    mCountriesListLiveData.value = it
+                    Log.e("hz", "CURRENT VALUE IN LIVE DATA IS ${mCountriesListLiveData.value}")
+                }, { }
                 )
         )
     }

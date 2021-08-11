@@ -43,6 +43,7 @@ private const val MENU_FILTER_ICON_STATE = "menu filter icon state"
 
 class CountryListFragment : Fragment() {
 
+    private var mInitialDataProcessing: Boolean = true
     private var param1: String? = null
     private var param2: String? = null
     private var binding: FragmentCountryListBinding? = null
@@ -52,9 +53,14 @@ class CountryListFragment : Fragment() {
     private var mLocationProviderClient: FusedLocationProviderClient? = null
     private val mViewModel = CountryListViewModel(SavedStateHandle(), CountriesApp.mDatabase)
 
+    init {
+        Log.e("HZ", "Initialization FRAGMENT BLOCK")
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        Log.e("HZ", "ON CREATE")
+        mViewModel.getCountriesFromAPI()
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -70,25 +76,17 @@ class CountryListFragment : Fragment() {
         return binding?.root
     }
 
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setHasOptionsMenu(true)
 
-        mLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(this.requireActivity())
-        getCurrentLocation()
+        Log.e("HZ", "ON VIEW CREATED")
 
-        mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { data ->
-            myAdapter.addNewUniqueItems(data)
-        })
-
-        mViewModel.getFilterLiveData().observe(viewLifecycleOwner, {
-            //myAdapter.repopulateFilteredDataListWithFilter(it)
-            mViewModel.updateCountriesLiveDataWithFilter()
-            Toast.makeText(this.requireActivity(), "Filter updated", Toast.LENGTH_SHORT).show()
-        })
-
+        //RESULT LISTENER
         setFragmentResultListener("filterKey") { _, bundle ->
             val result = bundle.getParcelableArrayList<Parcelable>("resultList") as List<Double>
             mViewModel.setFilterMaxArea(result[0])
@@ -98,9 +96,33 @@ class CountryListFragment : Fragment() {
             mViewModel.setFilterMaxDistance(result[4])
         }
 
-        mViewModel.getCountriesFromDb()
-        mViewModel.getCountriesFromAPI()
+        //General UI settings
+        setHasOptionsMenu(true)
 
+        // TODO: Handle saved instance state ...
+        //Saved Instance State
+        if (savedInstanceState != null) {
+            mLayoutManagerState =
+                savedInstanceState.getParcelable(COUNTRY_DETAILS_LAYOUT_MANAGER_KEY)!!
+            binding?.recycleView?.layoutManager?.onRestoreInstanceState(mLayoutManagerState)
+        } else {
+            binding?.recycleView?.layoutManager = LinearLayoutManager(context)
+        }
+
+        //GPS
+        mLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(this.requireActivity())
+        getCurrentLocation()
+
+        mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { data ->
+            myAdapter.repopulateAdapterData(data)
+        })
+        mViewModel.getFilterLiveData().observe(viewLifecycleOwner, {
+            myAdapter.repopulateAdapterData(mViewModel.getFilteredDataFromCountriesLiveData())
+            Toast.makeText(this.requireActivity(), "Filter updated", Toast.LENGTH_SHORT).show()
+        })
+
+        //RecycleView
         binding?.recycleView?.setHasFixedSize(true)
         myAdapter.setItemClick {
             val bundle = Bundle()
@@ -109,16 +131,9 @@ class CountryListFragment : Fragment() {
                 R.id.action_blankFragmentRV_to_countryDetailsFragment,
             )
         }
-
         binding?.recycleView?.adapter = myAdapter
 
-        if (savedInstanceState != null) {
-            mLayoutManagerState =
-                savedInstanceState.getParcelable(COUNTRY_DETAILS_LAYOUT_MANAGER_KEY)!!
-            binding?.recycleView?.layoutManager?.onRestoreInstanceState(mLayoutManagerState)
-        } else {
-            binding?.recycleView?.layoutManager = LinearLayoutManager(context)
-        }
+
     }
 
     override fun onPause() {
@@ -130,7 +145,7 @@ class CountryListFragment : Fragment() {
         inflater.inflate(R.menu.countries_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
         loadMenuSortIconState()
-        loadMenuFilterIconState()
+//        loadMenuFilterIconState()
         initializeMenuSortIconSet(menu.findItem(R.id.menu_sort_button))
         initializeFilterIconSet(menu.findItem(R.id.menu_filter_button))
 
@@ -150,7 +165,7 @@ class CountryListFragment : Fragment() {
                 if (newText.length >= 3) {
                     mViewModel.setFilterCountryName(newText)
                 }
-                if (newText.length in 0..2 && myAdapter.isFiltered()) {
+                if (newText.length in 0..2) {
                     mViewModel.setFilterCountryName(FILTER_ANY_COUNTRY_VALUE)
                 }
                 return true
@@ -159,6 +174,7 @@ class CountryListFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // TODO: Make filter item GONE until we have some values in LiveData(in order to avoid crash while clicking
         if (item.itemId == R.id.menu_maps_button) {
             Navigation.findNavController(requireView())
                 .navigate(R.id.action_blankFragmentRV_to_mapsFragmentBlank2)
@@ -203,12 +219,12 @@ class CountryListFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun loadMenuFilterIconState() {
-        val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
-            SHARED_PREFS, AppCompatActivity.MODE_PRIVATE
-        )
-        filterIconClipped = sharedPreferences.getBoolean(MENU_FILTER_ICON_STATE, false)
-    }
+//    private fun loadMenuFilterIconState() {
+//        val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
+//            SHARED_PREFS, AppCompatActivity.MODE_PRIVATE
+//        )
+//        filterIconClipped = sharedPreferences.getBoolean(MENU_FILTER_ICON_STATE, false)
+//    }
 
     private fun saveMenuFilterIconState() {
         val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
@@ -272,10 +288,16 @@ class CountryListFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        Log.e("hz", "onSaveInstanceStage")
         outState.putParcelable(
             COUNTRY_DETAILS_LAYOUT_MANAGER_KEY,
             mLayoutManagerState
         )
+        mInitialDataProcessing?.let {
+            outState.putBoolean(COUNTRY_LIST_INITIAL_DATA_PROCESSING_STATE,
+                it
+            )
+        }
     }
 
     private fun getCurrentLocation() {

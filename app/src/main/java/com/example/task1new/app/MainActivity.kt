@@ -18,17 +18,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed(){
-        AlertDialog.Builder(this).apply{
-            setTitle("Confirmation")
-            setMessage("Are you sure you want to exit?")
-            setPositiveButton("Yes"){_, _ ->
-                super.onBackPressed()
-            }
-            setNegativeButton("No"){_, _ ->
-                Toast.makeText(this@MainActivity, "Thank you", Toast.LENGTH_LONG).show()
-            }
-            setCancelable(true)
-        }.create().show()
-    }
+
+    // TODO: Something wrong happens ... We are asked while leaving every single fragment!
+//    override fun onBackPressed(){
+//        AlertDialog.Builder(this).apply{
+//            setTitle("Confirmation")
+//            setMessage("Are you sure you want to exit?")
+//            setPositiveButton("Yes"){_, _ ->
+//                super.onBackPressed()
+//            }
+//            setNegativeButton("No"){_, _ ->
+//                Toast.makeText(this@MainActivity, "Thank you", Toast.LENGTH_LONG).show()
+//            }
+//            setCancelable(true)
+//        }.create().show()
+//    }
 }

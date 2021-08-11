@@ -1,5 +1,6 @@
 package com.example.task1new.base.filter
 
+import android.util.Log
 import com.example.task1new.DTO_DEFAULT_DISTANCE_VALUE
 import com.example.task1new.FILTER_ANY_COUNTRY_VALUE
 import com.example.task1new.dto.CountryDto
@@ -35,6 +36,8 @@ object CountryDtoListFilterObject {
                 result.add(country)
             }
         }
+        showFilterInfo()
+        Log.e("hz", "Countries to add through filter: ${result.size}")
         return result
     }
 
@@ -71,81 +74,12 @@ object CountryDtoListFilterObject {
     }
 
     fun showFilterInfo() {
-        println("NAME = $mCountryName")
-        println("MIN POPULATION = $mMinPopulation")
-        println("MAX POPULATION = $mMaxPopulation")
-        println("MIN AREA = $mMinArea")
-        println("MAX AREA = $mMaxArea")
-        println("MAX DISTANCE = $mMaxDistance")
-    }
-
-    fun filterSetupChangeOptions(
-        countryName: String = mCountryName,
-        minPopulation: Int = mMinPopulation,
-        maxPopulation: Int = mMaxPopulation,
-        minArea: Double = mMinArea,
-        maxArea: Double = mMaxArea,
-        maxDistance: Double = mMaxDistance,
-    ) {
-        clearFilter()
-        if (countryName != mCountryName) {
-            setUpCountryName(countryName)
-        }
-        if (minPopulation != mMinPopulation) {
-            setUpMinPopulation(minPopulation)
-        }
-        if (maxPopulation != mMaxPopulation) {
-            setUpMaxPopulation(maxPopulation)
-        }
-        if (minArea != mMinArea) {
-            setUpMinArea(minArea)
-        }
-        if (maxArea != mMaxArea) {
-            setUpMaxArea(maxArea)
-        }
-        if (maxDistance != mMaxDistance) {
-            setUpMaxDistance(mMaxDistance)
-        }
-    }
-
-    private fun clearFilter() {
-        mCountryName = FILTER_ANY_COUNTRY_VALUE
-        mMinPopulation = Integer.MIN_VALUE
-        mMaxPopulation = Integer.MAX_VALUE
-        mMinArea = Double.MIN_VALUE
-        mMaxArea = Double.MAX_VALUE
-        mMaxDistance = Double.MAX_VALUE
-        mFilterIsEmpty = true
-    }
-
-    fun setUpCountryName(countryName: String) {
-        mCountryName = countryName
-        mFilterIsEmpty = false
-    }
-
-    fun setUpMinPopulation(value: Int) {
-        mMinPopulation = value
-        mFilterIsEmpty = false
-    }
-
-    fun setUpMaxPopulation(value: Int) {
-        mMaxPopulation = value
-        mFilterIsEmpty = false
-    }
-
-    fun setUpMinArea(value: Double) {
-        mMinArea = value
-        mFilterIsEmpty = false
-    }
-
-    fun setUpMaxArea(value: Double) {
-        mMaxArea = value
-        mFilterIsEmpty = false
-    }
-
-    fun setUpMaxDistance(value: Double) {
-        mMaxDistance = value
-        mFilterIsEmpty = false
+        Log.e("FILTER", "NAME = $mCountryName")
+        Log.e("FILTER", "MIN POPULATION = $mMinPopulation")
+        Log.e("FILTER", "MAX POPULATION = $mMaxPopulation")
+        Log.e("FILTER", "MIN AREA = $mMinArea")
+        Log.e("FILTER", "MAX AREA = $mMaxArea")
+        Log.e("FILTER", "MAX DISTANCE = $mMaxDistance")
     }
 
     private fun checkForFilter(country: CountryDto): Boolean {
@@ -182,8 +116,12 @@ object CountryDtoListFilterObject {
     }
 
     private fun checkDistance(dto: CountryDto): Boolean {
-        return if (dto.distance == DTO_DEFAULT_DISTANCE_VALUE) {
-            false
-        } else dto.distance.toDouble() < mMaxDistance
+        if(dto.distance == DTO_DEFAULT_DISTANCE_VALUE){
+            return false
+        }
+        if(dto.distance.toDouble() > mMaxDistance){
+            return false
+        }
+        return true
     }
 }

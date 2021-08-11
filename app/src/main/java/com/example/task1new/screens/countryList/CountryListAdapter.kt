@@ -64,48 +64,54 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
         notifyDataSetChanged()
     }
 
-    fun addNewUniqueItems(newItemsDto: List<CountryDto>) {
+    fun repopulateAdapterData(newItemsDto: List<CountryDto>) {
+
+        mDataListInAdapter.clear()
+        mDataListInAdapter.addAll(newItemsDto)
+        mFilteredDataList.clear()
+        mFilteredDataList.addAll(newItemsDto)
+        notifyDataSetChanged()
 
         // case #1 -> Data loading (initially)
-        if (mDataListInAdapter.isEmpty()) {
-            mDataListInAdapter.addAll(newItemsDto)
-            mFilteredDataList.clear()
-            mFilteredDataList.addAll(mDataListInAdapter)
-            notifyDataSetChanged()
-            Log.e(
-                TAG,
-                " CASE 1 : ADD ALL ITEMS IN DATA LIST. mData.size = ${mDataListInAdapter.size}"
-            )
-        } // case #2 -> no new elements
-        else if (mDataListInAdapter.containsAll(newItemsDto)) {
-            Log.e(
-                TAG,
-                " CASE 2 : NO DATA TO ADD, NO NEW ELEMENTS mData.size = ${mDataListInAdapter.size}"
-            )
-        } // case #3 -> adding new unique elements
-        else {
-            val uniqueItems = mutableListOf<CountryDto>()
-            for (newDto in newItemsDto) {
-                var itemIsUnique = true
-                for (oldDto in mDataListInAdapter) {
-                    if (newDto.name == oldDto.name) {
-                        itemIsUnique = false
-                        break
-                    }
-                }
-                if (itemIsUnique) {
-                    uniqueItems.add(newDto)
-                }
-            }
-            mDataListInAdapter.addAll(uniqueItems)
-            mFilteredDataList.addAll(uniqueItems)
-            if (mFilteredDataList.size == 0) {
-                mFilteredDataList.addAll(mDataListInAdapter)
-            }
-            val initialSize = mDataListInAdapter.size
-            //notifyItemRangeChanged(initialSize - 1, mDataListInAdapter.size - 1)
-            Log.e(TAG, " CASE 3 : ADD NEW UNIQUE ITEMS mData.size = ${mDataListInAdapter.size}")
-        }
+//        if (mDataListInAdapter.isEmpty()) {
+//            mDataListInAdapter.addAll(newItemsDto)
+//            mFilteredDataList.clear()
+//            mFilteredDataList.addAll(mDataListInAdapter)
+//            notifyDataSetChanged()
+//            Log.e(
+//                TAG,
+//                " CASE 1 : ADD ALL ITEMS IN DATA LIST. mData.size = ${mDataListInAdapter.size}"
+//            )
+//        } // case #2 -> no new elements
+//        else if (mDataListInAdapter.containsAll(newItemsDto)) {
+//            Log.e(
+//                TAG,
+//                " CASE 2 : NO DATA TO ADD, NO NEW ELEMENTS mData.size = ${mDataListInAdapter.size}"
+//            )
+//        } // case #3 -> adding new unique elements
+//        else {
+//            val uniqueItems = mutableListOf<CountryDto>()
+//            for (newDto in newItemsDto) {
+//                var itemIsUnique = true
+//                for (oldDto in mDataListInAdapter) {
+//                    if (newDto.name == oldDto.name) {
+//                        itemIsUnique = false
+//                        break
+//                    }
+//                }
+//                if (itemIsUnique) {
+//                    uniqueItems.add(newDto)
+//                }
+//            }
+//            mDataListInAdapter.addAll(uniqueItems)
+//            mFilteredDataList.addAll(uniqueItems)
+//            if (mFilteredDataList.size == 0) {
+//                mFilteredDataList.addAll(mDataListInAdapter)
+//            }
+//            val initialSize = mDataListInAdapter.size
+//            //notifyItemRangeChanged(initialSize - 1, mDataListInAdapter.size - 1)
+//            Log.e(TAG, " CASE 3 : ADD NEW UNIQUE ITEMS mData.size = ${mDataListInAdapter.size}")
+//        }
     }
 
     fun sortAscendingDataListInAdapter() {
