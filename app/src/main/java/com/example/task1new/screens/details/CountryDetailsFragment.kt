@@ -10,6 +10,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.setFragmentResultListener
+import androidx.navigation.Navigation
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
 import com.example.task1new.R
 import com.example.task1new.base.mvp.BaseMvpFragment
@@ -35,6 +36,7 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
     private var mGoogleMap: GoogleMap? = null
     private var binding: FragmentCountryDetailsBinding? = null
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,6 +46,7 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         binding = FragmentCountryDetailsBinding.inflate(inflater, container, false)
         mCountryName = arguments?.getString(COUNTRY_NAME_BUNDLE_KEY, "") ?: ""
         binding?.mvCountryDetails?.onCreate(savedInstanceState)
+
         return binding?.root
     }
 
@@ -85,24 +88,58 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         }
     }
 
-    override fun onResume() {
+    override fun onStart() {
+        super.onStart()
+        binding?.mvCountryDetails?.onStart()
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        binding?.mvCountryDetails?.onDestroy()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding?.mvCountryDetails?.onStop()
+    }
+
+    override fun onResume() {
         binding?.mvCountryDetails?.onResume()
         super.onResume()
     }
 
     override fun onDestroyView() {
-
         super.onDestroyView()
         binding = null
         mGoogleMap = null
         getPresenter().onDestroyView()
+    }
 
+    override fun onMapReady(p0: GoogleMap) {
+        mGoogleMap = p0
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
         binding?.mvCountryDetails?.onLowMemory()
+    }
+
+    override fun showCountryInfo(country: CountryDto, location: LatLng) {
+        mLanguagesAdapter.addListOfItems(
+            country.languages
+        )
+        binding?.srCountryDetails?.isRefreshing = false
+        binding?.ivCountryFlag?.loadSvg(
+            country.flag
+        )
+        mGoogleMap?.addMarker(
+            MarkerOptions().position(
+                location
+            )
+                .title(country.name)
+        )
+
+        mGoogleMap?.moveCamera(CameraUpdateFactory.newLatLng(location))
     }
 
     private fun saveNoteTextState(){
@@ -128,24 +165,6 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         return mPresenter
     }
 
-    override fun showCountryInfo(country: CountryDto, location: LatLng) {
-        mLanguagesAdapter.addListOfItems(
-            country.languages
-        )
-        binding?.srCountryDetails?.isRefreshing = false
-        binding?.ivCountryFlag?.loadSvg(
-            country.flag
-        )
-        mGoogleMap?.addMarker(
-            MarkerOptions().position(
-                location
-            )
-                .title(country.name)
-        )
-
-        mGoogleMap?.moveCamera(CameraUpdateFactory.newLatLng(location))
-    }
-
     override fun showError(error: String, throwable: Throwable) {
         activity?.showSimpleDialogNetworkError()
     }
@@ -157,9 +176,4 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
     override fun hideProgress() {
         binding?.progressDetails?.visibility = View.GONE
     }
-
-    override fun onMapReady(p0: GoogleMap) {
-        mGoogleMap = p0
-    }
-
 }

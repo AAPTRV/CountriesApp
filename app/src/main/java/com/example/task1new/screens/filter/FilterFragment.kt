@@ -153,7 +153,6 @@ class FilterFragment : Fragment() {
             result.add(mMaxDistance.toDouble())
 
             setFragmentResult("filterKey", bundleOf("resultList" to result))
-
             Navigation.findNavController(requireView())
                 .navigateUp()
         }
