@@ -45,7 +45,7 @@ class DaoEntityToDtoTransformer {
 
         fun List<CountryDatabaseLanguageInfoEntity>.findEntityByCountryName(countryName: String): CountryDatabaseLanguageInfoEntity{
             for(entity in this){
-                if(entity.mName == countryName){
+                if(entity.mCountryname.lowercase() == countryName.lowercase()){
                     return entity
                 }
             }

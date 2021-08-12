@@ -18,6 +18,7 @@ import com.example.task1new.content.dialog.CustomDialog
 import com.example.task1new.databinding.FragmentCountryDetailsBinding
 import com.example.task1new.dto.CountryDto
 import com.example.task1new.ext.loadSvg
+import com.example.task1new.ext.showDialogWithOneButton
 import com.example.task1new.ext.showSimpleDialogNetworkError
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -70,22 +71,31 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
 
         val myDialog = CustomDialog(this.requireContext())
         myDialog.create()
-        binding?.note?.setOnClickListener{
-            myDialog.show()
+//        binding?.note?.setOnClickListener{
+//            myDialog.show()
+//        }
+        // TODO: FILL THE CONTENT
+        binding?.note?.setOnClickListener {
+            activity?.showDialogWithOneButton(
+                null,
+                "123",
+                R.string.dialog_ok,
+                null
+            )
         }
-        val mEtDialog = myDialog.findViewById<EditText>(R.id.editText)
-        mEtDialog.requestFocus()
-        mEtDialog.showSoftInputOnFocus = true
-        val mOkButton = myDialog.findViewById<Button>(R.id.button_ok)
-        val mCancelButton = myDialog.findViewById<Button>(R.id.button_cancel)
-        mOkButton.setOnClickListener {
-            binding?.note?.text = mEtDialog.text.toString()
-            saveNoteTextState()
-            myDialog.dismiss()
-        }
-        mCancelButton.setOnClickListener {
-            myDialog.dismiss()
-        }
+//        val mEtDialog = myDialog.findViewById<EditText>(R.id.editText)
+//        mEtDialog.requestFocus()
+//        mEtDialog.showSoftInputOnFocus = true
+//        val mOkButton = myDialog.findViewById<Button>(R.id.button_ok)
+//        val mCancelButton = myDialog.findViewById<Button>(R.id.button_cancel)
+//        mOkButton.setOnClickListener {
+//            binding?.note?.text = mEtDialog.text.toString()
+//            saveNoteTextState()
+//            myDialog.dismiss()
+//        }
+//        mCancelButton.setOnClickListener {
+//            myDialog.dismiss()
+//        }
     }
 
     override fun onStart() {

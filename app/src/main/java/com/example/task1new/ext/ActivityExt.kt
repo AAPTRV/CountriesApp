@@ -27,16 +27,6 @@ val DIALOG_WIDTH_DELTA_7: Float = 0.7F
  * @param message the message text resource.
  */
 
-fun Activity.showAlertDialog() {
-    val alertDialog = MaterialAlertDialogBuilder(this)
-        .setTitle("Alert")
-        .setMessage("Alert message to be shown")
-        .setBackground(resources.getDrawable(R.drawable.ic_launcher_background))
-        .setPositiveButton("OK") { dialog, which -> dialog.dismiss() }
-        .setNegativeButton("NO") { dialog, which -> dialog.dismiss() }
-    alertDialog.show()
-}
-
 private fun createDialog(activity: Activity): Dialog {
     val dialog = Dialog(activity)
 
@@ -48,7 +38,6 @@ private fun createDialog(activity: Activity): Dialog {
                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
     }
-
     return dialog
 }
 
@@ -105,4 +94,14 @@ fun Activity.showDialogWithOneButton(
         dialog.show()
     }
     return dialog
+}
+
+fun Activity.showAlertDialog() {
+    val alertDialog = AlertDialog.Builder(this)
+        .setTitle(getString(R.string.error))
+        .setMessage(getString(R.string.error_default))
+        .setPositiveButton(getString(R.string.dialog_ok)) { dialog, _ ->
+            dialog.dismiss()
+        }
+    alertDialog?.show()
 }

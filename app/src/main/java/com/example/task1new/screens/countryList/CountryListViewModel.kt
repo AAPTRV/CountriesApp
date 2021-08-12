@@ -237,19 +237,16 @@ class CountryListViewModel(
         }
 
         fun getCountriesInfoEntitiesFlowable(): Flowable<List<CountryDatabaseCommonInfoEntity>> {
-            return Flowable.just(mDaoCountryInfo.getAllInfo())
+            return Flowable.just("")
+                .map { mDaoCountryInfo.getAllInfo() }
+                .doOnNext { Log.e("HZ", "Common entities Flowable thread is: ${Thread.currentThread().name}") }
         }
 
-        fun getCountriesLanguageEntitiesFlowable(): Flowable<MutableList<CountryDatabaseLanguageInfoEntity>> {
-            return Flowable.fromIterable(mDaoCountryInfo.getAllInfo())
-                .map { commonInfoEntity ->
-                    mDaoLanguageInfo.getLanguageInfoByCountry(
-                        commonInfoEntity.name
-                    )
-                }
-                .collect(
-                    { mutableListOf<CountryDatabaseLanguageInfoEntity>() },
-                    { collector, entity -> collector.add(entity) }).toFlowable()
+        fun getCountriesLanguageEntitiesFlowable(): Flowable<List<CountryDatabaseLanguageInfoEntity>>{
+            return Flowable.just("")
+                .map{mDaoLanguageInfo.getAllInfo()}
+                .doOnNext { Log.e("HZ", "Common language Flowable thread is: ${Thread.currentThread().name}") }
+
         }
 
         mCompositeDisposable.add(

@@ -198,6 +198,7 @@ class CountryListFragment : Fragment() {
                     .navigate(R.id.action_blankFragmentRV_to_filterFragment, bundle)
             } else {
                 item.setIcon(R.drawable.ic_baseline_filter_alt_24)
+                // TODO: Check clear filter for default value -> if gps is off it
                 mViewModel.clearFilterExceptName()
                 filterIconClipped = false
             }
