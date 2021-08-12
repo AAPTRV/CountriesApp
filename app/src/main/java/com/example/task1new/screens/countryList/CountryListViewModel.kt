@@ -253,9 +253,7 @@ class CountryListViewModel(
             Flowable.zip(
                 getCountriesInfoEntitiesFlowable(),
                 getCountriesLanguageEntitiesFlowable(),
-                io.reactivex.rxjava3.functions.BiFunction<List<CountryDatabaseCommonInfoEntity>,
-                        List<CountryDatabaseLanguageInfoEntity>,
-                        List<CountryDto>> { commonInfoEntityList, languageInfoEntityList ->
+                io.reactivex.rxjava3.functions.BiFunction{ commonInfoEntityList, languageInfoEntityList ->
                     return@BiFunction getDtoFromEntities(
                         commonInfoEntityList,
                         languageInfoEntityList

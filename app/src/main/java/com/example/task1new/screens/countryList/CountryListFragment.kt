@@ -59,8 +59,7 @@ class CountryListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.e("HZ", "ON CREATE")
-//        mViewModel.getCountriesFromDb()
-//        mViewModel.getCountriesFromAPI()
+        mViewModel.getCountriesFromAPI()
         mViewModel.getCountriesFromDbRx()
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
@@ -289,6 +288,7 @@ class CountryListFragment : Fragment() {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
+            // TODO: What about last location?
             val task: Task<Location>? = mLocationProviderClient?.lastLocation
             task?.addOnSuccessListener { location ->
                 location?.let { mViewModel.attachCurrentLocation(location) }
