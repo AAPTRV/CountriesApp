@@ -1,11 +1,11 @@
-package com.repository.database
+package com.example.data.repository.database
 
+import com.example.data.room.DBInfo
 import com.example.domain.dto.LanguageDto
+import com.example.domain.repository.DatabaseRepository
 import com.example.task1new.ext.convertToLanguagesDto
-import com.example.task1new.room.CountryDatabaseLanguageInfoEntity
-import com.example.task1new.room.DBInfo
 
-class DatabaseRepositoryImpl(private val db: DBInfo) : com.example.domain.repository.DatabaseRepository {
+class DatabaseRepositoryImpl(private val db: DBInfo) : DatabaseRepository {
 
     override fun getAllInfo(): List<LanguageDto> {
         val data = db.getLanguageCommonInfoDAO().getAllInfo()

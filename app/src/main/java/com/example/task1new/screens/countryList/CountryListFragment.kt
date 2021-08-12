@@ -25,6 +25,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
 import com.example.task1new.base.mvp.BaseKoinMvpFragment
+import com.example.task1new.base.mvvm.Outcome
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
@@ -89,12 +90,18 @@ class CountryListFragment : BaseKoinMvpFragment<CountryListView, CountryListPres
         mLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.requireActivity())
         getCurrentLocation()
 
+        mViewModel.subscribeToCountryChannel()
+        mViewModel.getCountries()
+
         mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { data ->
-            myAdapter.addNewUniqueItems(data)
+            when (data) {
+                is Outcome.Progress -> if (data.loading) showProgress() else hideProgress()
+                is Outcome.Next -> myAdapter.addNewUniqueItems(data.data)
+            }
         })
 
-        mViewModel.getCountriesFromDb()
-        mViewModel.getCountriesFromAPI()
+        //mViewModel.getCountriesFromDb()
+        //mViewModel.getCountries()
 
         binding?.recycleView?.setHasFixedSize(true)
         myAdapter.setItemClick {

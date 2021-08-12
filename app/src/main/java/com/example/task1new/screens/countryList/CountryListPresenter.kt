@@ -5,7 +5,7 @@ import com.example.task1new.base.mvp.BaseMvpPresenter
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
 import com.example.data.model.convertToCountryDto
-import com.example.task1new.room.*
+import com.example.data.room.*
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
@@ -13,8 +13,8 @@ import java.util.concurrent.TimeUnit
 
 class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView>() {
 
-    private var mDaoCountryInfo: CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
-    private var mDaoLanguageInfo: CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
+    //private var mDaoCountryInfo: CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
+    //private var mDaoLanguageInfo: CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
     private var mSearchSubject = BehaviorSubject.create<String>()
 
     init {
@@ -88,13 +88,13 @@ class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView
                         mCountriesInfoFromAPI.slice(1..20).forEach { item ->
                             mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
                         }
-                        mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
+                        //mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
 
                         mCountriesInfoFromAPI.slice(1..20).forEach { item ->
                             mCountriesInfoToDB.add(
                                 item.convertCommonInfoAPIDatatoDBItem()
                             )
-                            mDaoCountryInfo.addAll(mCountriesInfoToDB)
+                            //mDaoCountryInfo.addAll(mCountriesInfoToDB)
                         }
                     }
                     .map { it.convertToCountryDto() }

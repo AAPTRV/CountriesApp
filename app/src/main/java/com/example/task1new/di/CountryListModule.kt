@@ -13,7 +13,7 @@ val countryListModule = module {
 
         scoped { GetAllCountriesUseCase(get()) }
 
-        viewModel { (handle: SavedStateHandle) -> CountryListViewModel(handle, get(), get(), get(), get()) }
+        viewModel { (handle: SavedStateHandle) -> CountryListViewModel(handle, get(), get(), get(), get(), get()) }
 
     }
 

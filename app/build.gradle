@@ -46,10 +46,6 @@ def junitVersion = '4.+'
 def androidXTestJUnitVersion = '1.1.2'
 def androidXTestEspressoVersion = '3.3.0'
 
-def androidRoomRuntimeVersion = '2.3.0'
-def androidRoomKtxVersion = '2.3.0'
-def androidRoomTestingVersion = '2.3.0'
-def androidRoomCompilerVersion = '2.3.0'
 def mapViewVersion = '17.0.1'
 
 def bumptechGlideVersion = '4.12.0'
@@ -100,13 +96,6 @@ dependencies {
     testImplementation 'junit:junit:4.+' + junitVersion
     androidTestImplementation 'androidx.test.ext:junit:' + androidXTestJUnitVersion
     androidTestImplementation 'androidx.test.espresso:espresso-core:' + androidXTestEspressoVersion
-
-    // Room components
-    implementation "androidx.room:room-runtime:" + androidRoomRuntimeVersion
-    implementation "androidx.room:room-ktx:" + androidRoomKtxVersion
-    androidTestImplementation "androidx.room:room-testing:" + androidRoomTestingVersion
-    kapt 'androidx.room:room-compiler:' + androidRoomCompilerVersion
-    implementation "androidx.room:room-rxjava3:" + androidRoomRuntimeVersion
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:' + bumptechGlideVersion

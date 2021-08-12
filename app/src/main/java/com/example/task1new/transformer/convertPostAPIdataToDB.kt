@@ -1,8 +1,8 @@
 package com.example.task1new.ext
 
 import com.example.data.model.CountryModel
-import com.example.task1new.room.CountryDatabaseCommonInfoEntity
-import com.example.task1new.room.CountryDatabaseLanguageInfoEntity
+import com.example.data.room.CountryDatabaseCommonInfoEntity
+import com.example.data.room.CountryDatabaseLanguageInfoEntity
 import org.koin.android.ext.koin.ERROR_MSG
 import java.lang.StringBuilder
 

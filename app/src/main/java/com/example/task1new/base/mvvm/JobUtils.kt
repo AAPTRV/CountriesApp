@@ -7,6 +7,13 @@ import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
 
+fun <T> executeJobWithoutProgress(job: Flowable<T>, outcome: MutableLiveData<Outcome<T>>): Disposable {
+    return job.executeOnIoThread()
+        .subscribe(
+            { outcome.nextWithoutProgress(it) }, { outcome.failedWithoutProgress(it) }
+        )
+}
+
 fun <T> executeJob(job: Flowable<T>, outcome: MutableLiveData<Outcome<T>>): Disposable {
     outcome.loading(true)
     return job.executeOnIoThread()
@@ -23,6 +30,18 @@ fun <T> MutableLiveData<Outcome<T>>.success(t: T) {
     with(this) {
         loading(false)
         value = Outcome.success(t)
+    }
+}
+
+fun <T> MutableLiveData<Outcome<T>>.nextWithoutProgress(t: T) {
+    with(this) {
+        value = Outcome.next(t)
+    }
+}
+
+fun <T> MutableLiveData<Outcome<T>>.failedWithoutProgress(e: Throwable) {
+    with(this) {
+        value = Outcome.failure(e)
     }
 }
 

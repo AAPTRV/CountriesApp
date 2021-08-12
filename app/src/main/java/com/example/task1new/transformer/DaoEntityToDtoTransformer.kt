@@ -3,8 +3,8 @@ package com.example.task1new.transformer
 import com.example.task1new.ext.convertToLanguagesDto
 import com.example.domain.dto.LanguageDto
 import com.example.domain.dto.CountryDto
-import com.example.task1new.room.CountryDatabaseCommonInfoEntity
-import com.example.task1new.room.CountryDatabaseLanguageInfoEntity
+import com.example.data.room.CountryDatabaseCommonInfoEntity
+import com.example.data.room.CountryDatabaseLanguageInfoEntity
 
 class DaoEntityToDtoTransformer {
     companion object {

@@ -5,7 +5,7 @@ import com.example.domain.dto.LatLngDto
 import com.example.domain.dto.CountryDto
 import com.google.gson.annotations.SerializedName
 
-fun List<CountryModel>.convertToCountryDto(): List<CountryDto> {
+fun MutableList<CountryModel>.convertToCountryDto(): MutableList<CountryDto> {
     val resultListDto = mutableListOf<CountryDto>()
     for (model in this) {
         resultListDto.add(model.convertToCountryItemDto())

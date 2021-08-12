@@ -5,7 +5,7 @@ import com.example.domain.repository.NetworkRepository
 import com.example.domain.usecase.impl.GetCountryListByNameUseCase
 import com.example.task1new.base.mvp.BaseMvpPresenter
 import com.google.android.gms.maps.model.LatLng
-import com.repository.networkRepo.NetworkRepositoryImpl
+import com.example.data.repository.networkRepo.NetworkRepositoryImpl
 
 class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
 

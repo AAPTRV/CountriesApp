@@ -1,4 +1,4 @@
-package com.example.domain.filter
+package com.example.domain.dto
 
 data class CountryFilterDto(
     var area: Float = Float.MAX_VALUE,

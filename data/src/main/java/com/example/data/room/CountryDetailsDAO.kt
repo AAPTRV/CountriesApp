@@ -1,4 +1,4 @@
-package com.example.task1new.room
+package com.example.data.room
 
 import androidx.room.*
 

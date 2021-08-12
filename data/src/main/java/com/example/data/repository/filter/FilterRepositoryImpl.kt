@@ -1,5 +1,6 @@
-package com.example.domain.filter
+package com.example.data.repository.filter
 
+import com.example.domain.dto.CountryFilterDto
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 
 class FilterRepositoryImpl : com.example.domain.repository.FilterRepository {

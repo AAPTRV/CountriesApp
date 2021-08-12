@@ -9,9 +9,9 @@ import retrofit2.http.Path
 interface CountryService {
 
     @GET(NetConstants.SERVER_API_POSTS_URL)
-    fun getCountryList(): Flowable<List<CountryModel>>
+    fun getCountryList(): Flowable<MutableList<CountryModel>>
 
     @GET(NetConstants.GET_COUNTRY_BY_NAME)
-    fun getCountryByName(@Path(NetConstants.PATH_VARIABLE) name: String): Flowable<List<CountryModel>>
+    fun getCountryByName(@Path(NetConstants.PATH_VARIABLE) name: String): Flowable<MutableList<CountryModel>>
 
 }

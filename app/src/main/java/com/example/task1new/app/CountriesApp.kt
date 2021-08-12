@@ -3,7 +3,7 @@ package com.example.task1new.app
 import android.app.Application
 import com.example.task1new.di.appModule
 import com.example.task1new.di.countryListModule
-import com.example.task1new.room.DBInfo
+import com.example.data.room.DBInfo
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext.startKoin
