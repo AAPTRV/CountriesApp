@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
@@ -292,6 +293,12 @@ class CountryListFragment : Fragment() {
             val task: Task<Location>? = mLocationProviderClient?.lastLocation
             task?.addOnSuccessListener { location ->
                 location?.let { mViewModel.attachCurrentLocation(location) }
+                if (location == null) {
+                    mViewModel.attachCurrentLocation(Location(LocationManager.GPS_PROVIDER).apply {
+                        latitude = 53.06
+                        longitude = 126.19
+                    })
+                }
             }
         } else {
             val listPermissionsNeeded = ArrayList<String>()

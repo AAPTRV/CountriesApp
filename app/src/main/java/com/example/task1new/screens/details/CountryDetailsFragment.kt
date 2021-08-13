@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 private const val SHARED_PREFS: String = "sharedPrefs"
 private const val NOTE_TEXT_STATE = "Note text state"
 
+// TODO: Implement MVVM
 class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetailsPresenter>(), OnMapReadyCallback, CountryDetailsView {
 
     private lateinit var mLanguagesAdapter: LanguageAdapter
@@ -69,8 +70,8 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         }
         getPresenter().getCountryByName(mCountryName, false)
 
-        val myDialog = CustomDialog(this.requireContext())
-        myDialog.create()
+//        val myDialog = CustomDialog(this.requireContext())
+//        myDialog.create()
 //        binding?.note?.setOnClickListener{
 //            myDialog.show()
 //        }

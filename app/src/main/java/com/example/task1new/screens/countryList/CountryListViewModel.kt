@@ -152,8 +152,6 @@ class CountryListViewModel(
         return mCountriesFilterLiveData
     }
 
-//    private fun getFilter(): CountryDtoListFilterObject = mFilter
-
     fun clearFilterExceptName() {
         mFilter.getFilter().filterClearExceptName()
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
