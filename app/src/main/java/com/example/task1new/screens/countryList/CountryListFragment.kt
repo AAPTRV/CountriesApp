@@ -60,7 +60,7 @@ class CountryListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.e("HZ", "ON CREATE")
-        mViewModel.getCountriesFromAPI()
+//        mViewModel.getCountriesFromAPI()
         mViewModel.getCountriesFromDbRx()
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
@@ -104,11 +104,6 @@ class CountryListFragment : Fragment() {
             binding?.recycleView?.layoutManager = LinearLayoutManager(context)
         }
 
-        //GPS
-        mLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(this.requireActivity())
-        getCurrentLocation()
-
         //MVVM OBSERVE
         mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { data ->
             myAdapter.repopulateAdapterData(data)
@@ -118,6 +113,11 @@ class CountryListFragment : Fragment() {
             myAdapter.repopulateAdapterData(mViewModel.getFilteredDataFromCountriesLiveData())
             Toast.makeText(this.requireActivity(), "Filter updated", Toast.LENGTH_SHORT).show()
         })
+
+        //GPS
+        mLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(this.requireActivity())
+        getCurrentLocation()
 
         //RecycleView
         binding?.recycleView?.setHasFixedSize(true)
@@ -289,7 +289,6 @@ class CountryListFragment : Fragment() {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: What about last location?
             val task: Task<Location>? = mLocationProviderClient?.lastLocation
             task?.addOnSuccessListener { location ->
                 location?.let { mViewModel.attachCurrentLocation(location) }

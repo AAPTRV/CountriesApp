@@ -19,10 +19,13 @@ import com.example.task1new.repository.FilterRepositoryImpl
 import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToDtoTransformer
 import com.example.task1new.transformer.DaoEntityToDtoTransformer.Companion.findEntityByCountryName
+import com.google.android.gms.location.LocationServices
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.function.BiFunction
+import kotlin.concurrent.thread
 
 class CountryListViewModel(
     savedStateHandle: SavedStateHandle,
@@ -60,6 +63,7 @@ class CountryListViewModel(
                     longitude = dto.location[1]
                 }
                 mUsersLocation?.let {
+                    Log.e("HZ", "We are in mUsersLocation != null")
                     dto.distance =
                         (mUsersLocation!!.distanceTo(currentCountryLocation)
                             .toDouble() / 1000).toString()
@@ -235,96 +239,76 @@ class CountryListViewModel(
         }
 
         fun getCountriesInfoEntitiesFlowable(): Flowable<List<CountryDatabaseCommonInfoEntity>> {
-            return Flowable.just("")
-                .map { mDaoCountryInfo.getAllInfo() }
-                .doOnNext { Log.e("HZ", "Common entities Flowable thread is: ${Thread.currentThread().name}") }
+            return Flowable.create({
+                val result = mDaoCountryInfo.getAllInfo()
+                it.onNext(result)
+                it.onComplete()
+            }, BackpressureStrategy.LATEST)
         }
 
-        fun getCountriesLanguageEntitiesFlowable(): Flowable<List<CountryDatabaseLanguageInfoEntity>>{
-            return Flowable.just("")
-                .map{mDaoLanguageInfo.getAllInfo()}
-                .doOnNext { Log.e("HZ", "Common language Flowable thread is: ${Thread.currentThread().name}") }
-
+        fun getCountriesLanguageEntitiesFlowable(): Flowable<List<CountryDatabaseLanguageInfoEntity>> {
+            return Flowable.create({
+                val result = mDaoLanguageInfo.getAllInfo()
+                it.onNext(result)
+                it.onComplete()
+            }, BackpressureStrategy.LATEST)
         }
 
         mCompositeDisposable.add(
             Flowable.zip(
                 getCountriesInfoEntitiesFlowable(),
                 getCountriesLanguageEntitiesFlowable(),
-                io.reactivex.rxjava3.functions.BiFunction{ commonInfoEntityList, languageInfoEntityList ->
+                io.reactivex.rxjava3.functions.BiFunction { commonInfoEntityList, languageInfoEntityList ->
                     return@BiFunction getDtoFromEntities(
                         commonInfoEntityList,
                         languageInfoEntityList
                     )
                 })
                 // TODO: Adding distance is not working!
+                .doOnNext {
+                    Log.e("HZ", "thread is sleeping")
+                    Thread.sleep(2000)
+                    Log.e("HZ", "thread woke up!")
+                }
                 .map { addDistanceToCountriesDtoList(it) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { addNewUniqueItemsInLiveData(it) })
-}
+    }
 
-fun getCountriesFromDb() {
-    val mCountriesLanguageEntities = mutableListOf<CountryDatabaseLanguageInfoEntity>()
-    val mCountriesInfoEntities = mutableListOf<CountryDatabaseCommonInfoEntity>()
-    val mPostCountriesData = mutableListOf<CountryDto>()
-    // Filling mCountriesInfoEntities list with items from DB
-    mDaoCountryInfo.getAllInfo().forEach { entity ->
-        mCountriesInfoEntities.add(entity)
-    }
-    // Filling mCountriesLanguageEntities with items from DB
-    mCountriesInfoEntities.forEach { entity ->
-        mCountriesLanguageEntities.add(mDaoLanguageInfo.getLanguageInfoByCountry(entity.name))
-    }
-    // Filling mPost Countries Data through transformer, using info and languages entities
-    mCountriesInfoEntities.forEachIndexed { index, infoEntity ->
-        mPostCountriesData.add(
-            DaoEntityToDtoTransformer.daoEntityToDtoTransformer(
-                infoEntity,
-                mCountriesLanguageEntities[index]
-            )
+    fun getCountriesFromAPI() {
+        mCompositeDisposable.add(
+            Retrofit.getCountriesApi().getPosts()
+                .doOnNext {
+                    Log.e("hz", "DO ON NEXT")
+                    // DB inserting data
+                    val mCountriesInfoFromAPI = it.toMutableList()
+                    val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
+
+                    val mLanguagesFromApiToDB =
+                        mutableListOf<CountryDatabaseLanguageInfoEntity>()
+                    mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+                        mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
+                    }
+                    mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
+
+                    mCountriesInfoFromAPI.slice(1..20).forEach { item ->
+                        mCountriesInfoToDB.add(
+                            item.convertCommonInfoAPIDatatoDBItem()
+                        )
+                        mDaoCountryInfo.addAll(mCountriesInfoToDB)
+                    }
+//                    addDistanceToCountriesLiveData()
+                }
+                .map { it.convertToCountryDto() }
+                .map { addDistanceToCountriesDtoList(it) }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    addNewUniqueItemsInLiveData(it)
+                    Log.e("hz", "GET API LIVE DATA SIZE = ${mCountriesListLiveData.value?.size}")
+                }, { }
+                )
         )
     }
-    if (mPostCountriesData.isNotEmpty()) {
-        // Filling adapter with first 20 items from DB
-        addNewUniqueItemsInLiveData(mPostCountriesData)
-        Log.e("hz", "GET DB LIVE DATA SIZE = ${mCountriesListLiveData.value?.size}")
-    }
-}
-
-fun getCountriesFromAPI() {
-    mCompositeDisposable.add(
-        Retrofit.getCountriesApi().getPosts()
-            .doOnNext {
-                Log.e("hz", "DO ON NEXT")
-                // DB inserting data
-                val mCountriesInfoFromAPI = it.toMutableList()
-                val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
-
-                val mLanguagesFromApiToDB =
-                    mutableListOf<CountryDatabaseLanguageInfoEntity>()
-                mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                    mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
-                }
-                mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
-
-                mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                    mCountriesInfoToDB.add(
-                        item.convertCommonInfoAPIDatatoDBItem()
-                    )
-                    mDaoCountryInfo.addAll(mCountriesInfoToDB)
-                }
-//                    addDistanceToCountriesLiveData()
-            }
-            .map { it.convertToCountryDto() }
-            .map { addDistanceToCountriesDtoList(it) }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                addNewUniqueItemsInLiveData(it)
-                Log.e("hz", "GET API LIVE DATA SIZE = ${mCountriesListLiveData.value?.size}")
-            }, { }
-            )
-    )
-}
 }
