@@ -70,11 +70,7 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         }
         getPresenter().getCountryByName(mCountryName, false)
 
-//        val myDialog = CustomDialog(this.requireContext())
-//        myDialog.create()
-//        binding?.note?.setOnClickListener{
-//            myDialog.show()
-//        }
+
         // TODO: FILL THE CONTENT
         binding?.note?.setOnClickListener {
             activity?.showDialogWithOneButton(
@@ -84,19 +80,6 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
                 null
             )
         }
-//        val mEtDialog = myDialog.findViewById<EditText>(R.id.editText)
-//        mEtDialog.requestFocus()
-//        mEtDialog.showSoftInputOnFocus = true
-//        val mOkButton = myDialog.findViewById<Button>(R.id.button_ok)
-//        val mCancelButton = myDialog.findViewById<Button>(R.id.button_cancel)
-//        mOkButton.setOnClickListener {
-//            binding?.note?.text = mEtDialog.text.toString()
-//            saveNoteTextState()
-//            myDialog.dismiss()
-//        }
-//        mCancelButton.setOnClickListener {
-//            myDialog.dismiss()
-//        }
     }
 
     override fun onStart() {
@@ -176,24 +159,6 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         return mPresenter
     }
 
-    override fun showCountryInfo(country: CountryDto, location: LatLng) {
-        mLanguagesAdapter.addListOfItems(
-            country.languages
-        )
-        binding?.srCountryDetails?.isRefreshing = false
-        binding?.ivCountryFlag?.loadSvg(
-            country.flag
-        )
-        mGoogleMap?.addMarker(
-            MarkerOptions().position(
-                location
-            )
-                .title(country.name)
-        )
-
-        mGoogleMap?.moveCamera(CameraUpdateFactory.newLatLng(location))
-    }
-
     override fun showError(error: String, throwable: Throwable) {
         activity?.showSimpleDialogNetworkError()
     }
@@ -206,8 +171,5 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         binding?.progressDetails?.visibility = View.GONE
     }
 
-    override fun onMapReady(p0: GoogleMap) {
-        mGoogleMap = p0
-    }
 
 }
