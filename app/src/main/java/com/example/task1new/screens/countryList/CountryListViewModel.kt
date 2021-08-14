@@ -33,8 +33,8 @@ class CountryListViewModel(
 ) :
     BaseViewModel(savedStateHandle) {
 
+    private var mFilter = FilterRepositoryImpl().getFilter()
     private var mUsersLocation: Location? = null
-    private val mFilter: FilterRepository = FilterRepositoryImpl()
     private var mDaoCountryInfo: CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
     private var mDaoLanguageInfo: CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
     private val mCountriesListLiveData =
@@ -50,7 +50,7 @@ class CountryListViewModel(
     fun getFilteredDataFromCountriesLiveData(): List<CountryDto> {
         val result: MutableList<CountryDto> = mutableListOf()
         mCountriesListLiveData.value?.let { result.addAll(it) }
-        return result.applyFilter(mFilter.getFilter())
+        return result.applyFilter(mFilter)
     }
 
     private fun addDistanceToCountriesDtoList(dtoList: List<CountryDto>): List<CountryDto> {
@@ -157,37 +157,37 @@ class CountryListViewModel(
     }
 
     fun clearFilterExceptName() {
-        mFilter.getFilter().filterClearExceptName()
+        mFilter.filterClearExceptName()
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }
 
     fun setFilterCountryName(countryName: String) {
-        mFilter.getFilter().filterCountryNameChange(countryName)
+        mFilter.filterCountryNameChange(countryName)
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }
 
     fun setFilterMinPopulation(minPopulation: Int) {
-        mFilter.getFilter().filterMinPopulationChange(minPopulation)
+        mFilter.filterMinPopulationChange(minPopulation)
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }
 
     fun setFilterMaxPopulation(maxPopulation: Int) {
-        mFilter.getFilter().filterMaxPopulationChange(maxPopulation)
+        mFilter.filterMaxPopulationChange(maxPopulation)
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }
 
     fun setFilterMinArea(minArea: Double) {
-        mFilter.getFilter().filterMinAreaChange(minArea)
+        mFilter.filterMinAreaChange(minArea)
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }
 
     fun setFilterMaxArea(maxArea: Double) {
-        mFilter.getFilter().filterMaxAreaChange(maxArea)
+        mFilter.filterMaxAreaChange(maxArea)
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }
 
     fun setFilterMaxDistance(maxDistance: Double) {
-        mFilter.getFilter().filterMaxDistanceChange(maxDistance)
+        mFilter.filterMaxDistanceChange(maxDistance)
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }
 
@@ -264,12 +264,6 @@ class CountryListViewModel(
                         languageInfoEntityList
                     )
                 })
-                // TODO: Adding distance is not working!
-                .doOnNext {
-                    Log.e("HZ", "thread is sleeping")
-                    Thread.sleep(2000)
-                    Log.e("HZ", "thread woke up!")
-                }
                 .map { addDistanceToCountriesDtoList(it) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -280,7 +274,6 @@ class CountryListViewModel(
         mCompositeDisposable.add(
             Retrofit.getCountriesApi().getPosts()
                 .doOnNext {
-                    Log.e("hz", "DO ON NEXT")
                     // DB inserting data
                     val mCountriesInfoFromAPI = it.toMutableList()
                     val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
@@ -306,7 +299,6 @@ class CountryListViewModel(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     addNewUniqueItemsInLiveData(it)
-                    Log.e("hz", "GET API LIVE DATA SIZE = ${mCountriesListLiveData.value?.size}")
                 }, { }
                 )
         )

@@ -60,8 +60,11 @@ class CountryListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.e("HZ", "ON CREATE")
-//        mViewModel.getCountriesFromAPI()
-        mViewModel.getCountriesFromDbRx()
+        //GPS
+        mLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(this.requireActivity())
+        getCurrentLocation()
+        mViewModel.getCountriesFromAPI()
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -114,10 +117,7 @@ class CountryListFragment : Fragment() {
             Toast.makeText(this.requireActivity(), "Filter updated", Toast.LENGTH_SHORT).show()
         })
 
-        //GPS
-        mLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(this.requireActivity())
-        getCurrentLocation()
+
 
         //RecycleView
         binding?.recycleView?.setHasFixedSize(true)
@@ -298,6 +298,7 @@ class CountryListFragment : Fragment() {
                         longitude = 126.19
                     })
                 }
+                mViewModel.getCountriesFromDbRx()
             }
         } else {
             val listPermissionsNeeded = ArrayList<String>()
