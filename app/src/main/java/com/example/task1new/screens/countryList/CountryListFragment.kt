@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
@@ -20,7 +21,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.task1new.*
 import com.example.task1new.app.CountriesApp
-import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.databinding.FragmentCountryListBinding
 import com.example.task1new.ext.showSimpleDialogNetworkError
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -41,6 +41,7 @@ private const val SHARED_PREFS: String = "sharedPrefs"
 private const val MENU_SORT_ICON_STATE = "menu sort icon state"
 private const val MENU_FILTER_ICON_STATE = "menu filter icon state"
 
+
 class CountryListFragment : Fragment() {
 
     private var param1: String? = null
@@ -52,9 +53,18 @@ class CountryListFragment : Fragment() {
     private var mLocationProviderClient: FusedLocationProviderClient? = null
     private val mViewModel = CountryListViewModel(SavedStateHandle(), CountriesApp.mDatabase)
 
+    init {
+        Log.e("HZ", "Initialization FRAGMENT BLOCK")
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        Log.e("HZ", "ON CREATE")
+        //GPS
+        mLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(this.requireActivity())
+        getCurrentLocation()
+        mViewModel.getCountriesFromAPI()
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -72,41 +82,11 @@ class CountryListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setHasOptionsMenu(true)
-
-        mLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(this.requireActivity())
-        getCurrentLocation()
-
-        mViewModel.getCountriesFromDbRxSimple()
-        mViewModel.getCountriesFromAPIRx()
-
-        mViewModel.getCountriesLiveDataRx().observe(viewLifecycleOwner, { outcome ->
-            when (outcome) {
-                is Outcome.Progress -> {
-                    showProgress()
-                }
-                is Outcome.Next -> {
-                    myAdapter.addNewUniqueItems(outcome.data)
-                    hideProgress()
-                    Log.e("HZ", "DATA SET CHANGED")
-                }
-                is Outcome.Failure -> {
-
-                }
-                is Outcome.Success -> {
-                }
-            }
-        })
-
-
-        mViewModel.getFilterLiveData().observe(viewLifecycleOwner, {
-            myAdapter.repopulateFilteredDataListWithFilter(it)
-            Toast.makeText(this.requireActivity(), "Filter updated", Toast.LENGTH_SHORT).show()
-        })
-
-        setFragmentResultListener("filterKey") { _, bundle ->
-            val result = bundle.getParcelableArrayList<Parcelable>("resultList") as List<Double>
+        showProgress()
+        //RESULT LISTENER
+        setFragmentResultListener(FRAGMENT_FOR_RESULT_FILTER_KEY) { _, bundle ->
+            val result =
+                bundle.getParcelableArrayList<Parcelable>(FRAGMENT_FOR_RESULT_RESULT_LIST) as List<Double>
             mViewModel.setFilterMaxArea(result[0])
             mViewModel.setFilterMinArea(result[1])
             mViewModel.setFilterMaxPopulation(result[2].toInt())
@@ -114,27 +94,40 @@ class CountryListFragment : Fragment() {
             mViewModel.setFilterMaxDistance(result[4])
         }
 
-//        mViewModel.getCountriesFromDb()
-//        mViewModel.getCountriesFromAPI()
+        //General UI settings
+        setHasOptionsMenu(true)
 
-        binding?.recycleView?.setHasFixedSize(true)
-        myAdapter.setItemClick {
-            val bundle = Bundle()
-            Log.e("HZ", "COUNTRY NAME = ${it.name}")
-            bundle.putString(COUNTRY_NAME_BUNDLE_KEY, it.name)
-            findNavController().navigate(
-                R.id.action_blankFragmentRV_to_countryDetailsFragment, bundle
-            )
-        }
-
-        binding?.recycleView?.adapter = myAdapter
-
+        // TODO: Handle saved instance state ...
+        //Saved Instance State
         if (savedInstanceState != null) {
             mLayoutManagerState =
                 savedInstanceState.getParcelable(COUNTRY_DETAILS_LAYOUT_MANAGER_KEY)!!
             binding?.recycleView?.layoutManager?.onRestoreInstanceState(mLayoutManagerState)
         } else {
             binding?.recycleView?.layoutManager = LinearLayoutManager(context)
+        }
+
+        //MVVM OBSERVE
+        mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { data ->
+            myAdapter.repopulateAdapterData(data)
+            hideProgress()
+        })
+        mViewModel.getFilterLiveData().observe(viewLifecycleOwner, {
+            myAdapter.repopulateAdapterData(mViewModel.getFilteredDataFromCountriesLiveData())
+            Toast.makeText(this.requireActivity(), "Filter updated", Toast.LENGTH_SHORT).show()
+        })
+
+
+
+        //RecycleView
+        binding?.recycleView?.setHasFixedSize(true)
+        binding?.recycleView?.adapter = myAdapter
+        myAdapter.setItemClick {
+            val bundle = Bundle()
+            bundle.putString(COUNTRY_NAME_BUNDLE_KEY, it.name)
+            findNavController().navigate(
+                R.id.action_blankFragmentRV_to_countryDetailsFragment, bundle
+            )
         }
     }
 
@@ -147,7 +140,7 @@ class CountryListFragment : Fragment() {
         inflater.inflate(R.menu.countries_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
         loadMenuSortIconState()
-        loadMenuFilterIconState()
+//        loadMenuFilterIconState()
         initializeMenuSortIconSet(menu.findItem(R.id.menu_sort_button))
         initializeFilterIconSet(menu.findItem(R.id.menu_filter_button))
 
@@ -167,7 +160,7 @@ class CountryListFragment : Fragment() {
                 if (newText.length >= 3) {
                     mViewModel.setFilterCountryName(newText)
                 }
-                if (newText.length in 0..2 && myAdapter.isFiltered()) {
+                if (newText.length in 0..2) {
                     mViewModel.setFilterCountryName(FILTER_ANY_COUNTRY_VALUE)
                 }
                 return true
@@ -176,6 +169,8 @@ class CountryListFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // TODO: Make filter item GONE until we have some values in LiveData(in order to avoid crash while clicking
+        // TODO: Handle filter range slider while it is impossible to detect users location
         if (item.itemId == R.id.menu_maps_button) {
             Navigation.findNavController(requireView())
                 .navigate(R.id.action_blankFragmentRV_to_mapsFragmentBlank2)
@@ -183,18 +178,18 @@ class CountryListFragment : Fragment() {
         if (item.itemId == R.id.menu_filter_button) {
             if (!filterIconClipped) {
                 val bundle = Bundle()
-                bundle.putInt(
-                    FILTER_MAXIMUM_POPULATION_BUNDLE_KEY,
+                bundle.putString(
+                    ADAPTER_MAXIMUM_POPULATION_BUNDLE_KEY,
                     mViewModel.getMaximumPopulation()
                 )
-                bundle.putInt(
-                    FILTER_MINIMUM_POPULATION_BUNDLE_KEY,
+                bundle.putString(
+                    ADAPTER_MINIMUM_POPULATION_BUNDLE_KEY,
                     mViewModel.getMinimumPopulation()
                 )
-                bundle.putString(FILTER_MAXIMUM_AREA_BUNDLE_KEY, mViewModel.getMaximumArea())
-                bundle.putString(FILTER_MINIMUM_AREA_BUNDLE_KEY, mViewModel.getMinimumArea())
+                bundle.putString(ADAPTER_MAXIMUM_AREA_BUNDLE_KEY, mViewModel.getMaximumArea())
+                bundle.putString(ADAPTER_MINIMUM_AREA_BUNDLE_KEY, mViewModel.getMinimumArea())
                 bundle.putString(
-                    FILTER_MAXIMUM_DISTANCE_BUNDLE_KEY,
+                    ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY,
                     mViewModel.getMaximumDistance()
                 )
                 filterIconClipped = true
@@ -203,11 +198,13 @@ class CountryListFragment : Fragment() {
                     .navigate(R.id.action_blankFragmentRV_to_filterFragment, bundle)
             } else {
                 item.setIcon(R.drawable.ic_baseline_filter_alt_24)
+                // TODO: Check clear filter for default value -> if gps is off it
                 mViewModel.clearFilterExceptName()
                 filterIconClipped = false
             }
         }
         if (item.itemId == R.id.menu_sort_button) {
+            // TODO: Sort items automatically at start (there is a problem while back from the details with layout manager (scroll))
             updateMenuSortIconView(item)
             saveMenuSortIconState()
             if (sortIconClipped) {
@@ -217,13 +214,6 @@ class CountryListFragment : Fragment() {
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun loadMenuFilterIconState() {
-        val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
-            SHARED_PREFS, AppCompatActivity.MODE_PRIVATE
-        )
-        filterIconClipped = sharedPreferences.getBoolean(MENU_FILTER_ICON_STATE, false)
     }
 
     private fun saveMenuFilterIconState() {
@@ -301,10 +291,14 @@ class CountryListFragment : Fragment() {
         ) {
             val task: Task<Location>? = mLocationProviderClient?.lastLocation
             task?.addOnSuccessListener { location ->
-                location?.let {
-                    myAdapter.attachCurrentLocation(location)
-                    mViewModel.attachCurrentLocation(location)
+                location?.let { mViewModel.attachCurrentLocation(location) }
+                if (location == null) {
+                    mViewModel.attachCurrentLocation(Location(LocationManager.GPS_PROVIDER).apply {
+                        latitude = 53.06
+                        longitude = 126.19
+                    })
                 }
+                mViewModel.getCountriesFromDbRx()
             }
         } else {
             val listPermissionsNeeded = ArrayList<String>()
@@ -312,7 +306,7 @@ class CountryListFragment : Fragment() {
             ActivityCompat.requestPermissions(
                 this.requireActivity(),
                 listPermissionsNeeded.toTypedArray(),
-                44
+                GPS_PERMISSION
             )
         }
     }
@@ -323,6 +317,7 @@ class CountryListFragment : Fragment() {
          * this fragment using the provided parameters.
          *
          * @param param1 Parameter 1.
+         * @param param2 Parameter 2.
          * @return A new instance of fragment BlankFragmentRV.
          */
 

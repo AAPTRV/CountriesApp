@@ -53,5 +53,8 @@
     <string name="countries_area">Countries area:</string>
     <string name="reset_filter">RESET FILTER</string>
     <string name="search">Search</string>
+    <string name="error">ERROR</string>
+    <string name="error_default">ERROR_DEFAULT</string>
+    <string name="dialog_ok">DIALOG_OK</string>
 
 </resources>

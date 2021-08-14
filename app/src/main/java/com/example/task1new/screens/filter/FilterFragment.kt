@@ -58,29 +58,28 @@ class FilterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var mMinArea = arguments?.getString(FILTER_MINIMUM_AREA_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
-        var mMaxArea = arguments?.getString(FILTER_MAXIMUM_AREA_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
+        var mMinArea = arguments?.getString(ADAPTER_MINIMUM_AREA_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
+        var mMaxArea = arguments?.getString(ADAPTER_MAXIMUM_AREA_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
         binding?.areaSlider?.valueFrom = mMinArea
         binding?.areaSlider?.valueTo = mMaxArea
         binding?.areaSlider?.stepSize = getStepSize(mMinArea, mMaxArea)
         binding?.areaSlider?.values = mutableListOf(mMinArea, mMaxArea)
 
         var mMinPopulation =
-            arguments?.getInt(FILTER_MINIMUM_POPULATION_BUNDLE_KEY, 0) ?: 0
+            arguments?.getString(ADAPTER_MINIMUM_POPULATION_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
         var mMaxPopulation =
-            arguments?.getInt(FILTER_MAXIMUM_POPULATION_BUNDLE_KEY, 0) ?: 0
-        binding?.populationSlider?.valueFrom = mMinPopulation.toFloat()
-        binding?.populationSlider?.valueTo = mMaxPopulation.toFloat()
-        binding?.populationSlider?.stepSize = getStepSize(mMinPopulation.toFloat(), mMaxPopulation.toFloat())
-        binding?.populationSlider?.values = mutableListOf(mMinPopulation.toFloat(), mMaxPopulation.toFloat())
+            arguments?.getString(ADAPTER_MAXIMUM_POPULATION_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
+        binding?.populationSlider?.valueFrom = mMinPopulation
+        binding?.populationSlider?.valueTo = mMaxPopulation
+        binding?.populationSlider?.stepSize = getStepSize(mMinPopulation, mMaxPopulation)
+        binding?.populationSlider?.values = mutableListOf(mMinPopulation, mMaxPopulation)
 
         var mMaxDistance =
-            arguments?.getString(FILTER_MAXIMUM_DISTANCE_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
+            arguments?.getString(ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
 
         binding?.distanceSlider?.valueFrom = 0F
         binding?.distanceSlider?.valueTo = mMaxDistance
         binding?.distanceSlider?.stepSize = getStepSize(0F, mMaxDistance)
-//        binding?.distanceSlider?.values = mutableListOf(mMinDistance, mMaxDistance)
 
         binding?.areaTextView?.text =
             context?.getString(R.string.filter_area, mMinArea / 1000, mMaxArea / 1000)
@@ -112,13 +111,13 @@ class FilterFragment : Fragment() {
         binding?.populationSlider?.addOnSliderTouchListener(object :
             RangeSlider.OnSliderTouchListener {
             override fun onStartTrackingTouch(slider: RangeSlider) {
-                mMaxPopulation = slider.values[1].toInt()
-                mMinPopulation = slider.values[0].toInt()
+                mMaxPopulation = slider.values[1]
+                mMinPopulation = slider.values[0]
             }
 
             override fun onStopTrackingTouch(slider: RangeSlider) {
-                mMaxPopulation = slider.values[1].toInt()
-                mMinPopulation = slider.values[0].toInt()
+                mMaxPopulation = slider.values[1]
+                mMinPopulation = slider.values[0]
                 binding?.populationTextView?.text =
                     context?.getString(
                         R.string.filter_population,
@@ -154,9 +153,8 @@ class FilterFragment : Fragment() {
             result.add(mMaxDistance.toDouble())
 
             setFragmentResult("filterKey", bundleOf("resultList" to result))
-
             Navigation.findNavController(requireView())
-                .navigate(R.id.action_filterFragment_to_blankFragmentRV)
+                .navigateUp()
         }
     }
 

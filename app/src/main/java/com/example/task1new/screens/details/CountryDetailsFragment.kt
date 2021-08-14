@@ -2,7 +2,6 @@ package com.example.task1new.screens.details
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.setFragmentResultListener
-import com.example.task1new.COUNTRY_DETAILS_BUNDLE_ERROR
+import androidx.navigation.Navigation
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
 import com.example.task1new.R
 import com.example.task1new.base.mvp.BaseMvpFragment
@@ -19,6 +18,7 @@ import com.example.task1new.content.dialog.CustomDialog
 import com.example.task1new.databinding.FragmentCountryDetailsBinding
 import com.example.task1new.dto.CountryDto
 import com.example.task1new.ext.loadSvg
+import com.example.task1new.ext.showDialogWithOneButton
 import com.example.task1new.ext.showSimpleDialogNetworkError
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 private const val SHARED_PREFS: String = "sharedPrefs"
 private const val NOTE_TEXT_STATE = "Note text state"
 
+// TODO: Implement MVVM
 class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetailsPresenter>(), OnMapReadyCallback, CountryDetailsView {
 
     private lateinit var mLanguagesAdapter: LanguageAdapter
@@ -37,19 +38,17 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
     private var mGoogleMap: GoogleMap? = null
     private var binding: FragmentCountryDetailsBinding? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mCountryName = arguments?.getString(COUNTRY_NAME_BUNDLE_KEY) ?: COUNTRY_DETAILS_BUNDLE_ERROR
-        Log.e("HZ", "DETAILS COUNTRY NAME = $mCountryName")
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         binding = FragmentCountryDetailsBinding.inflate(inflater, container, false)
+        mCountryName = arguments?.getString(COUNTRY_NAME_BUNDLE_KEY, "") ?: ""
         binding?.mvCountryDetails?.onCreate(savedInstanceState)
+
         return binding?.root
     }
 
@@ -71,44 +70,87 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         }
         getPresenter().getCountryByName(mCountryName, false)
 
-        val myDialog = CustomDialog(this.requireContext())
-        myDialog.create()
-        binding?.note?.setOnClickListener{
-            myDialog.show()
+//        val myDialog = CustomDialog(this.requireContext())
+//        myDialog.create()
+//        binding?.note?.setOnClickListener{
+//            myDialog.show()
+//        }
+        // TODO: FILL THE CONTENT
+        binding?.note?.setOnClickListener {
+            activity?.showDialogWithOneButton(
+                null,
+                "123",
+                R.string.dialog_ok,
+                null
+            )
         }
-        val mEtDialog = myDialog.findViewById<EditText>(R.id.editText)
-        mEtDialog.requestFocus()
-        mEtDialog.showSoftInputOnFocus = true
-        val mOkButton = myDialog.findViewById<Button>(R.id.button_ok)
-        val mCancelButton = myDialog.findViewById<Button>(R.id.button_cancel)
-        mOkButton.setOnClickListener {
-            binding?.note?.text = mEtDialog.text.toString()
-            saveNoteTextState()
-            myDialog.dismiss()
-        }
-        mCancelButton.setOnClickListener {
-            myDialog.dismiss()
-        }
+//        val mEtDialog = myDialog.findViewById<EditText>(R.id.editText)
+//        mEtDialog.requestFocus()
+//        mEtDialog.showSoftInputOnFocus = true
+//        val mOkButton = myDialog.findViewById<Button>(R.id.button_ok)
+//        val mCancelButton = myDialog.findViewById<Button>(R.id.button_cancel)
+//        mOkButton.setOnClickListener {
+//            binding?.note?.text = mEtDialog.text.toString()
+//            saveNoteTextState()
+//            myDialog.dismiss()
+//        }
+//        mCancelButton.setOnClickListener {
+//            myDialog.dismiss()
+//        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        binding?.mvCountryDetails?.onStart()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding?.mvCountryDetails?.onDestroy()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding?.mvCountryDetails?.onStop()
     }
 
     override fun onResume() {
-
         binding?.mvCountryDetails?.onResume()
         super.onResume()
     }
 
     override fun onDestroyView() {
-
         super.onDestroyView()
         binding = null
         mGoogleMap = null
         getPresenter().onDestroyView()
+    }
 
+    override fun onMapReady(p0: GoogleMap) {
+        mGoogleMap = p0
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
         binding?.mvCountryDetails?.onLowMemory()
+    }
+
+    override fun showCountryInfo(country: CountryDto, location: LatLng) {
+        mLanguagesAdapter.addListOfItems(
+            country.languages
+        )
+        binding?.srCountryDetails?.isRefreshing = false
+        binding?.ivCountryFlag?.loadSvg(
+            country.flag
+        )
+        mGoogleMap?.addMarker(
+            MarkerOptions().position(
+                location
+            )
+                .title(country.name)
+        )
+
+        mGoogleMap?.moveCamera(CameraUpdateFactory.newLatLng(location))
     }
 
     private fun saveNoteTextState(){
