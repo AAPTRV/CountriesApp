@@ -13,7 +13,7 @@ fun List<LanguageModel>.convertToCountryNameList(): String {
     return sb.toString()
 }
 
-fun List<Double?>.convertToCountryLocationList(): String {
+fun List<Double?>.convertCountryListToString(): String {
     val sb = StringBuilder()
     this.forEachIndexed { index, language ->
         sb.append(language.toString())

@@ -26,6 +26,10 @@ import com.example.task1new.ext.showSimpleDialogNetworkError
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
+import org.koin.android.compat.ScopeCompat.viewModel
+import org.koin.androidx.scope.ScopeFragment
+import org.koin.androidx.viewmodel.ext.android.stateViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -42,7 +46,7 @@ private const val MENU_SORT_ICON_STATE = "menu sort icon state"
 private const val MENU_FILTER_ICON_STATE = "menu filter icon state"
 
 
-class CountryListFragment : Fragment() {
+class CountryListFragment : ScopeFragment() {
 
     private var param1: String? = null
     private var param2: String? = null
@@ -51,7 +55,7 @@ class CountryListFragment : Fragment() {
     private var filterIconClipped = false
     private lateinit var mLayoutManagerState: Parcelable
     private var mLocationProviderClient: FusedLocationProviderClient? = null
-    private val mViewModel = CountryListViewModel(SavedStateHandle(), CountriesApp.mDatabase)
+    private val mViewModel: CountryListViewModel by stateViewModel()
 
     init {
         Log.e("HZ", "Initialization FRAGMENT BLOCK")

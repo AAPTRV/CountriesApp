@@ -14,6 +14,7 @@ import androidx.navigation.Navigation
 import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
 import com.example.task1new.R
 import com.example.task1new.base.mvp.BaseMvpFragment
+import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.content.dialog.CustomDialog
 import com.example.task1new.databinding.FragmentCountryDetailsBinding
 import com.example.task1new.dto.CountryDto
@@ -25,18 +26,22 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import org.koin.androidx.scope.ScopeFragment
+import org.koin.androidx.viewmodel.ext.android.stateViewModel
+import org.koin.core.component.getScopeName
 
 
 private const val SHARED_PREFS: String = "sharedPrefs"
 private const val NOTE_TEXT_STATE = "Note text state"
 
 // TODO: Implement MVVM
-class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetailsPresenter>(), OnMapReadyCallback, CountryDetailsView {
+class CountryDetailsFragment : ScopeFragment(), OnMapReadyCallback {
 
     private lateinit var mLanguagesAdapter: LanguageAdapter
     private lateinit var mCountryName: String
     private var mGoogleMap: GoogleMap? = null
     private var binding: FragmentCountryDetailsBinding? = null
+    private val mViewModel: CountryDetailsViewModel by stateViewModel()
 
 
     override fun onCreateView(
@@ -55,20 +60,53 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        getPresenter().attachView(this)
         loadNoteTextState()
+
+        mViewModel.getCountry(mCountryName)
+
+
+        mViewModel.getCountryLiveData().observe(viewLifecycleOwner, {
+            when (it) {
+                is Outcome.Progress ->{
+                    showProgress()
+                }
+                is Outcome.Next -> {
+                    Toast.makeText(
+                        this.requireActivity(),
+                        "name downloaded (next)",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                is Outcome.Failure -> {
+                    Toast.makeText(this.requireActivity(), "Name ERROR", Toast.LENGTH_SHORT).show()
+                    hideProgress()
+                    showError("Error", it.e)
+                }
+                is Outcome.Success -> {
+                    binding?.countryName?.text = it.data.name
+                    showCountryInfo(
+                        it.data, LatLng(
+                            it.data.convertToLatLngDto().mLatitude,
+                            it.data.convertToLatLngDto().mLongitude
+                        )
+                    )
+                    Toast.makeText(this.requireActivity(), "Name SUCCESS", Toast.LENGTH_SHORT)
+                        .show()
+                    hideProgress()
+                }
+            }
+        })
 
         binding?.mvCountryDetails?.getMapAsync(this)
 
         binding?.countryName?.text = mCountryName
 
+        binding?.srCountryDetails?.setOnRefreshListener {
+            mViewModel.getCountry(mCountryName)
+        }
+
         mLanguagesAdapter = LanguageAdapter()
         binding?.rvCountryDetailsLanguages?.adapter = mLanguagesAdapter
-
-        binding?.srCountryDetails?.setOnRefreshListener {
-            getPresenter().getCountryByName(mCountryName,true)
-        }
-        getPresenter().getCountryByName(mCountryName, false)
 
 
         // TODO: FILL THE CONTENT
@@ -81,6 +119,7 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
             )
         }
     }
+
 
     override fun onStart() {
         super.onStart()
@@ -106,7 +145,6 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         super.onDestroyView()
         binding = null
         mGoogleMap = null
-        getPresenter().onDestroyView()
     }
 
     override fun onMapReady(p0: GoogleMap) {
@@ -118,7 +156,7 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         binding?.mvCountryDetails?.onLowMemory()
     }
 
-    override fun showCountryInfo(country: CountryDto, location: LatLng) {
+    private fun showCountryInfo(country: CountryDto, location: LatLng) {
         mLanguagesAdapter.addListOfItems(
             country.languages
         )
@@ -136,38 +174,32 @@ class CountryDetailsFragment : BaseMvpFragment <CountryDetailsView, CountryDetai
         mGoogleMap?.moveCamera(CameraUpdateFactory.newLatLng(location))
     }
 
-    private fun saveNoteTextState(){
+    private fun saveNoteTextState() {
         val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
-            SHARED_PREFS, AppCompatActivity.MODE_PRIVATE)
+            SHARED_PREFS, AppCompatActivity.MODE_PRIVATE
+        )
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
         editor.putString(NOTE_TEXT_STATE, binding?.note?.text.toString())
         editor.apply()
         Toast.makeText(this.requireActivity(), "Data Saved", Toast.LENGTH_SHORT).show()
     }
 
-    private fun loadNoteTextState(){
+    private fun loadNoteTextState() {
         val sharedPreferences: SharedPreferences = this.requireActivity().getSharedPreferences(
-            SHARED_PREFS, AppCompatActivity.MODE_PRIVATE)
-        binding?.note?.text = sharedPreferences.getString(NOTE_TEXT_STATE,"No note yet")
+            SHARED_PREFS, AppCompatActivity.MODE_PRIVATE
+        )
+        binding?.note?.text = sharedPreferences.getString(NOTE_TEXT_STATE, "No note yet")
     }
 
-    override fun createPresenter() {
-        mPresenter = CountryDetailsPresenter()
-    }
-
-    override fun getPresenter(): CountryDetailsPresenter {
-        return mPresenter
-    }
-
-    override fun showError(error: String, throwable: Throwable) {
+    fun showError(error: String, throwable: Throwable) {
         activity?.showSimpleDialogNetworkError()
     }
 
-    override fun showProgress() {
+    fun showProgress() {
         binding?.progressDetails?.visibility = View.VISIBLE
     }
 
-    override fun hideProgress() {
+    fun hideProgress() {
         binding?.progressDetails?.visibility = View.GONE
     }
 

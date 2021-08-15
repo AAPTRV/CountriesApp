@@ -13,23 +13,26 @@ import com.example.task1new.base.mvvm.BaseViewModel
 import com.example.task1new.dto.CountryDto
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
+import com.example.task1new.ext.convertToCommonInfoDbItem
+import com.example.task1new.ext.convertToLanguagesDbItem
 import com.example.task1new.model.convertToCountryDto
-import com.example.task1new.repository.FilterRepository
+import com.example.task1new.network.CountryService
 import com.example.task1new.repository.FilterRepositoryImpl
+import com.example.task1new.repository.networkRepo.NetworkRepository
+import com.example.task1new.repository.networkRepo.NetworkRepositoryImpl
 import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToDtoTransformer
 import com.example.task1new.transformer.DaoEntityToDtoTransformer.Companion.findEntityByCountryName
-import com.google.android.gms.location.LocationServices
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import java.util.function.BiFunction
-import kotlin.concurrent.thread
 
 class CountryListViewModel(
     savedStateHandle: SavedStateHandle,
-    mDataBase: DBInfo = CountriesApp.mDatabase,
+    // TODO Create DB repository
+    mDataBase: DBInfo,
+private val mNetworkRepository: NetworkRepository
 ) :
     BaseViewModel(savedStateHandle) {
 
@@ -272,7 +275,7 @@ class CountryListViewModel(
 
     fun getCountriesFromAPI() {
         mCompositeDisposable.add(
-            Retrofit.getCountriesApi().getPosts()
+            mNetworkRepository.getCountryList()
                 .doOnNext {
                     // DB inserting data
                     val mCountriesInfoFromAPI = it.toMutableList()
@@ -281,19 +284,17 @@ class CountryListViewModel(
                     val mLanguagesFromApiToDB =
                         mutableListOf<CountryDatabaseLanguageInfoEntity>()
                     mCountriesInfoFromAPI.slice(1..20).forEach { item ->
-                        mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
+                        mLanguagesFromApiToDB.addAll(item.convertToLanguagesDbItem())
                     }
                     mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
 
                     mCountriesInfoFromAPI.slice(1..20).forEach { item ->
                         mCountriesInfoToDB.add(
-                            item.convertCommonInfoAPIDatatoDBItem()
+                            item.convertToCommonInfoDbItem()
                         )
                         mDaoCountryInfo.addAll(mCountriesInfoToDB)
                     }
-//                    addDistanceToCountriesLiveData()
                 }
-                .map { it.convertToCountryDto() }
                 .map { addDistanceToCountriesDtoList(it) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

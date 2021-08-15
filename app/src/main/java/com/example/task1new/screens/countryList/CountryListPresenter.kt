@@ -2,12 +2,10 @@ package com.example.task1new.screens.countryList
 
 import com.example.task1new.Retrofit
 import com.example.task1new.base.mvp.BaseMvpPresenter
-import com.example.task1new.dto.CountryDto
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
 import com.example.task1new.model.convertToCountryDto
 import com.example.task1new.room.*
-import com.example.task1new.transformer.DaoEntityToDtoTransformer
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
@@ -58,7 +56,7 @@ class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView
             .distinctUntilChanged()
             .map { it.lowercase() }
             .flatMap {
-                Retrofit.jsonPlaceHolderApi.getCountryByName(it).toObservable()
+                Retrofit.COUNTRY_SERVICE.getCountryByName(it).toObservable()
                     .onErrorResumeNext { io.reactivex.rxjava3.core.Observable.just(mutableListOf()) }
             }
             .subscribeOn(Schedulers.io())
@@ -79,7 +77,7 @@ class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView
         }
         addDisposable(
             inBackground(
-                Retrofit.jsonPlaceHolderApi.getPosts()
+                Retrofit.COUNTRY_SERVICE.getCountryList()
                     .doOnNext {
                         // DB inserting data
                         val mCountriesInfoFromAPI = it.toMutableList()

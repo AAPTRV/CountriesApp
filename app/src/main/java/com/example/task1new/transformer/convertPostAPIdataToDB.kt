@@ -1,5 +1,7 @@
 package com.example.task1new.ext
 
+import com.example.task1new.dto.CountryDto
+import com.example.task1new.dto.convertLanguagesDtoToString
 import com.example.task1new.model.CountryModel
 import com.example.task1new.room.CountryDatabaseCommonInfoEntity
 import com.example.task1new.room.CountryDatabaseLanguageInfoEntity
@@ -26,7 +28,7 @@ fun CountryModel.convertCommonInfoAPIDatatoDBItem(): CountryDatabaseCommonInfoEn
 
 
     if(this.latlng.isNotEmpty()){
-        mEntityLocation = this.latlng.convertToCountryLocationList()
+        mEntityLocation = this.latlng.convertCountryListToString()
     }
 
     return CountryDatabaseCommonInfoEntity(
@@ -38,6 +40,50 @@ fun CountryModel.convertCommonInfoAPIDatatoDBItem(): CountryDatabaseCommonInfoEn
         mEntityArea,
         mEntityLocation
     )
+}
+
+fun CountryDto.convertToCommonInfoDbItem(): CountryDatabaseCommonInfoEntity{
+    return CountryDatabaseCommonInfoEntity(
+        this.name,
+        this.capital,
+        this.population,
+        this.languages.convertLanguagesDtoToString(),
+        this.flag,
+        this.area,
+        this.location.convertCountryListToString()
+    )
+}
+
+fun CountryDto.convertToLanguagesDbItem(): List<CountryDatabaseLanguageInfoEntity>{
+    val result = mutableListOf<CountryDatabaseLanguageInfoEntity>()
+
+    fun MutableList<String>.convertListToString(): String {
+        val sb = StringBuilder()
+        this.forEachIndexed { index, item ->
+            if (this.size > 1 && index != this.size - 1) {
+                sb.append(item)
+                sb.append(",")
+            } else {
+                sb.append(item)
+            }
+        }
+        return sb.toString()
+    }
+
+    for(language in this.languages){
+        result.add(
+            CountryDatabaseLanguageInfoEntity(
+                this.name,
+                language.iso639_1,
+                language.iso639_2,
+                language.name,
+                language.nativeName
+            )
+        )
+    }
+
+    return result
+
 }
 
 fun CountryModel.convertLanguagesAPIDataToDBItem(): CountryDatabaseLanguageInfoEntity {
