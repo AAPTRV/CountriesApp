@@ -21,10 +21,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.task1new.*
 import com.example.task1new.app.CountriesApp
+import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.databinding.FragmentCountryListBinding
 import com.example.task1new.ext.showSimpleDialogNetworkError
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.Task
 import org.koin.android.compat.ScopeCompat.viewModel
 import org.koin.androidx.scope.ScopeFragment
@@ -86,7 +88,6 @@ class CountryListFragment : ScopeFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        showProgress()
         //RESULT LISTENER
         setFragmentResultListener(FRAGMENT_FOR_RESULT_FILTER_KEY) { _, bundle ->
             val result =
@@ -112,9 +113,23 @@ class CountryListFragment : ScopeFragment() {
         }
 
         //MVVM OBSERVE
-        mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { data ->
-            myAdapter.repopulateAdapterData(data)
-            hideProgress()
+        mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { outcome ->
+            when(outcome){
+                is Outcome.Progress ->{
+                    showProgress()
+                }
+                is Outcome.Next -> {
+                    myAdapter.repopulateAdapterData(outcome.data)
+                    hideProgress()
+                }
+                is Outcome.Failure -> {
+                    hideProgress()
+                }
+                is Outcome.Success -> {
+                    myAdapter.repopulateAdapterData(outcome.data)
+                    hideProgress()
+                }
+            }
         })
         mViewModel.getFilterLiveData().observe(viewLifecycleOwner, {
             myAdapter.repopulateAdapterData(mViewModel.getFilteredDataFromCountriesLiveData())

@@ -7,9 +7,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.example.task1new.Retrofit
 import com.example.task1new.app.CountriesApp
+import com.example.task1new.base.mvvm.*
 import com.example.task1new.utils.filter.CountryDtoListFilterObject
 import com.example.task1new.utils.filter.CountryDtoListFilterObject.applyFilter
-import com.example.task1new.base.mvvm.BaseViewModel
 import com.example.task1new.dto.CountryDto
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
@@ -32,7 +32,7 @@ class CountryListViewModel(
     savedStateHandle: SavedStateHandle,
     // TODO Create DB repository
     mDataBase: DBInfo,
-private val mNetworkRepository: NetworkRepository
+    private val mNetworkRepository: NetworkRepository
 ) :
     BaseViewModel(savedStateHandle) {
 
@@ -40,8 +40,11 @@ private val mNetworkRepository: NetworkRepository
     private var mUsersLocation: Location? = null
     private var mDaoCountryInfo: CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
     private var mDaoLanguageInfo: CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
+//    private val mCountriesListLiveData =
+//        savedStateHandle.getLiveData<List<CountryDto>>("countryListDto")
+
     private val mCountriesListLiveData =
-        savedStateHandle.getLiveData<List<CountryDto>>("countryListDto")
+        savedStateHandle.getLiveData<Outcome<List<CountryDto>>>("countryListDto")
 
     private val mCountriesFilterLiveData =
         savedStateHandle.getLiveData<CountryDtoListFilterObject>("countryListDtoFilter")
@@ -50,9 +53,17 @@ private val mNetworkRepository: NetworkRepository
         mUsersLocation = location
     }
 
+//    fun getFilteredDataFromCountriesLiveData(): List<CountryDto> {
+//        val result: MutableList<CountryDto> = mutableListOf()
+//        mCountriesListLiveData.value?.let { result.addAll(it) }
+//        return result.applyFilter(mFilter)
+//    }
+
     fun getFilteredDataFromCountriesLiveData(): List<CountryDto> {
         val result: MutableList<CountryDto> = mutableListOf()
-        mCountriesListLiveData.value?.let { result.addAll(it) }
+        if (mCountriesListLiveData.value is Outcome.Success) {
+            result.addAll((mCountriesListLiveData.value as Outcome.Success).data)
+        }
         return result.applyFilter(mFilter)
     }
 
@@ -95,8 +106,8 @@ private val mNetworkRepository: NetworkRepository
 
     fun getMaximumDistance(): String {
         var mDistanceMax: Double = Double.MIN_VALUE
-        mCountriesListLiveData.value.let {
-            for (country in mCountriesListLiveData.value!!) {
+        if (mCountriesListLiveData.value is Outcome.Success) {
+            for (country in (mCountriesListLiveData.value as Outcome.Success).data) {
                 if (country.location.isNotEmpty()) {
                     if (calculateDistanceToUser(country) > mDistanceMax) {
                         mDistanceMax = calculateDistanceToUser(country)
@@ -109,8 +120,8 @@ private val mNetworkRepository: NetworkRepository
 
     fun getMinimumArea(): String {
         var mAreaMin: Double = Double.MAX_VALUE
-        mCountriesListLiveData.value.let {
-            for (country in mCountriesListLiveData.value!!) {
+        if (mCountriesListLiveData.value is Outcome.Success) {
+            for (country in (mCountriesListLiveData.value as Outcome.Success).data) {
                 if (country.area < mAreaMin) {
                     mAreaMin = country.area
                 }
@@ -119,10 +130,22 @@ private val mNetworkRepository: NetworkRepository
         return mAreaMin.toString()
     }
 
+//    fun getMinimumArea(): String {
+//        var mAreaMin: Double = Double.MAX_VALUE
+//        mCountriesListLiveData.value.let {
+//            for (country in mCountriesListLiveData.value!!) {
+//                if (country.area < mAreaMin) {
+//                    mAreaMin = country.area
+//                }
+//            }
+//        }
+//        return mAreaMin.toString()
+//    }
+
     fun getMaximumArea(): String {
         var mAreaMax: Double = Double.MIN_VALUE
-        mCountriesListLiveData.value.let {
-            for (country in mCountriesListLiveData.value!!) {
+        if (mCountriesListLiveData.value is Outcome.Success) {
+            for (country in (mCountriesListLiveData.value as Outcome.Success).data) {
                 if (country.area > mAreaMax) {
                     mAreaMax = country.area
                 }
@@ -131,10 +154,22 @@ private val mNetworkRepository: NetworkRepository
         return mAreaMax.toString()
     }
 
+//    fun getMaximumArea(): String {
+//        var mAreaMax: Double = Double.MIN_VALUE
+//        mCountriesListLiveData.value.let {
+//            for (country in mCountriesListLiveData.value!!) {
+//                if (country.area > mAreaMax) {
+//                    mAreaMax = country.area
+//                }
+//            }
+//        }
+//        return mAreaMax.toString()
+//    }
+
     fun getMinimumPopulation(): String {
         var mPopulationMin: Int = Int.MAX_VALUE
-        mCountriesListLiveData.value.let {
-            for (country in mCountriesListLiveData.value!!) {
+        if (mCountriesListLiveData.value is Outcome.Success) {
+            for (country in (mCountriesListLiveData.value as Outcome.Success).data) {
                 if (country.population < mPopulationMin) {
                     mPopulationMin = country.population
                 }
@@ -143,10 +178,22 @@ private val mNetworkRepository: NetworkRepository
         return mPopulationMin.toString()
     }
 
+//    fun getMinimumPopulation(): String {
+//        var mPopulationMin: Int = Int.MAX_VALUE
+//        mCountriesListLiveData.value.let {
+//            for (country in mCountriesListLiveData.value!!) {
+//                if (country.population < mPopulationMin) {
+//                    mPopulationMin = country.population
+//                }
+//            }
+//        }
+//        return mPopulationMin.toString()
+//    }
+
     fun getMaximumPopulation(): String {
         var mPopulationMax: Int = Int.MIN_VALUE
-        mCountriesListLiveData.value.let {
-            for (country in mCountriesListLiveData.value!!) {
+        if (mCountriesListLiveData.value is Outcome.Success) {
+            for (country in (mCountriesListLiveData.value as Outcome.Success).data) {
                 if (country.population > mPopulationMax) {
                     mPopulationMax = country.population
                 }
@@ -154,6 +201,18 @@ private val mNetworkRepository: NetworkRepository
         }
         return mPopulationMax.toString()
     }
+
+//    fun getMaximumPopulation(): String {
+//        var mPopulationMax: Int = Int.MIN_VALUE
+//        mCountriesListLiveData.value.let {
+//            for (country in mCountriesListLiveData.value!!) {
+//                if (country.population > mPopulationMax) {
+//                    mPopulationMax = country.population
+//                }
+//            }
+//        }
+//        return mPopulationMax.toString()
+//    }
 
     fun getFilterLiveData(): MutableLiveData<CountryDtoListFilterObject> {
         return mCountriesFilterLiveData
@@ -194,31 +253,39 @@ private val mNetworkRepository: NetworkRepository
         mCountriesFilterLiveData.value = CountryDtoListFilterObject
     }
 
-    fun getCountriesListLiveData(): MutableLiveData<List<CountryDto>> {
+    fun getCountriesListLiveData(): MutableLiveData<Outcome<List<CountryDto>>> {
         return mCountriesListLiveData
     }
 
+//    fun getCountriesListLiveData(): MutableLiveData<List<CountryDto>> {
+//        return mCountriesListLiveData
+//    }
+
     private fun addNewUniqueItemsInLiveData(dtoList: List<CountryDto>) {
-        if (mCountriesListLiveData.value.isNullOrEmpty()) {
-            mCountriesListLiveData.value = dtoList
-        } else {
-            val result = mutableListOf<CountryDto>()
-            val initialDtoList = mutableListOf<CountryDto>()
-            initialDtoList.addAll(mCountriesListLiveData.value!!)
-            for (newDto in dtoList) {
-                var isUnique = true
-                for (dto in initialDtoList) {
-                    if (newDto.name == dto.name) {
-                        if (newDto.distance == dto.distance) {
-                            isUnique = false
+
+        if (mCountriesListLiveData.value is Outcome.Next) {
+
+            if ((mCountriesListLiveData.value as Outcome.Next).data.isNullOrEmpty()) {
+                (mCountriesListLiveData.value as Outcome.Next).data = dtoList
+            } else {
+                val result = mutableListOf<CountryDto>()
+                val initialDtoList = mutableListOf<CountryDto>()
+                initialDtoList.addAll((mCountriesListLiveData.value as Outcome.Next).data)
+                for (newDto in dtoList) {
+                    var isUnique = true
+                    for (dto in initialDtoList) {
+                        if (newDto.name == dto.name) {
+                            if (newDto.distance == dto.distance) {
+                                isUnique = false
+                            }
                         }
                     }
+                    if (isUnique) {
+                        result.add(newDto)
+                    }
                 }
-                if (isUnique) {
-                    result.add(newDto)
-                }
+                (mCountriesListLiveData.value as Outcome.Next).data = result
             }
-            mCountriesListLiveData.value = result
         }
     }
 
@@ -256,7 +323,7 @@ private val mNetworkRepository: NetworkRepository
                 it.onComplete()
             }, BackpressureStrategy.LATEST)
         }
-
+        mCountriesListLiveData.loading(true)
         mCompositeDisposable.add(
             Flowable.zip(
                 getCountriesInfoEntitiesFlowable(),
@@ -270,10 +337,11 @@ private val mNetworkRepository: NetworkRepository
                 .map { addDistanceToCountriesDtoList(it) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { addNewUniqueItemsInLiveData(it) })
+                .subscribe { mCountriesListLiveData.success(it)})
     }
 
     fun getCountriesFromAPI() {
+        mCountriesListLiveData.loading(true)
         mCompositeDisposable.add(
             mNetworkRepository.getCountryList()
                 .doOnNext {
@@ -299,8 +367,12 @@ private val mNetworkRepository: NetworkRepository
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    addNewUniqueItemsInLiveData(it)
-                }, { }
+                           mCountriesListLiveData.next(it)
+                }, { }, {
+                    if (mCountriesListLiveData.value is Outcome.Next) {
+                        mCountriesListLiveData.success((mCountriesListLiveData.value as Outcome.Next).data)
+                    }
+                }
                 )
         )
     }
