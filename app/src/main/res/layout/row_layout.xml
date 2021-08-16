@@ -3,17 +3,23 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/black"
+    >
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:cardBackgroundColor="@color/purple_700">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/rectangle_rounded"
+            android:layout_margin="10dp">
 
             <ImageView
                 android:id="@+id/cardIcon"
@@ -31,15 +37,16 @@
 
             <TextView
                 android:id="@+id/text_name_title"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/zero_size"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/common_margin"
                 android:layout_marginTop="@dimen/common_margin"
                 android:text="@string/text_title"
                 android:textSize="@dimen/common_text_medium"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toRightOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/cardIcon"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toRightOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/text_title"
@@ -66,7 +73,7 @@
 
             <TextView
                 android:id="@+id/text_languages"
-                android:layout_width="@dimen/row_layout_textView_height"
+                android:layout_width="@dimen/zero_size"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/common_margin"
                 android:layout_marginTop="@dimen/common_margin"
@@ -75,6 +82,29 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/cardIcon"
                 app:layout_constraintTop_toBottomOf="@+id/text_description" />
+
+            <TextView
+                android:id="@+id/text_area"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/common_margin"
+                android:layout_marginTop="@dimen/common_margin"
+                android:text="@string/area"
+                android:textSize="@dimen/common_text_small"
+                app:layout_constraintStart_toEndOf="@+id/cardIcon"
+                app:layout_constraintTop_toBottomOf="@+id/text_languages" />
+
+            <TextView
+                android:id="@+id/text_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/common_margin"
+                android:layout_marginTop="@dimen/common_margin"
+                android:text="@string/distance"
+                android:textSize="@dimen/common_text_small"
+                app:layout_constraintStart_toEndOf="@+id/cardIcon"
+                app:layout_constraintTop_toBottomOf="@+id/text_area" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

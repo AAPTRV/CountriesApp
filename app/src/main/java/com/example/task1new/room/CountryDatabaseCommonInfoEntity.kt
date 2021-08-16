@@ -18,6 +18,15 @@ class CountryDatabaseCommonInfoEntity(
     val population: Int,
 
     @ColumnInfo
-    val languages: String
+    val languages: String,
+
+    @ColumnInfo
+    val flag: String,
+
+    @ColumnInfo
+    val area: Double,
+
+    @ColumnInfo
+    val location: String
 
 )
