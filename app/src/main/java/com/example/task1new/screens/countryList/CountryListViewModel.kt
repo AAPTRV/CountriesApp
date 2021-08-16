@@ -40,6 +40,7 @@ class CountryListViewModel(
     private val mCountriesFilterLiveData =
         savedStateHandle.getLiveData<CountryDtoListFilterObject>("countryListDtoFilter")
 
+
     fun attachCurrentLocation(location: Location) {
         mUsersLocation = location
     }
