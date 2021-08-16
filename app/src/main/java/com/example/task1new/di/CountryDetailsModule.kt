@@ -17,11 +17,4 @@ val countryDetailsModule = module {
             CountryDetailsViewModel(handle, get(), get())
         }
     }
-    //Model level
-    single { DBInfo.init(get()) }
-    single { Retrofit.COUNTRY_SERVICE }
-
-    //Data level
-    single { NetworkRepositoryImpl(get()) as NetworkRepository }
-
 }

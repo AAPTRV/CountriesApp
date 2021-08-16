@@ -15,5 +15,4 @@ val appModule = module {
     //Data level
     single{ NetworkRepositoryImpl(get()) as NetworkRepository }
 
-
 }

@@ -11,13 +11,13 @@ import org.koin.core.context.startKoin
 
 class CountriesApp: Application() {
 
-    companion object{
-        lateinit var mDatabase: DBInfo
-    }
+//    companion object{
+//        lateinit var mDatabase: DBInfo
+//    }
 
     override fun onCreate() {
         super.onCreate()
-        mDatabase = this.let { DBInfo.init(it) }
+//        mDatabase = this.let { DBInfo.init(it) }
         startKoin {
             // Koin Android logger
             androidLogger()

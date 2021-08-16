@@ -1,6 +1,6 @@
-package com.example.task1new.base.mvp
+package com.example.task1new.base.mvvm
 
-interface BaseMvpView {
+interface BaseMvvmView {
 
     fun showError(error: String, throwable: Throwable)
 

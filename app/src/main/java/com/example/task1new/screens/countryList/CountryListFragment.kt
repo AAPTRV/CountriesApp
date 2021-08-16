@@ -15,23 +15,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
-import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.task1new.*
-import com.example.task1new.app.CountriesApp
+import com.example.task1new.base.mvvm.BaseMvvmView
 import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.databinding.FragmentCountryListBinding
 import com.example.task1new.ext.showSimpleDialogNetworkError
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.Task
-import org.koin.android.compat.ScopeCompat.viewModel
 import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -48,7 +44,7 @@ private const val MENU_SORT_ICON_STATE = "menu sort icon state"
 private const val MENU_FILTER_ICON_STATE = "menu filter icon state"
 
 
-class CountryListFragment : ScopeFragment() {
+class CountryListFragment : ScopeFragment(), BaseMvvmView {
 
     private var param1: String? = null
     private var param2: String? = null
@@ -70,7 +66,6 @@ class CountryListFragment : ScopeFragment() {
         mLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(this.requireActivity())
         getCurrentLocation()
-        mViewModel.getCountriesFromAPI()
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -135,8 +130,6 @@ class CountryListFragment : ScopeFragment() {
             myAdapter.repopulateAdapterData(mViewModel.getFilteredDataFromCountriesLiveData())
             Toast.makeText(this.requireActivity(), "Filter updated", Toast.LENGTH_SHORT).show()
         })
-
-
 
         //RecycleView
         binding?.recycleView?.setHasFixedSize(true)
@@ -318,6 +311,7 @@ class CountryListFragment : ScopeFragment() {
                     })
                 }
                 mViewModel.getCountriesFromDbRx()
+                mViewModel.getCountriesFromAPI()
             }
         } else {
             val listPermissionsNeeded = ArrayList<String>()
@@ -352,15 +346,15 @@ class CountryListFragment : ScopeFragment() {
             }
     }
 
-    fun showError(error: String, throwable: Throwable) {
+    override fun showError(error: String, throwable: Throwable) {
         activity?.showSimpleDialogNetworkError()
     }
 
-    fun showProgress() {
+    override fun showProgress() {
         binding?.progressList?.visibility = View.VISIBLE
     }
 
-    fun hideProgress() {
+    override fun hideProgress() {
         binding?.progressList?.visibility = View.GONE
     }
 }

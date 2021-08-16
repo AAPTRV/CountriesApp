@@ -5,21 +5,14 @@ import android.location.LocationManager
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import com.example.task1new.Retrofit
-import com.example.task1new.app.CountriesApp
 import com.example.task1new.base.mvvm.*
 import com.example.task1new.utils.filter.CountryDtoListFilterObject
 import com.example.task1new.utils.filter.CountryDtoListFilterObject.applyFilter
 import com.example.task1new.dto.CountryDto
-import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
-import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
 import com.example.task1new.ext.convertToCommonInfoDbItem
 import com.example.task1new.ext.convertToLanguagesDbItem
-import com.example.task1new.model.convertToCountryDto
-import com.example.task1new.network.CountryService
 import com.example.task1new.repository.FilterRepositoryImpl
 import com.example.task1new.repository.networkRepo.NetworkRepository
-import com.example.task1new.repository.networkRepo.NetworkRepositoryImpl
 import com.example.task1new.room.*
 import com.example.task1new.transformer.DaoEntityToDtoTransformer
 import com.example.task1new.transformer.DaoEntityToDtoTransformer.Companion.findEntityByCountryName
@@ -40,8 +33,6 @@ class CountryListViewModel(
     private var mUsersLocation: Location? = null
     private var mDaoCountryInfo: CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
     private var mDaoLanguageInfo: CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
-//    private val mCountriesListLiveData =
-//        savedStateHandle.getLiveData<List<CountryDto>>("countryListDto")
 
     private val mCountriesListLiveData =
         savedStateHandle.getLiveData<Outcome<List<CountryDto>>>("countryListDto")
@@ -52,12 +43,6 @@ class CountryListViewModel(
     fun attachCurrentLocation(location: Location) {
         mUsersLocation = location
     }
-
-//    fun getFilteredDataFromCountriesLiveData(): List<CountryDto> {
-//        val result: MutableList<CountryDto> = mutableListOf()
-//        mCountriesListLiveData.value?.let { result.addAll(it) }
-//        return result.applyFilter(mFilter)
-//    }
 
     fun getFilteredDataFromCountriesLiveData(): List<CountryDto> {
         val result: MutableList<CountryDto> = mutableListOf()
@@ -97,8 +82,9 @@ class CountryListViewModel(
             }
 
             mUsersLocation?.let {
+                val userLocation = it
                 result =
-                    (mUsersLocation!!.distanceTo(currentCountryLocation).toDouble() / 1000)
+                    (userLocation.distanceTo(currentCountryLocation).toDouble() / 1000)
             }
         }
         return result
@@ -130,18 +116,6 @@ class CountryListViewModel(
         return mAreaMin.toString()
     }
 
-//    fun getMinimumArea(): String {
-//        var mAreaMin: Double = Double.MAX_VALUE
-//        mCountriesListLiveData.value.let {
-//            for (country in mCountriesListLiveData.value!!) {
-//                if (country.area < mAreaMin) {
-//                    mAreaMin = country.area
-//                }
-//            }
-//        }
-//        return mAreaMin.toString()
-//    }
-
     fun getMaximumArea(): String {
         var mAreaMax: Double = Double.MIN_VALUE
         if (mCountriesListLiveData.value is Outcome.Success) {
@@ -153,18 +127,6 @@ class CountryListViewModel(
         }
         return mAreaMax.toString()
     }
-
-//    fun getMaximumArea(): String {
-//        var mAreaMax: Double = Double.MIN_VALUE
-//        mCountriesListLiveData.value.let {
-//            for (country in mCountriesListLiveData.value!!) {
-//                if (country.area > mAreaMax) {
-//                    mAreaMax = country.area
-//                }
-//            }
-//        }
-//        return mAreaMax.toString()
-//    }
 
     fun getMinimumPopulation(): String {
         var mPopulationMin: Int = Int.MAX_VALUE
@@ -178,18 +140,6 @@ class CountryListViewModel(
         return mPopulationMin.toString()
     }
 
-//    fun getMinimumPopulation(): String {
-//        var mPopulationMin: Int = Int.MAX_VALUE
-//        mCountriesListLiveData.value.let {
-//            for (country in mCountriesListLiveData.value!!) {
-//                if (country.population < mPopulationMin) {
-//                    mPopulationMin = country.population
-//                }
-//            }
-//        }
-//        return mPopulationMin.toString()
-//    }
-
     fun getMaximumPopulation(): String {
         var mPopulationMax: Int = Int.MIN_VALUE
         if (mCountriesListLiveData.value is Outcome.Success) {
@@ -201,18 +151,6 @@ class CountryListViewModel(
         }
         return mPopulationMax.toString()
     }
-
-//    fun getMaximumPopulation(): String {
-//        var mPopulationMax: Int = Int.MIN_VALUE
-//        mCountriesListLiveData.value.let {
-//            for (country in mCountriesListLiveData.value!!) {
-//                if (country.population > mPopulationMax) {
-//                    mPopulationMax = country.population
-//                }
-//            }
-//        }
-//        return mPopulationMax.toString()
-//    }
 
     fun getFilterLiveData(): MutableLiveData<CountryDtoListFilterObject> {
         return mCountriesFilterLiveData
@@ -256,10 +194,6 @@ class CountryListViewModel(
     fun getCountriesListLiveData(): MutableLiveData<Outcome<List<CountryDto>>> {
         return mCountriesListLiveData
     }
-
-//    fun getCountriesListLiveData(): MutableLiveData<List<CountryDto>> {
-//        return mCountriesListLiveData
-//    }
 
     private fun addNewUniqueItemsInLiveData(dtoList: List<CountryDto>) {
 
