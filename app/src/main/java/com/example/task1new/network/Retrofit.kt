@@ -1,7 +1,9 @@
 package com.example.task1new
 
+import com.example.task1new.network.CoroutineCountryService
 import com.example.task1new.network.CountryService
 import com.example.task1new.utils.NetConstants
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -18,15 +20,26 @@ object Retrofit {
         .writeTimeout(NetConstants.SESSION_TIMEOUT, TimeUnit.MILLISECONDS)
         .addInterceptor(loggingInterceptor)
         .build()
+
     private val retrofitBuilder = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
         .baseUrl(NetConstants.SERVER_API_BASE_URL)
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .client(okHttpClient)
         .build()
+
+    private val coroutineRetrofitBuilder = Retrofit.Builder()
+        .addConverterFactory(GsonConverterFactory.create())
+        .baseUrl(NetConstants.SERVER_API_BASE_URL)
+        .addCallAdapterFactory(CoroutineCallAdapterFactory.invoke())
+        .client(okHttpClient)
+        .build()
+
     val COUNTRY_SERVICE: CountryService = retrofitBuilder.create(CountryService::class.java)
 
-    fun getCountriesApi():CountryService = COUNTRY_SERVICE
+    val COROUTINE_COUNTRY_SERVICE: CoroutineCountryService = coroutineRetrofitBuilder.create(CoroutineCountryService::class.java)
+
+    fun getCountriesApi(): CountryService = COUNTRY_SERVICE
 
     init {
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY

@@ -2,6 +2,7 @@ package com.example.task1new.screens.details
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,13 +63,16 @@ class CountryDetailsFragment : ScopeFragment(), OnMapReadyCallback {
 
         loadNoteTextState()
 
-        mViewModel.getCountry(mCountryName)
+        mViewModel.getCountryCoroutines(mCountryName)
 
 
         mViewModel.getCountryLiveData().observe(viewLifecycleOwner, {
             when (it) {
-                is Outcome.Progress ->{
-                    showProgress()
+                is Outcome.Progress -> {
+                    Log.e("hz", it.loading.toString() + " " + System.currentTimeMillis())
+                    if (it.loading) showProgress() else hideProgress()
+                    Toast.makeText(this.requireActivity(), it.loading.toString(), Toast.LENGTH_SHORT)
+                        .show()
                 }
                 is Outcome.Next -> {
                     Toast.makeText(
@@ -79,7 +83,6 @@ class CountryDetailsFragment : ScopeFragment(), OnMapReadyCallback {
                 }
                 is Outcome.Failure -> {
                     Toast.makeText(this.requireActivity(), "Name ERROR", Toast.LENGTH_SHORT).show()
-                    hideProgress()
                     showError("Error", it.e)
                 }
                 is Outcome.Success -> {
@@ -92,7 +95,6 @@ class CountryDetailsFragment : ScopeFragment(), OnMapReadyCallback {
                     )
                     Toast.makeText(this.requireActivity(), "Name SUCCESS", Toast.LENGTH_SHORT)
                         .show()
-                    hideProgress()
                 }
             }
         })
