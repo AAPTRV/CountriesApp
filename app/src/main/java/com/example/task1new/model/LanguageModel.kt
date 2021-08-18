@@ -1,6 +1,6 @@
 package com.example.task1new.model
 
-import com.example.task1new.dto.LanguageDto
+import com.example.domain.dto.LanguageDto
 
 data class LanguageModel(
     val iso639_1: String?,

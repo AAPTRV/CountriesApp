@@ -1,8 +1,8 @@
 package com.example.task1new.model
 
-import com.example.task1new.dto.LanguageDto
-import com.example.task1new.dto.LatLngDto
-import com.example.task1new.dto.CountryDto
+import com.example.domain.dto.LanguageDto
+import com.example.domain.dto.LatLngDto
+import com.example.domain.dto.CountryDto
 import com.google.gson.annotations.SerializedName
 
 fun List<CountryModel>.convertToCountryDto(): List<CountryDto> {

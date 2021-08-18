@@ -17,7 +17,7 @@ import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.content.dialog.CustomDialog
 import com.example.task1new.databinding.FragmentCountryDetailsBinding
-import com.example.task1new.dto.CountryDto
+import com.example.domain.dto.CountryDto
 import com.example.task1new.ext.loadSvg
 import com.example.task1new.ext.showDialogWithOneButton
 import com.example.task1new.ext.showSimpleDialogNetworkError

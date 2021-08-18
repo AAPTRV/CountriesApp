@@ -1,4 +1,4 @@
-package com.example.task1new.dto
+package com.example.domain.dto
 
 data class LatLngDto(
     val name: String,

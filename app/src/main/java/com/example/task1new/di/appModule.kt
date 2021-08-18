@@ -1,7 +1,7 @@
 package com.example.task1new.di
 
+import com.example.domain.repository.NetworkRepository
 import com.example.task1new.Retrofit
-import com.example.task1new.repository.networkRepo.NetworkRepository
 import com.example.task1new.repository.networkRepo.NetworkRepositoryImpl
 import com.example.task1new.room.DBInfo
 import org.koin.dsl.module

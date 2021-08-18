@@ -1,9 +1,8 @@
-package com.example.task1new.utils.filter
+package com.example.domain.filter
 
-import android.util.Log
 import com.example.task1new.DTO_DEFAULT_DISTANCE_VALUE
 import com.example.task1new.FILTER_ANY_COUNTRY_VALUE
-import com.example.task1new.dto.CountryDto
+import com.example.domain.dto.CountryDto
 
 object CountryDtoListFilterObject {
 
@@ -23,12 +22,10 @@ object CountryDtoListFilterObject {
     fun List<CountryDto>.applyFilter(filter: CountryDtoListFilterObject): MutableList<CountryDto> {
         val result = mutableListOf<CountryDto>()
         for (country in this) {
-            if (filter.checkForFilter(country)) {
+            if (checkForFilter(country)) {
                 result.add(country)
             }
         }
-        showFilterInfo()
-        Log.e("hz", "Countries to add through filter: ${result.size}")
         return result
     }
 
@@ -62,15 +59,6 @@ object CountryDtoListFilterObject {
 
     fun filterMaxDistanceChange(maxDistance: Double) {
         mMaxDistance = maxDistance
-    }
-
-    fun showFilterInfo() {
-        Log.e("FILTER", "NAME = $mCountryName")
-        Log.e("FILTER", "MIN POPULATION = $mMinPopulation")
-        Log.e("FILTER", "MAX POPULATION = $mMaxPopulation")
-        Log.e("FILTER", "MIN AREA = $mMinArea")
-        Log.e("FILTER", "MAX AREA = $mMaxArea")
-        Log.e("FILTER", "MAX DISTANCE = $mMaxDistance")
     }
 
     private fun checkForFilter(country: CountryDto): Boolean {

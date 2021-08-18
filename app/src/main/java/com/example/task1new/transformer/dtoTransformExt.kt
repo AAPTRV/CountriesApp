@@ -1,6 +1,7 @@
-package com.example.task1new.dto
+package com.example.task1new.transformer
 
-import com.example.task1new.model.CountryModel
+import com.example.domain.dto.CountryDto
+import com.example.domain.dto.CountryWithDistanceDto
 
 fun CountryDto.convertToCountryDtoWithDistance(
     distance: Double
@@ -16,14 +17,3 @@ fun CountryDto.convertToCountryDtoWithDistance(
         distance = distance
     )
 }
-
-data class CountryWithDistanceDto(
-    val name: String,
-    val capital: String,
-    val population: Int,
-    val languages: MutableList<LanguageDto>,
-    val flag: String,
-    val area: Double,
-    val location: List<Double>,
-    val distance: Double
-)

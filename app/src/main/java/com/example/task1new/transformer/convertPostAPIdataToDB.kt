@@ -1,7 +1,7 @@
 package com.example.task1new.ext
 
-import com.example.task1new.dto.CountryDto
-import com.example.task1new.dto.convertLanguagesDtoToString
+import com.example.domain.dto.CountryDto
+import com.example.domain.dto.convertLanguagesDtoToString
 import com.example.task1new.model.CountryModel
 import com.example.task1new.room.CountryDatabaseCommonInfoEntity
 import com.example.task1new.room.CountryDatabaseLanguageInfoEntity

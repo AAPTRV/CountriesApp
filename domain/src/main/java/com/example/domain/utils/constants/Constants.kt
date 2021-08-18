@@ -1,19 +1,5 @@
 package com.example.task1new
 
-//Country Details Fragment
-const val COUNTRY_DETAILS_BUNDLE_ERROR = "BUNDLE ERROR"
-
-const val COUNTRY_NAME_BUNDLE_KEY = "COUNTRY_NAME_BUNDLE_KEY"
-const val COUNTRY_DETAILS_LAYOUT_MANAGER_KEY = "COUNTRY LAYOUT MANAGER KEY"
-const val COUNTRY_LIST_INITIAL_DATA_PROCESSING_STATE = "INITIAL DATA PROCESSING STATE"
-
-//Permissions
-const val GPS_PERMISSION = 44
-
-//Set Fragment Result Listener
-const val FRAGMENT_FOR_RESULT_FILTER_KEY = "filterKey"
-const val FRAGMENT_FOR_RESULT_RESULT_LIST = "resultList"
-
 //Const for filter
 
 const val ADAPTER_MINIMUM_AREA_BUNDLE_KEY = "ADAPTER_MINIMUM_AREA_BUNDLE_KEY"

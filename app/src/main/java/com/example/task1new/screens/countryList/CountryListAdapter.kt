@@ -8,8 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.task1new.R
 import com.example.task1new.base.adapter.BaseAdapter
-import com.example.task1new.dto.CountryDto
-import com.example.task1new.dto.convertLanguagesDtoToString
+import com.example.domain.dto.CountryDto
+import com.example.domain.dto.convertLanguagesDtoToString
 import com.example.task1new.ext.loadSvg
 
 

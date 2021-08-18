@@ -1,6 +1,6 @@
 package com.example.task1new.ext
 
-import com.example.task1new.dto.LanguageDto
+import com.example.domain.dto.LanguageDto
 import com.example.task1new.room.CountryDatabaseLanguageInfoEntity
 
 fun CountryDatabaseLanguageInfoEntity.convertToLanguagesDto(): MutableList<LanguageDto> {
