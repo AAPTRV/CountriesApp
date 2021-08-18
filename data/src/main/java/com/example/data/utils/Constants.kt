@@ -1,4 +1,4 @@
-package com.example.task1new
+package com.example.data.utils
 
 //Country Details Fragment
 const val COUNTRY_DETAILS_BUNDLE_ERROR = "BUNDLE ERROR"

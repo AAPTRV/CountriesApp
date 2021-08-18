@@ -1,7 +1,7 @@
 package com.example.task1new
 
-import com.example.task1new.network.CountryService
-import com.example.task1new.utils.NetConstants
+import com.example.data.network.CountryService
+import com.example.data.utils.NetConstants
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -26,7 +26,7 @@ object Retrofit {
         .build()
     val COUNTRY_SERVICE: CountryService = retrofitBuilder.create(CountryService::class.java)
 
-    fun getCountriesApi():CountryService = COUNTRY_SERVICE
+    fun getCountriesApi(): CountryService = COUNTRY_SERVICE
 
     init {
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY

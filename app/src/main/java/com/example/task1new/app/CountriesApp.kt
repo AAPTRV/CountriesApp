@@ -4,16 +4,11 @@ import android.app.Application
 import com.example.task1new.di.appModule
 import com.example.task1new.di.countryDetailsModule
 import com.example.task1new.di.countryListModule
-import com.example.task1new.room.DBInfo
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 
 class CountriesApp: Application() {
-
-//    companion object{
-//        lateinit var mDatabase: DBInfo
-//    }
 
     override fun onCreate() {
         super.onCreate()
@@ -27,6 +22,5 @@ class CountriesApp: Application() {
             modules(appModule, countryListModule, countryDetailsModule)
         }
     }
-
 
 }

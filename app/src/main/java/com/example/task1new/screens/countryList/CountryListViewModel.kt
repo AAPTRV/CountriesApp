@@ -24,15 +24,15 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 class CountryListViewModel(
     savedStateHandle: SavedStateHandle,
     // TODO Create DB repository
-    mDataBase: DBInfo,
+    mDataBase: com.example.data.room.DBInfo,
     private val mNetworkRepository: NetworkRepository
 ) :
     BaseViewModel(savedStateHandle) {
 
     private var mFilter = FilterRepositoryImpl().getFilter()
     private var mUsersLocation: Location? = null
-    private var mDaoCountryInfo: CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
-    private var mDaoLanguageInfo: CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
+    private var mDaoCountryInfo: com.example.data.room.CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
+    private var mDaoLanguageInfo: com.example.data.room.CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
 
     private val mCountriesListLiveData =
         savedStateHandle.getLiveData<Outcome<List<CountryDto>>>("countryListDto")
@@ -227,8 +227,8 @@ class CountryListViewModel(
     fun getCountriesFromDbRx() {
 
         fun getDtoFromEntities(
-            infoEntities: List<CountryDatabaseCommonInfoEntity>,
-            languageEntities: List<CountryDatabaseLanguageInfoEntity>
+            infoEntities: List<com.example.data.room.CountryDatabaseCommonInfoEntity>,
+            languageEntities: List<com.example.data.room.CountryDatabaseLanguageInfoEntity>
         ): List<CountryDto> {
 
             val result = mutableListOf<CountryDto>()
@@ -243,7 +243,7 @@ class CountryListViewModel(
             return result
         }
 
-        fun getCountriesInfoEntitiesFlowable(): Flowable<List<CountryDatabaseCommonInfoEntity>> {
+        fun getCountriesInfoEntitiesFlowable(): Flowable<List<com.example.data.room.CountryDatabaseCommonInfoEntity>> {
             return Flowable.create({
                 val result = mDaoCountryInfo.getAllInfo()
                 it.onNext(result)
@@ -251,7 +251,7 @@ class CountryListViewModel(
             }, BackpressureStrategy.LATEST)
         }
 
-        fun getCountriesLanguageEntitiesFlowable(): Flowable<List<CountryDatabaseLanguageInfoEntity>> {
+        fun getCountriesLanguageEntitiesFlowable(): Flowable<List<com.example.data.room.CountryDatabaseLanguageInfoEntity>> {
             return Flowable.create({
                 val result = mDaoLanguageInfo.getAllInfo()
                 it.onNext(result)
@@ -282,10 +282,10 @@ class CountryListViewModel(
                 .doOnNext {
                     // DB inserting data
                     val mCountriesInfoFromAPI = it.toMutableList()
-                    val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
+                    val mCountriesInfoToDB = mutableListOf<com.example.data.room.CountryDatabaseCommonInfoEntity>()
 
                     val mLanguagesFromApiToDB =
-                        mutableListOf<CountryDatabaseLanguageInfoEntity>()
+                        mutableListOf<com.example.data.room.CountryDatabaseLanguageInfoEntity>()
                     mCountriesInfoFromAPI.slice(1..20).forEach { item ->
                         mLanguagesFromApiToDB.addAll(item.convertToLanguagesDbItem())
                     }

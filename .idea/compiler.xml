@@ -3,6 +3,7 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.8">
       <module name="Task1new.app" target="11" />
+      <module name="Task1new.data" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

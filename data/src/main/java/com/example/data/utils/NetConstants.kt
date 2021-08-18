@@ -1,4 +1,4 @@
-package com.example.task1new.utils
+package com.example.data.utils
 
 object NetConstants {
     const val SESSION_TIMEOUT: Long = 10000

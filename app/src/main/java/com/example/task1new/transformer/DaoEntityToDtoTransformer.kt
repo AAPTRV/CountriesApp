@@ -4,15 +4,15 @@ import android.util.Log
 import com.example.task1new.ext.convertToLanguagesDto
 import com.example.domain.dto.LanguageDto
 import com.example.domain.dto.CountryDto
-import com.example.task1new.room.CountryDatabaseCommonInfoEntity
-import com.example.task1new.room.CountryDatabaseLanguageInfoEntity
+import com.example.data.room.CountryDatabaseCommonInfoEntity
+import com.example.data.room.CountryDatabaseLanguageInfoEntity
 
 class DaoEntityToDtoTransformer {
     companion object {
 
         fun daoEntityToDtoTransformer(
-            countryEntity: CountryDatabaseCommonInfoEntity,
-            languageEntity: CountryDatabaseLanguageInfoEntity
+            countryEntity: com.example.data.room.CountryDatabaseCommonInfoEntity,
+            languageEntity: com.example.data.room.CountryDatabaseLanguageInfoEntity
 
         ): CountryDto {
 
@@ -43,7 +43,7 @@ class DaoEntityToDtoTransformer {
             return this.split(",").map{it.toDouble()}.toMutableList()
         }
 
-        fun List<CountryDatabaseLanguageInfoEntity>.findEntityByCountryName(countryName: String): CountryDatabaseLanguageInfoEntity{
+        fun List<com.example.data.room.CountryDatabaseLanguageInfoEntity>.findEntityByCountryName(countryName: String): com.example.data.room.CountryDatabaseLanguageInfoEntity {
             for(entity in this){
                 if(entity.mCountryname.lowercase() == countryName.lowercase()){
                     return entity

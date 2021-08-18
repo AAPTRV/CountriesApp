@@ -1,4 +1,4 @@
-package com.example.task1new.model
+package com.example.data.model
 
 import com.example.domain.dto.LanguageDto
 

@@ -5,14 +5,14 @@ import androidx.lifecycle.SavedStateHandle
 import com.example.task1new.base.mvvm.*
 import com.example.domain.dto.CountryDto
 import com.example.domain.repository.NetworkRepository
-import com.example.task1new.room.DBInfo
+import com.example.data.room.DBInfo
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class CountryDetailsViewModel(
     savedStateHandle: SavedStateHandle,
-mDataBase: DBInfo,
-private val mNetworkRepository: NetworkRepository
+    mDataBase: com.example.data.room.DBInfo,
+    private val mNetworkRepository: NetworkRepository
 ) :
     BaseViewModel(savedStateHandle) {
 

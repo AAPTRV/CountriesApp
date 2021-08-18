@@ -2,12 +2,10 @@ package com.example.task1new.ext
 
 import com.example.domain.dto.CountryDto
 import com.example.domain.dto.convertLanguagesDtoToString
-import com.example.task1new.model.CountryModel
-import com.example.task1new.room.CountryDatabaseCommonInfoEntity
-import com.example.task1new.room.CountryDatabaseLanguageInfoEntity
+import com.example.data.model.CountryModel
 import java.lang.StringBuilder
 
-fun CountryModel.convertCommonInfoAPIDatatoDBItem(): CountryDatabaseCommonInfoEntity {
+fun CountryModel.convertCommonInfoAPIDatatoDBItem(): com.example.data.room.CountryDatabaseCommonInfoEntity {
 
     var mEntityName = "No name"
     var mEntityCapital = "No capital"
@@ -31,7 +29,7 @@ fun CountryModel.convertCommonInfoAPIDatatoDBItem(): CountryDatabaseCommonInfoEn
         mEntityLocation = this.latlng.convertCountryListToString()
     }
 
-    return CountryDatabaseCommonInfoEntity(
+    return com.example.data.room.CountryDatabaseCommonInfoEntity(
         mEntityName,
         mEntityCapital,
         mEntityPopulation,
@@ -42,8 +40,8 @@ fun CountryModel.convertCommonInfoAPIDatatoDBItem(): CountryDatabaseCommonInfoEn
     )
 }
 
-fun CountryDto.convertToCommonInfoDbItem(): CountryDatabaseCommonInfoEntity{
-    return CountryDatabaseCommonInfoEntity(
+fun CountryDto.convertToCommonInfoDbItem(): com.example.data.room.CountryDatabaseCommonInfoEntity {
+    return com.example.data.room.CountryDatabaseCommonInfoEntity(
         this.name,
         this.capital,
         this.population,
@@ -54,8 +52,8 @@ fun CountryDto.convertToCommonInfoDbItem(): CountryDatabaseCommonInfoEntity{
     )
 }
 
-fun CountryDto.convertToLanguagesDbItem(): List<CountryDatabaseLanguageInfoEntity>{
-    val result = mutableListOf<CountryDatabaseLanguageInfoEntity>()
+fun CountryDto.convertToLanguagesDbItem(): List<com.example.data.room.CountryDatabaseLanguageInfoEntity>{
+    val result = mutableListOf<com.example.data.room.CountryDatabaseLanguageInfoEntity>()
 
     fun MutableList<String>.convertListToString(): String {
         val sb = StringBuilder()
@@ -72,7 +70,7 @@ fun CountryDto.convertToLanguagesDbItem(): List<CountryDatabaseLanguageInfoEntit
 
     for(language in this.languages){
         result.add(
-            CountryDatabaseLanguageInfoEntity(
+            com.example.data.room.CountryDatabaseLanguageInfoEntity(
                 this.name,
                 language.iso639_1,
                 language.iso639_2,
@@ -86,7 +84,7 @@ fun CountryDto.convertToLanguagesDbItem(): List<CountryDatabaseLanguageInfoEntit
 
 }
 
-fun CountryModel.convertLanguagesAPIDataToDBItem(): CountryDatabaseLanguageInfoEntity {
+fun CountryModel.convertLanguagesAPIDataToDBItem(): com.example.data.room.CountryDatabaseLanguageInfoEntity {
 
     fun MutableList<String>.convertListToString(): String {
         val sb = StringBuilder()
@@ -126,7 +124,7 @@ fun CountryModel.convertLanguagesAPIDataToDBItem(): CountryDatabaseLanguageInfoE
         }
     }
 
-    return CountryDatabaseLanguageInfoEntity(
+    return com.example.data.room.CountryDatabaseLanguageInfoEntity(
         mEntityCountryName,
         mEntityIso6391.convertListToString(),
         mEntityIso6392.convertListToString(),

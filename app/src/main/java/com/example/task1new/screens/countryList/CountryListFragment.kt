@@ -18,6 +18,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.data.utils.*
 import com.example.task1new.*
 import com.example.task1new.base.mvvm.BaseMvvmView
 import com.example.task1new.base.mvvm.Outcome
@@ -173,7 +174,7 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
                     mViewModel.setFilterCountryName(newText)
                 }
                 if (newText.length in 0..2) {
-                    mViewModel.setFilterCountryName(FILTER_ANY_COUNTRY_VALUE)
+                    mViewModel.setFilterCountryName(com.example.data.utils.FILTER_ANY_COUNTRY_VALUE)
                 }
                 return true
             }
@@ -191,17 +192,17 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
             if (!filterIconClipped) {
                 val bundle = Bundle()
                 bundle.putString(
-                    ADAPTER_MAXIMUM_POPULATION_BUNDLE_KEY,
+                    com.example.data.utils.ADAPTER_MAXIMUM_POPULATION_BUNDLE_KEY,
                     mViewModel.getMaximumPopulation()
                 )
                 bundle.putString(
-                    ADAPTER_MINIMUM_POPULATION_BUNDLE_KEY,
+                    com.example.data.utils.ADAPTER_MINIMUM_POPULATION_BUNDLE_KEY,
                     mViewModel.getMinimumPopulation()
                 )
-                bundle.putString(ADAPTER_MAXIMUM_AREA_BUNDLE_KEY, mViewModel.getMaximumArea())
-                bundle.putString(ADAPTER_MINIMUM_AREA_BUNDLE_KEY, mViewModel.getMinimumArea())
+                bundle.putString(com.example.data.utils.ADAPTER_MAXIMUM_AREA_BUNDLE_KEY, mViewModel.getMaximumArea())
+                bundle.putString(com.example.data.utils.ADAPTER_MINIMUM_AREA_BUNDLE_KEY, mViewModel.getMinimumArea())
                 bundle.putString(
-                    ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY,
+                    com.example.data.utils.ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY,
                     mViewModel.getMaximumDistance()
                 )
                 filterIconClipped = true

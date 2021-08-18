@@ -2,19 +2,19 @@ package com.example.task1new.screens.countryList
 
 import com.example.task1new.Retrofit
 import com.example.task1new.base.mvp.BaseMvpPresenter
+import com.example.data.model.convertToCountryDto
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
-import com.example.task1new.model.convertToCountryDto
 import com.example.task1new.room.*
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 
-class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView>() {
+class CountryListPresenter(mDataBase: com.example.data.room.DBInfo) : BaseMvpPresenter<CountryListView>() {
 
-    private var mDaoCountryInfo: CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
-    private var mDaoLanguageInfo: CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
+    private var mDaoCountryInfo: com.example.data.room.CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
+    private var mDaoLanguageInfo: com.example.data.room.CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
     private var mSearchSubject = BehaviorSubject.create<String>()
 
     init {
@@ -81,10 +81,10 @@ class CountryListPresenter(mDataBase: DBInfo) : BaseMvpPresenter<CountryListView
                     .doOnNext {
                         // DB inserting data
                         val mCountriesInfoFromAPI = it.toMutableList()
-                        val mCountriesInfoToDB = mutableListOf<CountryDatabaseCommonInfoEntity>()
+                        val mCountriesInfoToDB = mutableListOf<com.example.data.room.CountryDatabaseCommonInfoEntity>()
 
                         val mLanguagesFromApiToDB =
-                            mutableListOf<CountryDatabaseLanguageInfoEntity>()
+                            mutableListOf<com.example.data.room.CountryDatabaseLanguageInfoEntity>()
                         mCountriesInfoFromAPI.slice(1..20).forEach { item ->
                             mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
                         }

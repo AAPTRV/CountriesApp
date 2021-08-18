@@ -1,0 +1,60 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+
+android {
+    compileSdk 31
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 31
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
+}
+
+def comSquareUpOkHTTP3Version = '3.12.1'
+def comSquareUpOkHTTP3fInterceptorVersion = '3.12.1'
+def comSquareUpRetrofit2Version = '2.4.0'
+def comSquareUpRetrofit2ConverterGSONVersion = '2.4.0'
+def androidRoomRuntimeVersion = '2.3.0'
+def androidRoomKtxVersion = '2.3.0'
+def androidRoomTestingVersion = '2.3.0'
+def androidRoomCompilerVersion = '2.3.0'
+def comGithubAkarnokdRxJava3RetrofitAdapterVersion = '3.0.0'
+
+dependencies {
+    implementation project(':domain')
+
+    // Room components
+    implementation "androidx.room:room-runtime:" + androidRoomRuntimeVersion
+    implementation "androidx.room:room-ktx:" + androidRoomKtxVersion
+    androidTestImplementation "androidx.room:room-testing:" + androidRoomTestingVersion
+    kapt 'androidx.room:room-compiler:' + androidRoomCompilerVersion
+    implementation "androidx.room:room-rxjava3:" + androidRoomRuntimeVersion
+
+    //Network
+    implementation 'com.squareup.okhttp3:okhttp:' + comSquareUpOkHTTP3Version
+    implementation 'com.squareup.okhttp3:logging-interceptor:' + comSquareUpOkHTTP3fInterceptorVersion
+    implementation 'com.squareup.retrofit2:retrofit:' + comSquareUpRetrofit2Version
+    implementation 'com.squareup.retrofit2:converter-gson:' + comSquareUpRetrofit2ConverterGSONVersion
+    implementation "com.github.akarnokd:rxjava3-retrofit-adapter:" + comGithubAkarnokdRxJava3RetrofitAdapterVersion
+}

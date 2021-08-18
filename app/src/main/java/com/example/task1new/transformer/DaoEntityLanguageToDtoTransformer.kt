@@ -1,9 +1,9 @@
 package com.example.task1new.ext
 
 import com.example.domain.dto.LanguageDto
-import com.example.task1new.room.CountryDatabaseLanguageInfoEntity
+import com.example.data.room.CountryDatabaseLanguageInfoEntity
 
-fun CountryDatabaseLanguageInfoEntity.convertToLanguagesDto(): MutableList<LanguageDto> {
+fun com.example.data.room.CountryDatabaseLanguageInfoEntity.convertToLanguagesDto(): MutableList<LanguageDto> {
 
 
     val mListOfLanguages = mutableListOf<LanguageDto>()
