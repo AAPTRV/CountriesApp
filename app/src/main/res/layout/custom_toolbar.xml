@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="56dp">
+
+	<androidx.appcompat.widget.AppCompatImageView
+		android:id="@+id/mIvBackButton"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:padding="@dimen/padding_12dp"
+		android:src="@drawable/ic_baseline_arrow_back_24"
+		android:tint="@color/red" />
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/mTitle"
+		android:layout_width="@dimen/zero_size"
+		android:layout_height="match_parent"
+		android:layout_weight="1"
+		android:gravity="center"
+		android:textColor="@color/red"
+		android:textSize="@dimen/text_size20sp"
+		tools:text="Toolbar Test" />
+
+	<androidx.appcompat.widget.AppCompatImageView
+		android:id="@+id/mRightToolbarButton"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:padding="@dimen/padding_12dp"
+		android:src="@drawable/ic_baseline_filter_alt_24"
+		android:tint="@color/red" />
+
+</merge>

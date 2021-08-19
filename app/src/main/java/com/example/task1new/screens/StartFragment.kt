@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import com.example.task1new.R
 import com.example.task1new.databinding.FragmentStartBinding
 import com.example.task1new.ext.showSimpleDialog
@@ -57,7 +58,7 @@ class FragmentStart : Fragment() {
             Navigation.findNavController(view).navigate(R.id.action_blankFragmentFR_to_mapsFragmentBlank)
         }
         binding?.dialogTestButton?.setOnClickListener {
-            activity?.showSimpleDialog()
+            Navigation.findNavController(view).navigate(R.id.action_blankFragmentFR_to_canvasFragment)
         }
     }
 

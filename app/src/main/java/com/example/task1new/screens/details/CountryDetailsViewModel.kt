@@ -23,8 +23,7 @@ class CountryDetailsViewModel(
     savedStateHandle: SavedStateHandle,
     mDataBase: DBInfo,
     private val mNetworkRepository: NetworkRepository
-) :
-    BaseViewModel(savedStateHandle) {
+) : BaseViewModel(savedStateHandle) {
 
     private val mCountryLiveData = savedStateHandle.getLiveData<Outcome<CountryDto>>("countryDto")
 

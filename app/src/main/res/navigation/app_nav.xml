@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_blankFragmentFR_to_mapsFragmentBlank"
             app:destination="@id/mapsFragmentBlank" />
+        <action
+            android:id="@+id/action_blankFragmentFR_to_canvasFragment"
+            app:destination="@id/canvasFragment" />
     </fragment>
     <fragment
         android:id="@+id/blankFragmentRV"
@@ -50,4 +53,8 @@
             android:id="@+id/action_filterFragment_to_blankFragmentRV"
             app:destination="@id/blankFragmentRV" />
     </fragment>
+    <fragment
+        android:id="@+id/canvasFragment"
+        android:name="com.example.task1new.screens.canvasScreen.CanvasFragment"
+        android:label="CanvasFragment" />
 </navigation>

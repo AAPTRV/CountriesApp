@@ -4,7 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Android/petrov_aleksey_project/app/src/main/res/layout/row_layout.xml" value="0.22695035460992907" />
+        <entry key="..\:/Users/Roman/Documents/Github/SideProjects/petrov_aleksey_project/app/src/main/res/layout/canvas_fragment.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Roman/Documents/Github/SideProjects/petrov_aleksey_project/app/src/main/res/layout/custom_toolabr.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Roman/Documents/Github/SideProjects/petrov_aleksey_project/app/src/main/res/layout/fragment_country_details.xml" value="0.17831813576494426" />
+        <entry key="..\:/Users/Roman/Documents/Github/SideProjects/petrov_aleksey_project/app/src/main/res/layout/fragment_country_list.xml" value="0.36666666666666664" />
       </map>
     </option>
   </component>
