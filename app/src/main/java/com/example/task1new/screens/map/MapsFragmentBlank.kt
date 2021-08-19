@@ -11,7 +11,7 @@ import com.example.task1new.R
 import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.databinding.FragmentMapsBlankBinding
 import com.example.domain.dto.LatLngDto
-import com.example.task1new.ext.showSimpleDialogNetworkError
+import com.example.data.ext.showSimpleDialogNetworkError
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory

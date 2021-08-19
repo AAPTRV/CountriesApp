@@ -5,7 +5,6 @@ import com.example.task1new.base.mvp.BaseMvpPresenter
 import com.example.data.model.convertToCountryDto
 import com.example.task1new.ext.convertCommonInfoAPIDatatoDBItem
 import com.example.task1new.ext.convertLanguagesAPIDataToDBItem
-import com.example.task1new.room.*
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
@@ -13,8 +12,8 @@ import java.util.concurrent.TimeUnit
 
 class CountryListPresenter(mDataBase: com.example.data.room.DBInfo) : BaseMvpPresenter<CountryListView>() {
 
-    private var mDaoCountryInfo: com.example.data.room.CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
-    private var mDaoLanguageInfo: com.example.data.room.CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
+//    private var mDaoCountryInfo: com.example.data.room.CountryCommonInfoDAO = mDataBase.getCountryCommonInfoDAO()
+//    private var mDaoLanguageInfo: com.example.data.room.CountryLanguageDAO = mDataBase.getLanguageCommonInfoDAO()
     private var mSearchSubject = BehaviorSubject.create<String>()
 
     init {
@@ -88,13 +87,13 @@ class CountryListPresenter(mDataBase: com.example.data.room.DBInfo) : BaseMvpPre
                         mCountriesInfoFromAPI.slice(1..20).forEach { item ->
                             mLanguagesFromApiToDB.add(item.convertLanguagesAPIDataToDBItem())
                         }
-                        mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
+//                        mDaoLanguageInfo.addAll(mLanguagesFromApiToDB)
 
                         mCountriesInfoFromAPI.slice(1..20).forEach { item ->
                             mCountriesInfoToDB.add(
                                 item.convertCommonInfoAPIDatatoDBItem()
                             )
-                            mDaoCountryInfo.addAll(mCountriesInfoToDB)
+//                            mDaoCountryInfo.addAll(mCountriesInfoToDB)
                         }
                     }
                     .map { it.convertToCountryDto() }

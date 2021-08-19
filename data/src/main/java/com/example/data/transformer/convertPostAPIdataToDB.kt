@@ -1,5 +1,7 @@
 package com.example.task1new.ext
 
+import com.example.data.ext.convertCountryListToString
+import com.example.data.ext.convertToCountryNameList
 import com.example.domain.dto.CountryDto
 import com.example.domain.dto.convertLanguagesDtoToString
 import com.example.data.model.CountryModel

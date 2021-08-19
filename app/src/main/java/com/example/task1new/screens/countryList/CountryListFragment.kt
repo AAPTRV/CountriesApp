@@ -23,7 +23,7 @@ import com.example.task1new.*
 import com.example.task1new.base.mvvm.BaseMvvmView
 import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.databinding.FragmentCountryListBinding
-import com.example.task1new.ext.showSimpleDialogNetworkError
+import com.example.data.ext.showSimpleDialogNetworkError
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task

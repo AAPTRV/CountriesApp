@@ -1,4 +1,4 @@
-package com.example.task1new.transformer
+package com.example.data.transformer
 
 import com.example.domain.dto.CountryDto
 import com.example.domain.dto.CountryWithDistanceDto

@@ -8,7 +8,7 @@ interface CountryLanguageDAO {
     @Query("SELECT * FROM countries_data_base_languages_info")
     fun getAllInfo(): List<CountryDatabaseLanguageInfoEntity>
 
-    @Query("SELECT * FROM countries_data_base_languages_info WHERE mCountryname = :countryName")
+    @Query("SELECT * FROM countries_data_base_languages_info WHERE mCountryName = :countryName")
     fun getLanguageInfoByCountry(countryName: String): CountryDatabaseLanguageInfoEntity
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

@@ -1,4 +1,4 @@
-package com.example.task1new.ext
+package com.example.data.ext
 
 import com.example.data.model.LanguageModel
 import java.lang.StringBuilder

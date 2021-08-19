@@ -12,9 +12,9 @@ import com.example.task1new.R
 import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.databinding.FragmentCountryDetailsBinding
 import com.example.domain.dto.CountryDto
-import com.example.task1new.ext.loadSvg
-import com.example.task1new.ext.showDialogWithOneButton
-import com.example.task1new.ext.showSimpleDialogNetworkError
+import com.example.data.ext.loadSvg
+import com.example.data.ext.showDialogWithOneButton
+import com.example.data.ext.showSimpleDialogNetworkError
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback

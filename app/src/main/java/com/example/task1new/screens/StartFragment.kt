@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.task1new.R
 import com.example.task1new.databinding.FragmentStartBinding
-import com.example.task1new.ext.showSimpleDialog
+import com.example.data.ext.showSimpleDialog
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

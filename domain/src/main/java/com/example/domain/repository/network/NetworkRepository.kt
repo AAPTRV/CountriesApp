@@ -1,4 +1,4 @@
-package com.example.domain.repository
+package com.example.domain.repository.network
 
 import com.example.domain.dto.CountryDto
 import io.reactivex.rxjava3.core.Flowable

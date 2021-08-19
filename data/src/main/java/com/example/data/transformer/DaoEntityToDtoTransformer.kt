@@ -1,4 +1,4 @@
-package com.example.task1new.transformer
+package com.example.data.transformer
 
 import android.util.Log
 import com.example.task1new.ext.convertToLanguagesDto
@@ -43,9 +43,9 @@ class DaoEntityToDtoTransformer {
             return this.split(",").map{it.toDouble()}.toMutableList()
         }
 
-        fun List<com.example.data.room.CountryDatabaseLanguageInfoEntity>.findEntityByCountryName(countryName: String): com.example.data.room.CountryDatabaseLanguageInfoEntity {
+        fun List<CountryDatabaseLanguageInfoEntity>.findEntityByCountryName(countryName: String): CountryDatabaseLanguageInfoEntity {
             for(entity in this){
-                if(entity.mCountryname.lowercase() == countryName.lowercase()){
+                if(entity.mCountryName.lowercase() == countryName.lowercase()){
                     return entity
                 }
             }

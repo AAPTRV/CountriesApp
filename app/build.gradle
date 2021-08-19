@@ -128,7 +128,7 @@ dependencies {
     implementation "io.insert-koin:koin-androidx-workmanager:$koin_version"
 
     //RxJava
-    api 'io.reactivex.rxjava3:rxandroid:' + ioReactiveRxJava3RxAndroid
+    implementation 'io.reactivex.rxjava3:rxandroid:' + ioReactiveRxJava3RxAndroid
 
 
 }

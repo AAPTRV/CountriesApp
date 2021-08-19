@@ -10,7 +10,7 @@ import com.example.task1new.R
 import com.example.task1new.base.adapter.BaseAdapter
 import com.example.domain.dto.CountryDto
 import com.example.domain.dto.convertLanguagesDtoToString
-import com.example.task1new.ext.loadSvg
+import com.example.data.ext.loadSvg
 
 
 class CountryListAdapter : BaseAdapter<CountryDto>() {
