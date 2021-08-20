@@ -1,5 +1,7 @@
 package com.example.task1new.base.mvvm
 
+
+// TODO: Read about single class in Kotlin ...
 sealed class Outcome <T> {
 
     data class Progress<T>(var loading: Boolean): Outcome<T>()

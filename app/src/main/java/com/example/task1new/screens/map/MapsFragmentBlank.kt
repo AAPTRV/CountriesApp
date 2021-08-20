@@ -21,9 +21,10 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 
+
+// TODO: Make this fragment
 class MapsFragmentBlank : BaseMvpFragment<MapsView, MapsPresenter>(), OnMapReadyCallback, MapsView {
 
     private var mGoogleMap: GoogleMap? = null
@@ -57,7 +58,7 @@ class MapsFragmentBlank : BaseMvpFragment<MapsView, MapsPresenter>(), OnMapReady
             PackageManager.PERMISSION_GRANTED
         ) {
             val task: Task<Location>? = mLocationProviderClient?.lastLocation
-            task?.addOnSuccessListener(OnSuccessListener<Location>() {
+            task?.addOnSuccessListener({
                 if (it != null) {
                     mGoogleMap?.addMarker(
                         MarkerOptions().position(

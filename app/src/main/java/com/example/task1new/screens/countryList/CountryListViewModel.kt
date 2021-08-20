@@ -5,7 +5,6 @@ import android.location.LocationManager
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import com.example.data.repository.databaseRepo.DatabaseCommonInfoRepositoryImpl
 import com.example.task1new.base.mvvm.*
 import com.example.domain.filter.CountryDtoListFilterObject
 import com.example.domain.filter.CountryDtoListFilterObject.applyFilter
@@ -20,8 +19,10 @@ import com.example.domain.repository.database.DatabaseCommonInfoRepository
 import com.example.domain.repository.database.DatabaseLanguageRepository
 import com.example.data.transformer.DaoEntityToDtoTransformer
 import com.example.data.transformer.DaoEntityToDtoTransformer.Companion.findEntityByCountryName
+import com.example.domain.usecase.impl.GetAllCountriesUseCase
+import com.example.domain.usecase.impl.GetCountriesCommonInfoUseCase
+import com.example.domain.usecase.impl.GetCountriesLanguagesInfoUseCase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
@@ -31,7 +32,11 @@ class CountryListViewModel(
     mDataBase: com.example.data.room.DBInfo,
     private val mNetworkRepository: NetworkRepository,
     private val mDataBaseCommonInfoRepository: DatabaseCommonInfoRepository,
-    private val mDataBaseLanguageRepository: DatabaseLanguageRepository
+    private val mDataBaseLanguageRepository: DatabaseLanguageRepository,
+    private val mGetAllCountriesUseCase: GetAllCountriesUseCase,
+    private val mGetCountriesLanguagesInfoUseCase: GetCountriesLanguagesInfoUseCase,
+    private val mGetCountriesCommonInfoUseCase: GetCountriesCommonInfoUseCase
+
 ) :
     BaseViewModel(savedStateHandle) {
 
@@ -250,19 +255,11 @@ class CountryListViewModel(
         }
 
         fun getCountriesInfoEntitiesFlowable(): Flowable<List<com.example.data.room.CountryDatabaseCommonInfoEntity>> {
-            return Flowable.create({
-                val result = mDataBaseCommonInfoRepository.getAllInfo()
-                it.onNext(result.convertToEntity())
-                it.onComplete()
-            }, BackpressureStrategy.LATEST)
+            return mGetCountriesCommonInfoUseCase.execute().map{it.convertToEntity()}
         }
 
         fun getCountriesLanguageEntitiesFlowable(): Flowable<List<com.example.data.room.CountryDatabaseLanguageInfoEntity>> {
-            return Flowable.create({
-                val result = mDataBaseLanguageRepository.getAllInfo()
-                it.onNext(result.convertToEntity())
-                it.onComplete()
-            }, BackpressureStrategy.LATEST)
+            return mGetCountriesLanguagesInfoUseCase.execute().map{it.convertToEntity()}
         }
         mCountriesListLiveData.loading(true)
         mCompositeDisposable.add(
@@ -284,7 +281,7 @@ class CountryListViewModel(
     fun getCountriesFromAPI() {
         mCountriesListLiveData.loading(true)
         mCompositeDisposable.add(
-            mNetworkRepository.getCountryList()
+            mGetAllCountriesUseCase.execute()
                 .doOnNext {
                     // DB inserting data
                     val mCountriesInfoFromAPI = it.toMutableList()
