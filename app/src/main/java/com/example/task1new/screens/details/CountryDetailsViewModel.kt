@@ -5,13 +5,13 @@ import androidx.lifecycle.SavedStateHandle
 import com.example.task1new.base.mvvm.*
 import com.example.domain.dto.CountryDto
 import com.example.domain.repository.network.NetworkRepository
+import com.example.domain.usecase.impl.GetCountryByNameUseCase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class CountryDetailsViewModel(
     savedStateHandle: SavedStateHandle,
-    mDataBase: com.example.data.room.DBInfo,
-    private val mNetworkRepository: NetworkRepository
+    private val mGetCountryByNameUseCase: GetCountryByNameUseCase
 ) :
     BaseViewModel(savedStateHandle) {
 
@@ -23,7 +23,7 @@ class CountryDetailsViewModel(
     fun getCountry(mCountryName: String){
         mCountryLiveData.loading(true)
         mCompositeDisposable.add(
-            mNetworkRepository.getCountryByName(mCountryName)
+            mGetCountryByNameUseCase.setParams(mCountryName).execute()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({mCountryLiveData.next(it[0])}, {

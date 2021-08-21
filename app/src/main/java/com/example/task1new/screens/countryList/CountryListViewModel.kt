@@ -29,8 +29,6 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 class CountryListViewModel(
     savedStateHandle: SavedStateHandle,
     // TODO Create DB repository
-    mDataBase: com.example.data.room.DBInfo,
-    private val mNetworkRepository: NetworkRepository,
     private val mDataBaseCommonInfoRepository: DatabaseCommonInfoRepository,
     private val mDataBaseLanguageRepository: DatabaseLanguageRepository,
     private val mGetAllCountriesUseCase: GetAllCountriesUseCase,
@@ -42,15 +40,12 @@ class CountryListViewModel(
 
     private var mFilter = FilterRepositoryImpl().getFilter()
     private var mUsersLocation: Location? = null
-//    private var mDaoCountryInfo = DatabaseCommonInfoRepositoryImpl(DB)
-//    private var mDaoLanguageInfo: com.example.data.room.CountryLanguageDAO = mDataBaseCommonInfoRepository.getLanguageCommonInfoDAO()
 
     private val mCountriesListLiveData =
         savedStateHandle.getLiveData<Outcome<List<CountryDto>>>("countryListDto")
 
     private val mCountriesFilterLiveData =
         savedStateHandle.getLiveData<CountryDtoListFilterObject>("countryListDtoFilter")
-
 
     fun attachCurrentLocation(location: Location) {
         mUsersLocation = location

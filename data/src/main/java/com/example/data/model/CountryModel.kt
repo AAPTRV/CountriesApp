@@ -13,6 +13,20 @@ fun List<CountryModel>.convertToCountryDto(): List<CountryDto> {
     return resultListDto
 }
 
+fun CountryDto.convertToLatLngDto(): LatLngDto{
+    return LatLngDto(
+        this.name, this.location[0], this.location[1]
+    )
+}
+
+fun List<CountryDto>.convertToLatLngDto(): List<LatLngDto>{
+    val resultList = mutableListOf<LatLngDto>()
+    for(dto in this){
+        resultList.add(dto.convertToLatLngDto())
+    }
+    return resultList
+}
+
 data class CountryModel(
     val name: String?,
     val capital: String?,

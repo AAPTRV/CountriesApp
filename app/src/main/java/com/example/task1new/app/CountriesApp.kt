@@ -4,6 +4,7 @@ import android.app.Application
 import com.example.task1new.di.appModule
 import com.example.task1new.di.countryDetailsModule
 import com.example.task1new.di.countryListModule
+import com.example.task1new.di.mapsModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -19,7 +20,7 @@ class CountriesApp: Application() {
             // inject Android context
             androidContext(this@CountriesApp)
             // use modules
-            modules(appModule, countryListModule, countryDetailsModule)
+            modules(appModule, countryListModule, countryDetailsModule, mapsModule)
         }
     }
 
