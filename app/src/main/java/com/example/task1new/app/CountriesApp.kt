@@ -23,5 +23,4 @@ class CountriesApp: Application() {
             modules(appModule, countryListModule, countryDetailsModule, mapsModule)
         }
     }
-
 }

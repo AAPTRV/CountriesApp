@@ -1,6 +1,7 @@
 package com.example.data.utils
 
 object NetConstants {
+
     const val SESSION_TIMEOUT: Long = 10000
 
     const val PATH_VARIABLE = "path"

@@ -5,16 +5,17 @@ import android.location.LocationManager
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
+import com.example.data.ext.convertInfoToEntity
+import com.example.data.ext.convertInfoToRoomDto
+import com.example.data.ext.convertLanguageToEntity
+import com.example.data.ext.convertLanguageToRoomDto
 import com.example.task1new.base.mvvm.*
 import com.example.domain.filter.CountryDtoListFilterObject
 import com.example.domain.filter.CountryDtoListFilterObject.applyFilter
 import com.example.domain.dto.CountryDto
-import com.example.domain.repository.network.NetworkRepository
 import com.example.task1new.ext.convertToCommonInfoDbItem
 import com.example.task1new.ext.convertToLanguagesDbItem
 import com.example.data.repository.filterRepo.FilterRepositoryImpl
-import com.example.data.room.convertToEntity
-import com.example.data.room.convertToRoomDto
 import com.example.domain.repository.database.DatabaseCommonInfoRepository
 import com.example.domain.repository.database.DatabaseLanguageRepository
 import com.example.data.transformer.DaoEntityToDtoTransformer
@@ -250,11 +251,11 @@ class CountryListViewModel(
         }
 
         fun getCountriesInfoEntitiesFlowable(): Flowable<List<com.example.data.room.CountryDatabaseCommonInfoEntity>> {
-            return mGetCountriesCommonInfoUseCase.execute().map{it.convertToEntity()}
+            return mGetCountriesCommonInfoUseCase.execute().map{it.convertInfoToEntity()}
         }
 
         fun getCountriesLanguageEntitiesFlowable(): Flowable<List<com.example.data.room.CountryDatabaseLanguageInfoEntity>> {
-            return mGetCountriesLanguagesInfoUseCase.execute().map{it.convertToEntity()}
+            return mGetCountriesLanguagesInfoUseCase.execute().map{it.convertLanguageToEntity()}
         }
         mCountriesListLiveData.loading(true)
         mCompositeDisposable.add(
@@ -287,13 +288,13 @@ class CountryListViewModel(
                     mCountriesInfoFromAPI.slice(1..20).forEach { item ->
                         mLanguagesFromApiToDB.addAll(item.convertToLanguagesDbItem())
                     }
-                    mDataBaseLanguageRepository.addAll(mLanguagesFromApiToDB.convertToRoomDto())
+                    mDataBaseLanguageRepository.addAll(mLanguagesFromApiToDB.convertLanguageToRoomDto())
 
                     mCountriesInfoFromAPI.slice(1..20).forEach { item ->
                         mCountriesInfoToDB.add(
                             item.convertToCommonInfoDbItem()
                         )
-                        mDataBaseCommonInfoRepository.addAll(mCountriesInfoToDB.convertToRoomDto())
+                        mDataBaseCommonInfoRepository.addAll(mCountriesInfoToDB.convertInfoToRoomDto())
                     }
                 }
                 .map { addDistanceToCountriesDtoList(it) }

@@ -18,6 +18,8 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
+import androidx.recyclerview.widget.SnapHelper
 import com.example.data.utils.*
 import com.example.task1new.*
 import com.example.task1new.base.mvvm.BaseMvvmView
@@ -43,7 +45,6 @@ private const val ARG_PARAM2 = "param2"
 private const val SHARED_PREFS: String = "sharedPrefs"
 private const val MENU_SORT_ICON_STATE = "menu sort icon state"
 private const val MENU_FILTER_ICON_STATE = "menu filter icon state"
-
 
 class CountryListFragment : ScopeFragment(), BaseMvvmView {
 
@@ -99,19 +100,23 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
         setHasOptionsMenu(true)
 
         // TODO: Handle saved instance state ...
+        binding?.recycleView?.layoutManager = LinearLayoutManager(context)
+        val snapHelper: SnapHelper = LinearSnapHelper()  // или PagerSnapHelper()
+        binding?.recycleView?.let { snapHelper.attachToRecyclerView(binding?.recycleView) }
+        
         //Saved Instance State
-        if (savedInstanceState != null) {
-            mLayoutManagerState =
-                savedInstanceState.getParcelable(COUNTRY_DETAILS_LAYOUT_MANAGER_KEY)!!
-            binding?.recycleView?.layoutManager?.onRestoreInstanceState(mLayoutManagerState)
-        } else {
-            binding?.recycleView?.layoutManager = LinearLayoutManager(context)
-        }
+//        if (savedInstanceState != null) {
+//            mLayoutManagerState =
+//                savedInstanceState.getParcelable(COUNTRY_DETAILS_LAYOUT_MANAGER_KEY)!!
+//            binding?.recycleView?.layoutManager?.onRestoreInstanceState(mLayoutManagerState)
+//        } else {
+//            binding?.recycleView?.layoutManager = LinearLayoutManager(context)
+//        }
 
         //MVVM OBSERVE
         mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { outcome ->
-            when(outcome){
-                is Outcome.Progress ->{
+            when (outcome) {
+                is Outcome.Progress -> {
                     showProgress()
                 }
                 is Outcome.Next -> {
@@ -199,8 +204,14 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
                     com.example.data.utils.ADAPTER_MINIMUM_POPULATION_BUNDLE_KEY,
                     mViewModel.getMinimumPopulation()
                 )
-                bundle.putString(com.example.data.utils.ADAPTER_MAXIMUM_AREA_BUNDLE_KEY, mViewModel.getMaximumArea())
-                bundle.putString(com.example.data.utils.ADAPTER_MINIMUM_AREA_BUNDLE_KEY, mViewModel.getMinimumArea())
+                bundle.putString(
+                    com.example.data.utils.ADAPTER_MAXIMUM_AREA_BUNDLE_KEY,
+                    mViewModel.getMaximumArea()
+                )
+                bundle.putString(
+                    com.example.data.utils.ADAPTER_MINIMUM_AREA_BUNDLE_KEY,
+                    mViewModel.getMinimumArea()
+                )
                 bundle.putString(
                     com.example.data.utils.ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY,
                     mViewModel.getMaximumDistance()

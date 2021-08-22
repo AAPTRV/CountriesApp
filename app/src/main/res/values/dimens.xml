@@ -5,7 +5,7 @@
 
 
     \\ Row Layout
-    <dimen name="row_layout_icon_size">130dp</dimen>
+    <dimen name="row_layout_icon_size">100dp</dimen>
     <dimen name="zero_size">0dp</dimen>
 
 
@@ -17,7 +17,7 @@
 
 
     \\ Common
-    <dimen name="common_margin">10dp</dimen>
+    <dimen name="common_margin">2dp</dimen>
 
     \\ Text
     <dimen name="common_text_small">12sp</dimen>
@@ -39,5 +39,7 @@
     <dimen name="custom_dialog_standard_margin">8dp</dimen>
     <dimen name="margin_start">10dp</dimen>
     <dimen name="margin_end">10dp</dimen>
+    <dimen name="row_layout_margin">4dp</dimen>
+    <dimen name="text_view_common_left_margin">8dp</dimen>
 
 </resources>

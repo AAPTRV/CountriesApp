@@ -1,8 +1,8 @@
 package com.example.task1new.base.mvvm
 
+import java.io.Serializable
 
-// TODO: Read about single class in Kotlin ...
-sealed class Outcome <T> {
+sealed class Outcome <T>  : Serializable {
 
     data class Progress<T>(var loading: Boolean): Outcome<T>()
     data class Success<T>(var data: T): Outcome<T>()

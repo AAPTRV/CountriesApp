@@ -26,7 +26,6 @@ import com.google.android.gms.tasks.Task
 import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
-// TODO: Make this fragment
 class MapsFragmentBlank : ScopeFragment(), BaseMvvmView, OnMapReadyCallback {
 
     private var mGoogleMap: GoogleMap? = null

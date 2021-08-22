@@ -9,7 +9,6 @@ import org.koin.dsl.module
 
 val mapsModule = module {
 
-
     scope<MapsFragmentBlank> {
 
         scoped { GetAllCountriesUseCase(get()) }

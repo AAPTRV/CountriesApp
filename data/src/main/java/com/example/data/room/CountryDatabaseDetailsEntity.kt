@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-
 @Entity(tableName = "countries_data_base_details_info")
 class CountryDatabaseDetailsEntity(
 
