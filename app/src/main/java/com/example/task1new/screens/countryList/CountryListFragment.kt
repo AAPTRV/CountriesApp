@@ -103,15 +103,7 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
         binding?.recycleView?.layoutManager = LinearLayoutManager(context)
         val snapHelper: SnapHelper = LinearSnapHelper()  // или PagerSnapHelper()
         binding?.recycleView?.let { snapHelper.attachToRecyclerView(binding?.recycleView) }
-        
-        //Saved Instance State
-//        if (savedInstanceState != null) {
-//            mLayoutManagerState =
-//                savedInstanceState.getParcelable(COUNTRY_DETAILS_LAYOUT_MANAGER_KEY)!!
-//            binding?.recycleView?.layoutManager?.onRestoreInstanceState(mLayoutManagerState)
-//        } else {
-//            binding?.recycleView?.layoutManager = LinearLayoutManager(context)
-//        }
+
 
         //MVVM OBSERVE
         mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { outcome ->

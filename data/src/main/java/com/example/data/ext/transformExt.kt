@@ -1,9 +1,11 @@
 package com.example.data.ext
 
+import com.example.data.model.SingleCapitalModel
 import com.example.data.room.CountryDatabaseCommonInfoEntity
 import com.example.data.room.CountryDatabaseLanguageInfoEntity
 import com.example.domain.dto.RoomCommonInfoDto
 import com.example.domain.dto.RoomLanguageDto
+import com.example.domain.dto.SingleCapitalDto
 
 fun CountryDatabaseCommonInfoEntity.convertToRoomDto(): RoomCommonInfoDto{
     return RoomCommonInfoDto(
@@ -72,5 +74,21 @@ fun RoomLanguageDto.convertToEntity(): CountryDatabaseLanguageInfoEntity{
         this.iso639_2,
         this.mName,
         this.mNativeName
+    )
+}
+
+fun List<SingleCapitalModel>.convertToDto(): List<SingleCapitalDto>{
+    val result = mutableListOf<SingleCapitalDto>()
+    for(item in this){
+        result.add(item.convertToDto())
+    }
+    return result
+}
+
+fun SingleCapitalModel.convertToDto(): SingleCapitalDto{
+    var mCapital = ""
+    this.mCapital?.let { mCapital = it }
+    return SingleCapitalDto(
+        mCapital
     )
 }

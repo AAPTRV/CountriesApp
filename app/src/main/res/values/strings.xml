@@ -56,5 +56,8 @@
     <string name="error">ERROR</string>
     <string name="error_default">ERROR_DEFAULT</string>
     <string name="dialog_ok">DIALOG_OK</string>
+    <string name="show_all_capitals">SHOW ALL CAPITALS</string>
+    <string name="number">#</string>
+    <string name="country_s_capital_name">Country\'s capital name</string>
 
 </resources>

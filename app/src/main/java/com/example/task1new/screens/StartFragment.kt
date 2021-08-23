@@ -1,8 +1,6 @@
 package com.example.task1new.screens
 
-import android.content.ContentValues
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
@@ -58,6 +56,9 @@ class FragmentStart : Fragment() {
         }
         binding?.dialogTestButton?.setOnClickListener {
             activity?.showSimpleDialog()
+        }
+        binding?.capitalsButton?.setOnClickListener {
+            Navigation.findNavController(view).navigate(R.id.action_blankFragmentFR_to_capitalsFragment)
         }
     }
 
