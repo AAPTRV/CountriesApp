@@ -57,6 +57,10 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
     private var mLocationProviderClient: FusedLocationProviderClient? = null
     private val mViewModel: CountryListViewModel by stateViewModel()
 
+    private lateinit var mFilterButton: MenuItem
+    private lateinit var mMapsButton: MenuItem
+    private lateinit var mSortButton: MenuItem
+
     init {
         Log.e("HZ", "Initialization FRAGMENT BLOCK")
     }
@@ -147,16 +151,37 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        activity?.actionBar?.title
+        activity?.actionBar?.subtitle
         inflater.inflate(R.menu.countries_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
+
+
+
+
+        mFilterButton = menu.findItem(R.id.menu_filter_button)
+        mMapsButton = menu.findItem(R.id.menu_maps_button)
+        mSortButton = menu.findItem(R.id.menu_sort_button)
+
         loadMenuSortIconState()
-//        loadMenuFilterIconState()
         initializeMenuSortIconSet(menu.findItem(R.id.menu_sort_button))
         initializeFilterIconSet(menu.findItem(R.id.menu_filter_button))
 
         //Initialize menu search button
         val menuSearchItem = menu.findItem(R.id.menu_search_button)
         val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
+
+        mSvMenu.setOnSearchClickListener {
+            mFilterButton.isVisible = false
+            mMapsButton.isVisible = false
+            mSortButton.isVisible = false
+        }
+
+        mSvMenu.setOnCloseListener {
+            mFilterButton.isVisible = true
+            mMapsButton.isVisible = true
+            mSortButton.isVisible = true
+            false }
 
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -229,6 +254,10 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
                 myAdapter.sortDescendingDataListInAdapter()
             }
         }
+//        if (item.itemId == R.id.menu_search_button) {
+//            mFilterButton.isVisible = false
+//            Log.e("HZ", "MENU SEARCH BUTTON TAPPED")
+//        }
         return super.onOptionsItemSelected(item)
     }
 
