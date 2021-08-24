@@ -10,10 +10,10 @@ interface NetworkRepository {
 
     fun getCountryByName(name: String): Flowable<List<CountryDto>>
 
-    fun getCapitalsListCoroutines(): List<SingleCapitalDto>
+    suspend fun getCapitalsListCoroutines(): List<SingleCapitalDto>
 
-    fun getCountryListCoroutines(): List<CountryDto>
+    suspend fun getCountryListCoroutines(): List<CountryDto>
 
-    fun getCountryByNameCoroutines(name: String): List<CountryDto>
+    suspend fun getCountryByNameCoroutines(name: String): List<CountryDto>
 
 }
