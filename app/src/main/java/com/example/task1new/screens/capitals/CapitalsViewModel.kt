@@ -7,7 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.dto.SingleCapitalDto
 import com.example.domain.repository.network.NetworkRepositoryCoroutines
 import com.example.task1new.base.mvvm.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.lang.Exception
 
 class CapitalsViewModel(
@@ -26,8 +28,10 @@ class CapitalsViewModel(
         mCapitalsListLiveData.loading(true)
         viewModelScope.launch {
             try{
-                Log.e("HZ", "We are in ${Thread.currentThread().name} thread ... (viewModelScope)")
-                val capitalsList = mNetworkRepositoryCoroutines.getCapitalsListCoroutines()
+                val capitalsList = withContext(Dispatchers.IO){
+                    Log.e("HZ", "We are in ${Thread.currentThread().name} thread ... (viewModelScope)")
+                    mNetworkRepositoryCoroutines.getCapitalsListCoroutines()
+                }
                 Log.e("HZ", "CAPITAL LIST SIZE = ${capitalsList.size}")
                 mCapitalsListLiveData.success(capitalsList)
             } catch (exception: Exception){

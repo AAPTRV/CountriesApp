@@ -20,7 +20,13 @@ class CapitalsAdapter: BaseAdapter<SingleCapitalDto>() {
 
     fun repopulateAdapterData(newItemsDto: List<SingleCapitalDto>){
         mDataListInAdapter.clear()
-        mDataListInAdapter.addAll(newItemsDto)
+        val refinedData = mutableListOf<SingleCapitalDto>()
+        for(item in newItemsDto){
+            if (item.mCapital.isNotEmpty()){
+                refinedData.add(item)
+            }
+        }
+        mDataListInAdapter.addAll(refinedData)
         notifyDataSetChanged()
     }
 
@@ -32,7 +38,7 @@ class CapitalsAdapter: BaseAdapter<SingleCapitalDto>() {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is CapitalsViewHolder){
             val item = mDataListInAdapter[position]
-            holder.tvNumber.text = position.toString()
+            holder.tvNumber.text = (position + 1).toString()
             holder.tvCapitalName.text = item.mCapital
         }
     }
