@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.domain.dto.SingleCapitalDto
 import com.example.task1new.R
 import com.example.task1new.base.adapter.BaseAdapter
-import io.reactivex.rxjava3.core.Single
 
 // TODO: Also read about snap helper and implement it in a project
 

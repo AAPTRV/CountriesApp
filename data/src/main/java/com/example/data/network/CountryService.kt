@@ -1,7 +1,6 @@
 package com.example.data.network
 
 import com.example.data.model.CountryModel
-import com.example.data.model.SingleCapitalModel
 import com.example.data.utils.NetConstants
 import io.reactivex.rxjava3.core.Flowable
 import retrofit2.http.GET

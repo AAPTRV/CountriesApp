@@ -5,14 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.domain.dto.SingleCapitalDto
-import com.example.domain.repository.network.NetworkRepository
+import com.example.domain.repository.network.NetworkRepositoryCoroutines
 import com.example.task1new.base.mvvm.*
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class CapitalsViewModel(
     savedStateHandle: SavedStateHandle,
-    private val mNetworkRepository: NetworkRepository
+    private val mNetworkRepositoryCoroutines: NetworkRepositoryCoroutines
 ) : BaseViewModel(savedStateHandle) {
     private val mCapitalsListLiveData =
         savedStateHandle.getLiveData<Outcome<List<SingleCapitalDto>>>("capitals")
@@ -27,7 +27,7 @@ class CapitalsViewModel(
         viewModelScope.launch {
             try{
                 Log.e("HZ", "We are in ${Thread.currentThread().name} thread ... (viewModelScope)")
-                val capitalsList = mNetworkRepository.getCapitalsListCoroutines()
+                val capitalsList = mNetworkRepositoryCoroutines.getCapitalsListCoroutines()
                 Log.e("HZ", "CAPITAL LIST SIZE = ${capitalsList.size}")
                 mCapitalsListLiveData.success(capitalsList)
             } catch (exception: Exception){

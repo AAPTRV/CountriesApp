@@ -21,10 +21,6 @@ class CapitalsFragment : ScopeFragment(R.layout.capitals_fragment), BaseMvvmView
     private var binding: CapitalsFragmentBinding? = null
     private val mViewModel: CapitalsViewModel by stateViewModel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = CapitalsFragmentBinding.bind(view)

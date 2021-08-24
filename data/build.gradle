@@ -26,8 +26,8 @@ android {
     }
 }
 
-final retrofit = "2.9.0"
-final converterGson = "2.9.0"
+final retrofit = "2.8.0"
+final converterGson = "2.8.0"
 final okhttp = "4.9.0"
 final rxJavaRetrofit = "3.0.0"
 def room_version = "2.3.0"
@@ -44,6 +44,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     //Network
+    implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
     implementation "com.squareup.retrofit2:retrofit:$retrofit"
     implementation "com.squareup.retrofit2:converter-gson:$converterGson"
     implementation"com.squareup.okhttp3:okhttp:$okhttp"
