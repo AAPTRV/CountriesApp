@@ -9,7 +9,7 @@ class MapsPresenter : BaseMvpPresenter<MapsView>() {
         getView()?.showProgress()
         addDisposable(
             inBackground(
-                Retrofit.COUNTRY_SERVICE.getCountryList()
+                Retrofit.getCountriesApi().getCountryList()
             ).subscribe({ response ->
                 val mRefinedLatLngDto: MutableList<LatLngDto> = mutableListOf()
                 for(model in response){

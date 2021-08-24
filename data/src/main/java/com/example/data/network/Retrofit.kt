@@ -1,5 +1,6 @@
 package com.example.task1new
 
+import com.example.data.network.CoroutinesCountryService
 import com.example.data.network.CountryService
 import com.example.data.utils.NetConstants
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
@@ -24,9 +25,19 @@ object Retrofit {
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .client(okHttpClient)
         .build()
-    val COUNTRY_SERVICE: CountryService = retrofitBuilder.create(CountryService::class.java)
+
+    private val coroutinesRetrofitBuilder = Retrofit.Builder()
+        .addConverterFactory(GsonConverterFactory.create())
+        .baseUrl(NetConstants.SERVER_API_BASE_URL)
+        .client(okHttpClient)
+        .build()
+
+
+     private val COUNTRY_SERVICE: CountryService = retrofitBuilder.create(CountryService::class.java)
+    private val COROUTINES_COUNTRY_SERVICE: CoroutinesCountryService = coroutinesRetrofitBuilder.create(CoroutinesCountryService::class.java)
 
     fun getCountriesApi(): CountryService = COUNTRY_SERVICE
+    fun getCountriesCoroutinesApi(): CoroutinesCountryService = COROUTINES_COUNTRY_SERVICE
 
     init {
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY

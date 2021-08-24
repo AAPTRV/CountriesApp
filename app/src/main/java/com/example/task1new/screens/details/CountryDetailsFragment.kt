@@ -99,7 +99,7 @@ class CountryDetailsFragment : ScopeFragment(), OnMapReadyCallback {
         }
 
         mLanguagesAdapter = LanguageAdapter()
-        binding?.rvCountryDetailsLanguages?.adapter = mLanguagesAdapter
+        binding?.rvCountryDetails?.adapter = mLanguagesAdapter
 
 
         // TODO: FILL THE CONTENT

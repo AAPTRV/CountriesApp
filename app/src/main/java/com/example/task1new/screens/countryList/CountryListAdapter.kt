@@ -12,9 +12,7 @@ import com.example.domain.dto.CountryDto
 import com.example.domain.dto.convertLanguagesDtoToString
 import com.example.data.ext.loadSvg
 
-
 class CountryListAdapter : BaseAdapter<CountryDto>() {
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.row_layout, parent, false)

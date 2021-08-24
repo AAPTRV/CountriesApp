@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.domain.dto.SingleCapitalDto
 import com.example.task1new.R
 import com.example.task1new.base.adapter.BaseAdapter
+import io.reactivex.rxjava3.core.Single
 
 // TODO: Also read about snap helper and implement it in a project
 
@@ -16,6 +17,12 @@ class CapitalsAdapter: BaseAdapter<SingleCapitalDto>() {
     inner class CapitalsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         var tvNumber: AppCompatTextView = itemView.findViewById(R.id.capitalNumber)
         var tvCapitalName: AppCompatTextView = itemView.findViewById(R.id.capitalName)
+    }
+
+    fun repopulateAdapterData(newItemsDto: List<SingleCapitalDto>){
+        mDataListInAdapter.clear()
+        mDataListInAdapter.addAll(newItemsDto)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

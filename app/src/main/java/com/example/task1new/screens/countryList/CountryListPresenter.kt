@@ -55,7 +55,7 @@ class CountryListPresenter(mDataBase: com.example.data.room.DBInfo) : BaseMvpPre
             .distinctUntilChanged()
             .map { it.lowercase() }
             .flatMap {
-                Retrofit.COUNTRY_SERVICE.getCountryByName(it).toObservable()
+                Retrofit.getCountriesApi().getCountryByName(it).toObservable()
                     .onErrorResumeNext { io.reactivex.rxjava3.core.Observable.just(mutableListOf()) }
             }
             .subscribeOn(Schedulers.io())
@@ -76,7 +76,7 @@ class CountryListPresenter(mDataBase: com.example.data.room.DBInfo) : BaseMvpPre
         }
         addDisposable(
             inBackground(
-                Retrofit.COUNTRY_SERVICE.getCountryList()
+                Retrofit.getCountriesApi().getCountryList()
                     .doOnNext {
                         // DB inserting data
                         val mCountriesInfoFromAPI = it.toMutableList()

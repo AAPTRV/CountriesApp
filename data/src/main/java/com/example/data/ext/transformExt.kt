@@ -87,7 +87,7 @@ fun List<SingleCapitalModel>.convertToDto(): List<SingleCapitalDto>{
 
 fun SingleCapitalModel.convertToDto(): SingleCapitalDto{
     var mCapital = ""
-    this.mCapital?.let { mCapital = it }
+    this.capital?.let { mCapital = it }
     return SingleCapitalDto(
         mCapital
     )
