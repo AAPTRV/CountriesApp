@@ -27,6 +27,7 @@
     //adapter
     <string name="adapter_name">Name: %1$s</string>
     <string name="adapter_distance">Distance: %1$s km</string>
+    <string name="adapter_distance_toolbar">%1$skm</string>
     <string name="adapter_capital">Capital: %1$s</string>
     <string name="adapter_population">Population: %1$d </string>
     <string name="adapter_area">Area: %1$.1f km </string>

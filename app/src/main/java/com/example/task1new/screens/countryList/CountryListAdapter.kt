@@ -49,6 +49,7 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
         var languages: TextView = itemView.findViewById(R.id.text_languages)
         var area: TextView = itemView.findViewById(R.id.text_area)
         var distance: TextView = itemView.findViewById(R.id.text_distance)
+        var mCustomToolbarDistance: TextView = itemView.findViewById(R.id.tvDistance)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -82,6 +83,10 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
 
             holder.distance.text = holder.itemName.context.getString(
                 R.string.adapter_distance,
+                mDataListInAdapter[position].distance.toString()
+            )
+            holder.mCustomToolbarDistance.text = holder.itemName.context.getString(
+                R.string.adapter_distance_toolbar,
                 mDataListInAdapter[position].distance.toString()
             )
             holder.itemImage.loadSvg(mDataListInAdapter[position].flag)

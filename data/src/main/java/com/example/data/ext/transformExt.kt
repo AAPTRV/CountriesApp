@@ -43,8 +43,6 @@ fun List<RoomCommonInfoDto>.convertInfoToEntity(): List<CountryDatabaseCommonInf
     return result
 }
 
-
-
 fun List<CountryDatabaseLanguageInfoEntity>.convertLanguageToRoomDto(): List<RoomLanguageDto>{
     val result = mutableListOf<RoomLanguageDto>()
     this.forEach { result.add(it.convertToRoomDto()) }
