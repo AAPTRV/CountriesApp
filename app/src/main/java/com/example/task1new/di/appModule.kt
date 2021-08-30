@@ -16,8 +16,8 @@ val appModule = module {
     single{ Retrofit.COUNTRY_SERVICE }
 
     //Data level
-    single{ NetworkRepositoryImpl(get()) as NetworkRepository }
-    single{ DatabaseCommonInfoRepositoryImpl(get()) as DatabaseCommonInfoRepository}
-    single{ DatabaseLanguageRepositoryImpl(get()) as DatabaseLanguageRepository}
+    single<NetworkRepository>{ NetworkRepositoryImpl(get()) }
+    single<DatabaseCommonInfoRepository>{DatabaseCommonInfoRepositoryImpl(get())}
+    single<DatabaseLanguageRepository>{DatabaseLanguageRepositoryImpl(get())}
 
 }
