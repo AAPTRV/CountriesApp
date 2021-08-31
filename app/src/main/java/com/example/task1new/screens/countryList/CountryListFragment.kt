@@ -26,6 +26,7 @@ import com.example.task1new.base.mvvm.BaseMvvmView
 import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.databinding.FragmentCountryListBinding
 import com.example.data.ext.showSimpleDialogNetworkError
+import com.example.task1new.util.StartSnapHelper
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
@@ -101,17 +102,9 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
 
         // TODO: Handle saved instance state ...
         binding?.recycleView?.layoutManager = LinearLayoutManager(context)
-        val snapHelper: SnapHelper = LinearSnapHelper()  // или PagerSnapHelper()
+        val snapHelper: SnapHelper = StartSnapHelper() // или PagerSnapHelper()
         binding?.recycleView?.let { snapHelper.attachToRecyclerView(binding?.recycleView) }
-        
-        //Saved Instance State
-//        if (savedInstanceState != null) {
-//            mLayoutManagerState =
-//                savedInstanceState.getParcelable(COUNTRY_DETAILS_LAYOUT_MANAGER_KEY)!!
-//            binding?.recycleView?.layoutManager?.onRestoreInstanceState(mLayoutManagerState)
-//        } else {
-//            binding?.recycleView?.layoutManager = LinearLayoutManager(context)
-//        }
+
 
         //MVVM OBSERVE
         mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { outcome ->
