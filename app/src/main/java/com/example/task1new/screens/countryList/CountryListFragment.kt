@@ -26,6 +26,7 @@ import com.example.task1new.base.mvvm.BaseMvvmView
 import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.databinding.FragmentCountryListBinding
 import com.example.data.ext.showSimpleDialogNetworkError
+import com.example.task1new.util.StartSnapHelper
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
@@ -105,7 +106,7 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
 
         // TODO: Handle saved instance state ...
         binding?.recycleView?.layoutManager = LinearLayoutManager(context)
-        val snapHelper: SnapHelper = LinearSnapHelper()  // или PagerSnapHelper()
+        val snapHelper: SnapHelper = StartSnapHelper() // или PagerSnapHelper()
         binding?.recycleView?.let { snapHelper.attachToRecyclerView(binding?.recycleView) }
 
 
@@ -116,20 +117,20 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
                     showProgress()
                 }
                 is Outcome.Next -> {
-                    myAdapter.repopulateAdapterData(outcome.data)
+                    myAdapter.setDataByDiffUtil(outcome.data)
                     hideProgress()
                 }
                 is Outcome.Failure -> {
                     hideProgress()
                 }
                 is Outcome.Success -> {
-                    myAdapter.repopulateAdapterData(outcome.data)
+                    myAdapter.setDataByDiffUtil(outcome.data)
                     hideProgress()
                 }
             }
         })
         mViewModel.getFilterLiveData().observe(viewLifecycleOwner, {
-            myAdapter.repopulateAdapterData(mViewModel.getFilteredDataFromCountriesLiveData())
+            myAdapter.setDataByDiffUtil(mViewModel.getFilteredDataFromCountriesLiveData())
             Toast.makeText(this.requireActivity(), "Filter updated", Toast.LENGTH_SHORT).show()
         })
 
