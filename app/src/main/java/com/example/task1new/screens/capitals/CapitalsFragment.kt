@@ -1,7 +1,11 @@
 package com.example.task1new.screens.capitals
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
+import android.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.data.ext.showSimpleDialogNetworkError
 import com.example.task1new.R
@@ -21,12 +25,17 @@ class CapitalsFragment : ScopeFragment(R.layout.capitals_fragment), BaseMvvmView
     private var binding: CapitalsFragmentBinding? = null
     private val mViewModel: CapitalsViewModel by stateViewModel()
 
+    private lateinit var mMapsButton: MenuItem
+    private lateinit var mSearchButton: MenuItem
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = CapitalsFragmentBinding.bind(view)
         binding?.rvCountryCapitals?.layoutManager = LinearLayoutManager(context)
         binding?.rvCountryCapitals?.adapter = myAdapter
         mViewModel.getCapitalsCoroutines()
+
+        setHasOptionsMenu(true)
 
         mViewModel.getCapitalsLiveData().observe(viewLifecycleOwner, { outcome ->
             when(outcome){
@@ -45,6 +54,25 @@ class CapitalsFragment : ScopeFragment(R.layout.capitals_fragment), BaseMvvmView
                 }
             }
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.capitals_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+
+        mMapsButton = menu.findItem(R.id.capitals_menu_maps_button)
+        mSearchButton = menu.findItem(R.id.capitals_menu_search_button)
+        val mSvMenu = mSearchButton.actionView as SearchView
+
+        mSvMenu.setOnSearchClickListener {
+            mMapsButton.isVisible = false
+        }
+        mSvMenu.setOnCloseListener {
+            mMapsButton.isVisible = true
+            false
+        }
+
+
     }
 
     override fun showError(error: String, throwable: Throwable) {

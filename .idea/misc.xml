@@ -19,7 +19,9 @@
         <entry key="..\:/Android/petrov_aleksey_project/app/src/main/res/layout/item_capital.xml" value="0.33" />
         <entry key="..\:/Android/petrov_aleksey_project/app/src/main/res/layout/item_language.xml" value="0.27943840579710144" />
         <entry key="..\:/Android/petrov_aleksey_project/app/src/main/res/layout/row_layout.xml" value="0.5" />
-        <entry key="..\:/Android/petrov_aleksey_project/app/src/main/res/menu/countries_menu.xml" value="0.33" />
+        <entry key="..\:/Android/petrov_aleksey_project/app/src/main/res/menu/capitals_manu.xml" value="0.1" />
+        <entry key="..\:/Android/petrov_aleksey_project/app/src/main/res/menu/capitals_menu.xml" value="0.176" />
+        <entry key="..\:/Android/petrov_aleksey_project/app/src/main/res/menu/countries_menu.xml" value="0.1" />
       </map>
     </option>
   </component>

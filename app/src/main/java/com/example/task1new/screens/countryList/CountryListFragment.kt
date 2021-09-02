@@ -152,13 +152,8 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        activity?.actionBar?.title
-        activity?.actionBar?.subtitle
         inflater.inflate(R.menu.countries_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
-
-
-
 
         mFilterButton = menu.findItem(R.id.menu_filter_button)
         mMapsButton = menu.findItem(R.id.menu_maps_button)

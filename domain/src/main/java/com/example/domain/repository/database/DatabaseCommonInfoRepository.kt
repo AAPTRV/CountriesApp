@@ -1,6 +1,5 @@
 package com.example.domain.repository.database
 
-import com.example.domain.dto.CountryDto
 import com.example.domain.dto.RoomCommonInfoDto
 
 interface DatabaseCommonInfoRepository {
