@@ -1,7 +1,5 @@
 package com.example.task1new.di
 
-import com.example.data.network.CoroutinesCountryService
-import com.example.data.network.CountryService
 import com.example.data.repository.databaseRepo.DatabaseCommonInfoRepositoryImpl
 import com.example.data.repository.databaseRepo.DatabaseLanguageRepositoryImpl
 import com.example.data.repository.networkRepo.NetworkRepositoryCoroutinesImpl

@@ -13,10 +13,6 @@ import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
 class CapitalsFragment : ScopeFragment(R.layout.capitals_fragment), BaseMvvmView {
 
-    companion object {
-        fun newInstance() = CapitalsFragment()
-    }
-
     private var myAdapter = CapitalsAdapter()
     private var binding: CapitalsFragmentBinding? = null
     private val mViewModel: CapitalsViewModel by stateViewModel()
@@ -31,17 +27,19 @@ class CapitalsFragment : ScopeFragment(R.layout.capitals_fragment), BaseMvvmView
         mViewModel.getCapitalsLiveData().observe(viewLifecycleOwner, { outcome ->
             when(outcome){
                 is Outcome.Progress -> {
-                    showProgress()
+                    if (outcome.loading) {
+                        showProgress()
+                    } else {
+                        hideProgress()
+                    }
                 }
                 is Outcome.Next -> {
-                    hideProgress()
                 }
                 is Outcome.Success -> {
-                    hideProgress()
                     myAdapter.repopulateAdapterData(outcome.data)
                 }
                 is Outcome.Failure -> {
-                    hideProgress()
+                    showError(outcome.e.toString(), outcome.e)
                 }
             }
         })
