@@ -109,18 +109,20 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
         mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { outcome ->
             when (outcome) {
                 is Outcome.Progress -> {
-                    showProgress()
+                    if (outcome.loading) {
+                        showProgress()
+                    } else {
+                        hideProgress()
+                    }
                 }
                 is Outcome.Next -> {
                     myAdapter.repopulateAdapterData(outcome.data)
-                    hideProgress()
                 }
                 is Outcome.Failure -> {
-                    hideProgress()
+                    showError(outcome.e.toString(), outcome.e)
                 }
                 is Outcome.Success -> {
                     myAdapter.repopulateAdapterData(outcome.data)
-                    hideProgress()
                 }
             }
         })
