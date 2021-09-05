@@ -71,8 +71,6 @@ class CapitalsFragment : ScopeFragment(R.layout.capitals_fragment), BaseMvvmView
             mMapsButton.isVisible = true
             false
         }
-
-
     }
 
     override fun showError(error: String, throwable: Throwable) {
