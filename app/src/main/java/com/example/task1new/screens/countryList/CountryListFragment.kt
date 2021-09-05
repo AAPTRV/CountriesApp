@@ -225,9 +225,10 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
             updateMenuSortIconView(item)
             saveMenuSortIconState()
             if (sortIconClipped) {
-                myAdapter.sortAscendingDataListInAdapter()
+                // TODO: 05.09.2021 SORT!
+//                myAdapter.sortAscendingDataListInAdapter()
             } else {
-                myAdapter.sortDescendingDataListInAdapter()
+//                myAdapter.sortDescendingDataListInAdapter()
             }
         }
         return super.onOptionsItemSelected(item)
@@ -339,7 +340,8 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
          * @return A new instance of fragment BlankFragmentRV.
          */
 
-        var myAdapter: CountryListAdapter = CountryListAdapter()
+        //var myAdapter: CountryListAdapter = CountryListAdapter()
+        var myAdapter: MvvmListAdapter = MvvmListAdapter()
 
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
