@@ -24,6 +24,10 @@ class MvvmListAdapter :
         fun onClick(item: CountryDto)
     }
 
+    fun setItemClick(clickListener: (CountryDto) -> Unit){
+        mOnItemClickListener = clickListener
+    }
+
     class DifferItemCallback : DiffUtil.ItemCallback<CountryDto>() {
         @SuppressLint("DiffUtilEquals")
         override fun areContentsTheSame(oldItem: CountryDto, newItem: CountryDto): Boolean {

@@ -113,20 +113,20 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
                     showProgress()
                 }
                 is Outcome.Next -> {
-                    myAdapter.setDataByDiffUtil(outcome.data)
+                    myAdapter.submitList(outcome.data)
                     hideProgress()
                 }
                 is Outcome.Failure -> {
                     hideProgress()
                 }
                 is Outcome.Success -> {
-                    myAdapter.setDataByDiffUtil(outcome.data)
+                    myAdapter.submitList(outcome.data)
                     hideProgress()
                 }
             }
         })
         mViewModel.getFilterLiveData().observe(viewLifecycleOwner, {
-            myAdapter.setDataByDiffUtil(mViewModel.getFilteredDataFromCountriesLiveData())
+            myAdapter.submitList(mViewModel.getFilteredDataFromCountriesLiveData())
             Toast.makeText(this.requireActivity(), "Filter updated", Toast.LENGTH_SHORT).show()
         })
 
