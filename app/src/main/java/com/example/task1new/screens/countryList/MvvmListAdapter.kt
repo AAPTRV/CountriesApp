@@ -6,8 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.NonNull
-import androidx.annotation.Nullable
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -16,10 +14,6 @@ import com.example.domain.dto.CountryDto
 import com.example.domain.dto.convertLanguagesDtoToString
 import com.example.task1new.R
 import kotlinx.android.extensions.LayoutContainer
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
-
-
 
 class MvvmListAdapter :
     ListAdapter<CountryDto, MvvmListAdapter.ListViewHolder>(DifferItemCallback()) {
@@ -38,6 +32,7 @@ class MvvmListAdapter :
         val list = mutableListOf<CountryDto>()
         list.addAll(currentList)
         list.sortBy { it.population }
+        submitList(null)
         submitList(list)
     }
 
@@ -45,14 +40,13 @@ class MvvmListAdapter :
         val list = mutableListOf<CountryDto>()
         list.addAll(currentList)
         list.sortByDescending { it.population }
+        submitList(null)
         submitList(list)
     }
-
 
 //    override fun submitList(list: List<CountryDto>?) {
 //        super.submitList(list?.let { ArrayList(it) })
 //    }
-
 
     class DifferItemCallback : DiffUtil.ItemCallback<CountryDto>() {
         @SuppressLint("DiffUtilEquals")
