@@ -225,10 +225,10 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
             updateMenuSortIconView(item)
             saveMenuSortIconState()
             if (sortIconClipped) {
-                // TODO: 05.09.2021 SORT!
-//                myAdapter.sortAscendingDataListInAdapter()
+                // TODO: 05.09.2021 SORT IN A GOOD WAY!
+                myAdapter.sortAscendingDataListInAdapter()
             } else {
-//                myAdapter.sortDescendingDataListInAdapter()
+                myAdapter.sortDescendingDataListInAdapter()
             }
         }
         return super.onOptionsItemSelected(item)

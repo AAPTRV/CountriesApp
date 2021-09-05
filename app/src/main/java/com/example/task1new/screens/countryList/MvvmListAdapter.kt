@@ -28,6 +28,22 @@ class MvvmListAdapter :
         mOnItemClickListener = clickListener
     }
 
+    fun sortAscendingDataListInAdapter() {
+        val list = mutableListOf<CountryDto>()
+        list.addAll(currentList)
+        list.sortBy { it.population }
+        submitList(null)
+        submitList(list)
+    }
+
+    fun sortDescendingDataListInAdapter() {
+        val list = mutableListOf<CountryDto>()
+        list.addAll(currentList)
+        list.sortByDescending { it.population }
+        submitList(null)
+        submitList(list)
+    }
+
     class DifferItemCallback : DiffUtil.ItemCallback<CountryDto>() {
         @SuppressLint("DiffUtilEquals")
         override fun areContentsTheSame(oldItem: CountryDto, newItem: CountryDto): Boolean {
