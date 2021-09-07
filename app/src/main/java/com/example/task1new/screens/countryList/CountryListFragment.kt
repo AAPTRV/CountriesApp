@@ -18,11 +18,15 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
+import androidx.recyclerview.widget.SnapHelper
+import com.example.data.utils.*
 import com.example.task1new.*
 import com.example.task1new.base.mvvm.BaseMvvmView
 import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.databinding.FragmentCountryListBinding
-import com.example.task1new.ext.showSimpleDialogNetworkError
+import com.example.data.ext.showSimpleDialogNetworkError
+import com.example.task1new.util.StartSnapHelper
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
@@ -43,7 +47,6 @@ private const val SHARED_PREFS: String = "sharedPrefs"
 private const val MENU_SORT_ICON_STATE = "menu sort icon state"
 private const val MENU_FILTER_ICON_STATE = "menu filter icon state"
 
-
 class CountryListFragment : ScopeFragment(), BaseMvvmView {
 
     private var param1: String? = null
@@ -54,6 +57,10 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
     private lateinit var mLayoutManagerState: Parcelable
     private var mLocationProviderClient: FusedLocationProviderClient? = null
     private val mViewModel: CountryListViewModel by stateViewModel()
+
+    private lateinit var mFilterButton: MenuItem
+    private lateinit var mMapsButton: MenuItem
+    private lateinit var mSortButton: MenuItem
 
     init {
         Log.e("HZ", "Initialization FRAGMENT BLOCK")
@@ -98,36 +105,32 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
         setHasOptionsMenu(true)
 
         // TODO: Handle saved instance state ...
-        //Saved Instance State
-        if (savedInstanceState != null) {
-            mLayoutManagerState =
-                savedInstanceState.getParcelable(COUNTRY_DETAILS_LAYOUT_MANAGER_KEY)!!
-            binding?.recycleView?.layoutManager?.onRestoreInstanceState(mLayoutManagerState)
-        } else {
-            binding?.recycleView?.layoutManager = LinearLayoutManager(context)
-        }
+        binding?.recycleView?.layoutManager = LinearLayoutManager(context)
+        val snapHelper: SnapHelper = StartSnapHelper() // или PagerSnapHelper()
+        binding?.recycleView?.let { snapHelper.attachToRecyclerView(binding?.recycleView) }
+
 
         //MVVM OBSERVE
         mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { outcome ->
-            when(outcome){
-                is Outcome.Progress ->{
+            when (outcome) {
+                is Outcome.Progress -> {
                     showProgress()
                 }
                 is Outcome.Next -> {
-                    myAdapter.repopulateAdapterData(outcome.data)
+                    myAdapter.setDataByDiffUtil(outcome.data)
                     hideProgress()
                 }
                 is Outcome.Failure -> {
                     hideProgress()
                 }
                 is Outcome.Success -> {
-                    myAdapter.repopulateAdapterData(outcome.data)
+                    myAdapter.setDataByDiffUtil(outcome.data)
                     hideProgress()
                 }
             }
         })
         mViewModel.getFilterLiveData().observe(viewLifecycleOwner, {
-            myAdapter.repopulateAdapterData(mViewModel.getFilteredDataFromCountriesLiveData())
+            myAdapter.setDataByDiffUtil(mViewModel.getFilteredDataFromCountriesLiveData())
             Toast.makeText(this.requireActivity(), "Filter updated", Toast.LENGTH_SHORT).show()
         })
 
@@ -149,16 +152,37 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        activity?.actionBar?.title
+        activity?.actionBar?.subtitle
         inflater.inflate(R.menu.countries_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
+
+
+
+
+        mFilterButton = menu.findItem(R.id.menu_filter_button)
+        mMapsButton = menu.findItem(R.id.menu_maps_button)
+        mSortButton = menu.findItem(R.id.menu_sort_button)
+
         loadMenuSortIconState()
-//        loadMenuFilterIconState()
         initializeMenuSortIconSet(menu.findItem(R.id.menu_sort_button))
         initializeFilterIconSet(menu.findItem(R.id.menu_filter_button))
 
         //Initialize menu search button
         val menuSearchItem = menu.findItem(R.id.menu_search_button)
         val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
+
+        mSvMenu.setOnSearchClickListener {
+            mFilterButton.isVisible = false
+            mMapsButton.isVisible = false
+            mSortButton.isVisible = false
+        }
+
+        mSvMenu.setOnCloseListener {
+            mFilterButton.isVisible = true
+            mMapsButton.isVisible = true
+            mSortButton.isVisible = true
+            false }
 
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -173,7 +197,7 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
                     mViewModel.setFilterCountryName(newText)
                 }
                 if (newText.length in 0..2) {
-                    mViewModel.setFilterCountryName(FILTER_ANY_COUNTRY_VALUE)
+                    mViewModel.setFilterCountryName(com.example.data.utils.FILTER_ANY_COUNTRY_VALUE)
                 }
                 return true
             }
@@ -191,17 +215,23 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
             if (!filterIconClipped) {
                 val bundle = Bundle()
                 bundle.putString(
-                    ADAPTER_MAXIMUM_POPULATION_BUNDLE_KEY,
+                    com.example.data.utils.ADAPTER_MAXIMUM_POPULATION_BUNDLE_KEY,
                     mViewModel.getMaximumPopulation()
                 )
                 bundle.putString(
-                    ADAPTER_MINIMUM_POPULATION_BUNDLE_KEY,
+                    com.example.data.utils.ADAPTER_MINIMUM_POPULATION_BUNDLE_KEY,
                     mViewModel.getMinimumPopulation()
                 )
-                bundle.putString(ADAPTER_MAXIMUM_AREA_BUNDLE_KEY, mViewModel.getMaximumArea())
-                bundle.putString(ADAPTER_MINIMUM_AREA_BUNDLE_KEY, mViewModel.getMinimumArea())
                 bundle.putString(
-                    ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY,
+                    com.example.data.utils.ADAPTER_MAXIMUM_AREA_BUNDLE_KEY,
+                    mViewModel.getMaximumArea()
+                )
+                bundle.putString(
+                    com.example.data.utils.ADAPTER_MINIMUM_AREA_BUNDLE_KEY,
+                    mViewModel.getMinimumArea()
+                )
+                bundle.putString(
+                    com.example.data.utils.ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY,
                     mViewModel.getMaximumDistance()
                 )
                 filterIconClipped = true
@@ -225,6 +255,10 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
                 myAdapter.sortDescendingDataListInAdapter()
             }
         }
+//        if (item.itemId == R.id.menu_search_button) {
+//            mFilterButton.isVisible = false
+//            Log.e("HZ", "MENU SEARCH BUTTON TAPPED")
+//        }
         return super.onOptionsItemSelected(item)
     }
 

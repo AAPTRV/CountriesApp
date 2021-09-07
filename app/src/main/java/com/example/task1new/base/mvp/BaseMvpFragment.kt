@@ -1,8 +1,6 @@
 package com.example.task1new.base.mvp
 
 import android.os.Bundle
-import android.view.View
-import androidx.fragment.app.Fragment
 import org.koin.androidx.scope.ScopeFragment
 
 abstract class BaseMvpFragment<View : BaseMvpView, PresenterType : BaseMvpPresenter<View>> : ScopeFragment() {

@@ -1,4 +1,4 @@
-package com.example.task1new.ext
+package com.example.data.ext
 
 import android.app.Activity
 import android.app.AlertDialog

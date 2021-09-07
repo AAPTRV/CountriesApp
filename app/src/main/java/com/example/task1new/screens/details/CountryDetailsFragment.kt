@@ -5,22 +5,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.setFragmentResultListener
-import androidx.navigation.Navigation
-import com.example.task1new.COUNTRY_NAME_BUNDLE_KEY
+import com.example.data.utils.COUNTRY_NAME_BUNDLE_KEY
 import com.example.task1new.R
-import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.base.mvvm.Outcome
-import com.example.task1new.content.dialog.CustomDialog
 import com.example.task1new.databinding.FragmentCountryDetailsBinding
-import com.example.task1new.dto.CountryDto
-import com.example.task1new.ext.loadSvg
-import com.example.task1new.ext.showDialogWithOneButton
-import com.example.task1new.ext.showSimpleDialogNetworkError
+import com.example.domain.dto.CountryDto
+import com.example.data.ext.loadSvg
+import com.example.data.ext.showDialogWithOneButton
+import com.example.data.ext.showSimpleDialogNetworkError
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -28,7 +22,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
-import org.koin.core.component.getScopeName
 
 
 private const val SHARED_PREFS: String = "sharedPrefs"
@@ -106,7 +99,7 @@ class CountryDetailsFragment : ScopeFragment(), OnMapReadyCallback {
         }
 
         mLanguagesAdapter = LanguageAdapter()
-        binding?.rvCountryDetailsLanguages?.adapter = mLanguagesAdapter
+        binding?.rvCountryDetails?.adapter = mLanguagesAdapter
 
 
         // TODO: FILL THE CONTENT

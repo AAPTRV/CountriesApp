@@ -27,6 +27,7 @@
     //adapter
     <string name="adapter_name">Name: %1$s</string>
     <string name="adapter_distance">Distance: %1$s km</string>
+    <string name="adapter_distance_toolbar">%1$skm</string>
     <string name="adapter_capital">Capital: %1$s</string>
     <string name="adapter_population">Population: %1$d </string>
     <string name="adapter_area">Area: %1$.1f km </string>
@@ -56,5 +57,8 @@
     <string name="error">ERROR</string>
     <string name="error_default">ERROR_DEFAULT</string>
     <string name="dialog_ok">DIALOG_OK</string>
+    <string name="show_all_capitals">SHOW ALL CAPITALS</string>
+    <string name="number">#</string>
+    <string name="country_s_capital_name">Country\'s capital name</string>
 
 </resources>

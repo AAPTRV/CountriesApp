@@ -1,4 +1,4 @@
-package com.example.task1new.ext
+package com.example.data.ext
 
 import android.widget.ImageView
 import coil.ImageLoader

@@ -58,24 +58,24 @@ class FilterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var mMinArea = arguments?.getString(ADAPTER_MINIMUM_AREA_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
-        var mMaxArea = arguments?.getString(ADAPTER_MAXIMUM_AREA_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
+        var mMinArea = arguments?.getString(com.example.data.utils.ADAPTER_MINIMUM_AREA_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
+        var mMaxArea = arguments?.getString(com.example.data.utils.ADAPTER_MAXIMUM_AREA_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
         binding?.areaSlider?.valueFrom = mMinArea
         binding?.areaSlider?.valueTo = mMaxArea
         binding?.areaSlider?.stepSize = getStepSize(mMinArea, mMaxArea)
         binding?.areaSlider?.values = mutableListOf(mMinArea, mMaxArea)
 
         var mMinPopulation =
-            arguments?.getString(ADAPTER_MINIMUM_POPULATION_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
+            arguments?.getString(com.example.data.utils.ADAPTER_MINIMUM_POPULATION_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
         var mMaxPopulation =
-            arguments?.getString(ADAPTER_MAXIMUM_POPULATION_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
+            arguments?.getString(com.example.data.utils.ADAPTER_MAXIMUM_POPULATION_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
         binding?.populationSlider?.valueFrom = mMinPopulation
         binding?.populationSlider?.valueTo = mMaxPopulation
         binding?.populationSlider?.stepSize = getStepSize(mMinPopulation, mMaxPopulation)
         binding?.populationSlider?.values = mutableListOf(mMinPopulation, mMaxPopulation)
 
         var mMaxDistance =
-            arguments?.getString(ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
+            arguments?.getString(com.example.data.utils.ADAPTER_MAXIMUM_DISTANCE_BUNDLE_KEY, "")?.toFloat() ?: 0.0F
 
         binding?.distanceSlider?.valueFrom = 0F
         binding?.distanceSlider?.valueTo = mMaxDistance

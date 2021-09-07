@@ -2,14 +2,14 @@ package com.example.task1new.screens.map
 
 import com.example.task1new.Retrofit
 import com.example.task1new.base.mvp.BaseMvpPresenter
-import com.example.task1new.dto.LatLngDto
+import com.example.domain.dto.LatLngDto
 
 class MapsPresenter : BaseMvpPresenter<MapsView>() {
     fun getDataFromRetrofitToShowMarkers() {
         getView()?.showProgress()
         addDisposable(
             inBackground(
-                Retrofit.COUNTRY_SERVICE.getCountryList()
+                Retrofit.getCountriesApi().getCountryList()
             ).subscribe({ response ->
                 val mRefinedLatLngDto: MutableList<LatLngDto> = mutableListOf()
                 for(model in response){

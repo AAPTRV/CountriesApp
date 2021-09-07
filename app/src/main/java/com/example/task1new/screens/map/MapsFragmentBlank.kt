@@ -8,10 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import com.example.task1new.R
-import com.example.task1new.base.mvp.BaseMvpFragment
 import com.example.task1new.databinding.FragmentMapsBlankBinding
-import com.example.task1new.dto.LatLngDto
-import com.example.task1new.ext.showSimpleDialogNetworkError
+import com.example.domain.dto.LatLngDto
+import com.example.data.ext.showSimpleDialogNetworkError
+import com.example.task1new.base.mvvm.BaseMvvmView
+import com.example.task1new.base.mvvm.Outcome
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -21,14 +22,16 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
+import org.koin.androidx.scope.ScopeFragment
+import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
-class MapsFragmentBlank : BaseMvpFragment<MapsView, MapsPresenter>(), OnMapReadyCallback, MapsView {
+class MapsFragmentBlank : ScopeFragment(), BaseMvvmView, OnMapReadyCallback {
 
     private var mGoogleMap: GoogleMap? = null
     private var binding: FragmentMapsBlankBinding? = null
     private var mLocationProviderClient: FusedLocationProviderClient? = null
+    private val mViewModel: MapsFragmentViewModel by stateViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,8 +48,25 @@ class MapsFragmentBlank : BaseMvpFragment<MapsView, MapsPresenter>(), OnMapReady
         mLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(this.requireActivity())
         mapFragment?.getMapAsync(this)
-        getPresenter().attachView(this)
-        getPresenter().getDataFromRetrofitToShowMarkers()
+        mViewModel.getLatLngDtoFromApi()
+
+        mViewModel.getCountriesLatLngDto().observe(viewLifecycleOwner, {
+            outcome ->
+            when(outcome){
+                is Outcome.Progress ->{
+                    showProgress()
+                }
+                is Outcome.Next -> {
+                }
+                is Outcome.Failure -> {
+                    hideProgress()
+                }
+                is Outcome.Success -> {
+                    showAllCountryMarkersOnMap(outcome.data)
+                    hideProgress()
+                }
+            }
+        })
     }
 
     private fun getCurrentLocation() {
@@ -57,7 +77,7 @@ class MapsFragmentBlank : BaseMvpFragment<MapsView, MapsPresenter>(), OnMapReady
             PackageManager.PERMISSION_GRANTED
         ) {
             val task: Task<Location>? = mLocationProviderClient?.lastLocation
-            task?.addOnSuccessListener(OnSuccessListener<Location>() {
+            task?.addOnSuccessListener {
                 if (it != null) {
                     mGoogleMap?.addMarker(
                         MarkerOptions().position(
@@ -65,7 +85,8 @@ class MapsFragmentBlank : BaseMvpFragment<MapsView, MapsPresenter>(), OnMapReady
                                 it.latitude,
                                 it.longitude
                             )
-                        ).title("My position").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                        ).title("My position")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
                     )
                     mGoogleMap?.moveCamera(
                         CameraUpdateFactory.newLatLng(
@@ -76,7 +97,7 @@ class MapsFragmentBlank : BaseMvpFragment<MapsView, MapsPresenter>(), OnMapReady
                         )
                     )
                 }
-            })
+            }
         } else {
             val listPermissionsNeeded = ArrayList<String>()
             listPermissionsNeeded.add(android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -88,7 +109,7 @@ class MapsFragmentBlank : BaseMvpFragment<MapsView, MapsPresenter>(), OnMapReady
         mGoogleMap = googleMap
     }
 
-    override fun showAllCountryMarkersOnMap(dtoList: List<LatLngDto>) {
+    private fun showAllCountryMarkersOnMap(dtoList: List<LatLngDto>) {
         for (dto in dtoList) {
             mGoogleMap?.addMarker(
                 MarkerOptions().position(
@@ -120,13 +141,5 @@ class MapsFragmentBlank : BaseMvpFragment<MapsView, MapsPresenter>(), OnMapReady
 
     override fun hideProgress() {
         binding?.progressMaps?.visibility = View.GONE
-    }
-
-    override fun createPresenter() {
-        mPresenter = MapsPresenter()
-    }
-
-    override fun getPresenter(): MapsPresenter {
-        return mPresenter
     }
 }

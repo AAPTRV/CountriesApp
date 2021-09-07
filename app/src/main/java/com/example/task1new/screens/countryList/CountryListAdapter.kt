@@ -5,16 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.task1new.R
 import com.example.task1new.base.adapter.BaseAdapter
-import com.example.task1new.dto.CountryDto
-import com.example.task1new.dto.convertLanguagesDtoToString
-import com.example.task1new.ext.loadSvg
-
+import com.example.domain.dto.CountryDto
+import com.example.domain.dto.convertLanguagesDtoToString
+import com.example.data.ext.loadSvg
 
 class CountryListAdapter : BaseAdapter<CountryDto>() {
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.row_layout, parent, false)
@@ -29,6 +28,13 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
         mDataListInAdapter.clear()
         mDataListInAdapter.addAll(newItemsDto)
         notifyDataSetChanged()
+    }
+
+    fun setDataByDiffUtil(mNewDataList: List<CountryDto>){
+        val diffUtil = CountryListDiffUtil(mDataListInAdapter, mNewDataList)
+        val diffResults = DiffUtil.calculateDiff(diffUtil)
+        mDataListInAdapter = mNewDataList.toMutableList()
+        diffResults.dispatchUpdatesTo(this)
     }
 
     // TODO: Implement notifyItemChanged()
@@ -51,6 +57,7 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
         var languages: TextView = itemView.findViewById(R.id.text_languages)
         var area: TextView = itemView.findViewById(R.id.text_area)
         var distance: TextView = itemView.findViewById(R.id.text_distance)
+        var mCustomToolbarDistance: TextView = itemView.findViewById(R.id.tvDistance)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -84,6 +91,10 @@ class CountryListAdapter : BaseAdapter<CountryDto>() {
 
             holder.distance.text = holder.itemName.context.getString(
                 R.string.adapter_distance,
+                mDataListInAdapter[position].distance.toString()
+            )
+            holder.mCustomToolbarDistance.text = holder.itemName.context.getString(
+                R.string.adapter_distance_toolbar,
                 mDataListInAdapter[position].distance.toString()
             )
             holder.itemImage.loadSvg(mDataListInAdapter[position].flag)

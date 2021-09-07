@@ -1,7 +1,5 @@
 package com.example.task1new.base.mvp
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.disposables.CompositeDisposable

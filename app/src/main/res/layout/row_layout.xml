@@ -17,57 +17,50 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/rectangle_rounded"
-            android:layout_margin="10dp">
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/row_layout_margin"
+            android:background="@drawable/rectangle_rounded">
 
             <ImageView
                 android:id="@+id/cardIcon"
                 android:layout_width="@dimen/row_layout_icon_size"
                 android:layout_height="@dimen/row_layout_icon_size"
-                android:layout_marginStart="@dimen/common_margin"
-                android:layout_marginTop="@dimen/common_margin"
-                android:layout_marginBottom="@dimen/common_margin"
+                android:contentDescription="@string/icon_content_description"
                 android:scaleType="centerInside"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/icon"
-                android:contentDescription="@string/icon_content_description" />
+                app:srcCompat="@drawable/icon" />
 
             <TextView
                 android:id="@+id/text_name_title"
                 android:layout_width="@dimen/zero_size"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/common_margin"
-                android:layout_marginTop="@dimen/common_margin"
+                android:layout_marginStart="@dimen/text_view_common_left_margin"
                 android:text="@string/text_title"
                 android:textSize="@dimen/common_text_medium"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintLeft_toRightOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/cardIcon"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@+id/cardIcon" />
 
             <TextView
                 android:id="@+id/text_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/common_margin"
                 android:layout_marginTop="@dimen/common_margin"
                 android:text="@string/text_title"
-                android:textSize="@dimen/common_text_medium"
-                app:layout_constraintStart_toEndOf="@+id/cardIcon"
+                android:textSize="@dimen/common_text_small"
+                app:layout_constraintStart_toStartOf="@+id/text_name_title"
                 app:layout_constraintTop_toBottomOf="@id/text_name_title" />
 
             <TextView
                 android:id="@+id/text_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/common_margin"
                 android:layout_marginTop="@dimen/common_margin"
                 android:text="@string/text_description"
-                android:textSize="@dimen/common_text_medium"
-                app:layout_constraintStart_toEndOf="@+id/cardIcon"
+                android:textSize="@dimen/common_text_small"
+                app:layout_constraintStart_toStartOf="@+id/text_title"
                 app:layout_constraintTop_toBottomOf="@+id/text_title" />
 
 
@@ -75,35 +68,40 @@
                 android:id="@+id/text_languages"
                 android:layout_width="@dimen/zero_size"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/common_margin"
                 android:layout_marginTop="@dimen/common_margin"
                 android:text="@string/text_languages"
                 android:textSize="@dimen/common_text_small"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/cardIcon"
+                app:layout_constraintStart_toStartOf="@+id/text_description"
                 app:layout_constraintTop_toBottomOf="@+id/text_description" />
 
             <TextView
                 android:id="@+id/text_area"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/common_margin"
                 android:layout_marginTop="@dimen/common_margin"
                 android:text="@string/area"
                 android:textSize="@dimen/common_text_small"
-                app:layout_constraintStart_toEndOf="@+id/cardIcon"
+                app:layout_constraintStart_toStartOf="@+id/text_languages"
                 app:layout_constraintTop_toBottomOf="@+id/text_languages" />
 
             <TextView
                 android:id="@+id/text_distance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/common_margin"
                 android:layout_marginTop="@dimen/common_margin"
                 android:text="@string/distance"
                 android:textSize="@dimen/common_text_small"
-                app:layout_constraintStart_toEndOf="@+id/cardIcon"
+                app:layout_constraintStart_toStartOf="@+id/text_area"
                 app:layout_constraintTop_toBottomOf="@+id/text_area" />
+
+            <com.example.task1new.customViews.CustomLikeBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/text_distance"
+                android:layout_marginTop="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

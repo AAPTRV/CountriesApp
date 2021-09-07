@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_blankFragmentFR_to_mapsFragmentBlank"
             app:destination="@id/mapsFragmentBlank" />
+        <action
+            android:id="@+id/action_blankFragmentFR_to_capitalsFragment"
+            app:destination="@id/capitalsFragment" />
     </fragment>
     <fragment
         android:id="@+id/blankFragmentRV"
@@ -45,9 +48,10 @@
         android:id="@+id/filterFragment"
         android:name="com.example.task1new.screens.filter.FilterFragment"
         android:label="fragment_filter"
-        tools:layout="@layout/fragment_filter" >
-        <action
-            android:id="@+id/action_filterFragment_to_blankFragmentRV"
-            app:destination="@id/blankFragmentRV" />
-    </fragment>
+        tools:layout="@layout/fragment_filter" />
+    <fragment
+        android:id="@+id/capitalsFragment"
+        android:name="com.example.task1new.screens.capitals.CapitalsFragment"
+        android:label="capitals_fragment"
+        tools:layout="@layout/capitals_fragment" />
 </navigation>

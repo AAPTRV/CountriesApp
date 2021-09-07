@@ -12,7 +12,7 @@ class CountryDetailsPresenter : BaseMvpPresenter<CountryDetailsView>() {
         }
         addDisposable(
             inBackground(
-                Retrofit.COUNTRY_SERVICE.getCountryByName(name)
+                Retrofit.getCountriesApi().getCountryByName(name)
             ).subscribe(
                 {
                     getView()?.showCountryInfo(
