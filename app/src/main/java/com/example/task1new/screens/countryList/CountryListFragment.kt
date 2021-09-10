@@ -117,20 +117,20 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
                     showProgress()
                 }
                 is Outcome.Next -> {
-                    myAdapter.setDataByDiffUtil(outcome.data)
+                    myAdapter.submitList(outcome.data)
                     hideProgress()
                 }
                 is Outcome.Failure -> {
                     hideProgress()
                 }
                 is Outcome.Success -> {
-                    myAdapter.setDataByDiffUtil(outcome.data)
+                    myAdapter.submitList(outcome.data)
                     hideProgress()
                 }
             }
         })
         mViewModel.getFilterLiveData().observe(viewLifecycleOwner, {
-            myAdapter.setDataByDiffUtil(mViewModel.getFilteredDataFromCountriesLiveData())
+            myAdapter.submitList(mViewModel.getFilteredDataFromCountriesLiveData())
             Toast.makeText(this.requireActivity(), "Filter updated", Toast.LENGTH_SHORT).show()
         })
 
@@ -250,6 +250,7 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
             updateMenuSortIconView(item)
             saveMenuSortIconState()
             if (sortIconClipped) {
+                // TODO: 05.09.2021 SORT IN A GOOD WAY!
                 myAdapter.sortAscendingDataListInAdapter()
             } else {
                 myAdapter.sortDescendingDataListInAdapter()
@@ -368,7 +369,8 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
          * @return A new instance of fragment BlankFragmentRV.
          */
 
-        var myAdapter: CountryListAdapter = CountryListAdapter()
+        //var myAdapter: CountryListAdapter = CountryListAdapter()
+        var myAdapter: MvvmListAdapter = MvvmListAdapter()
 
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
