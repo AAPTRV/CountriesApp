@@ -158,9 +158,6 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
         inflater.inflate(R.menu.countries_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
 
-
-
-
         mFilterButton = menu.findItem(R.id.menu_filter_button)
         mMapsButton = menu.findItem(R.id.menu_maps_button)
         mSortButton = menu.findItem(R.id.menu_sort_button)
@@ -361,16 +358,7 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment BlankFragmentRV.
-         */
 
-        //var myAdapter: CountryListAdapter = CountryListAdapter()
         var myAdapter: MvvmListAdapter = MvvmListAdapter()
 
         @JvmStatic
