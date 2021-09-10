@@ -26,6 +26,7 @@ import com.example.task1new.base.mvvm.BaseMvvmView
 import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.databinding.FragmentCountryListBinding
 import com.example.data.ext.showSimpleDialogNetworkError
+import com.example.task1new.util.StartSnapHelper
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
@@ -56,6 +57,10 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
     private lateinit var mLayoutManagerState: Parcelable
     private var mLocationProviderClient: FusedLocationProviderClient? = null
     private val mViewModel: CountryListViewModel by stateViewModel()
+
+    private lateinit var mFilterButton: MenuItem
+    private lateinit var mMapsButton: MenuItem
+    private lateinit var mSortButton: MenuItem
 
     init {
         Log.e("HZ", "Initialization FRAGMENT BLOCK")
@@ -101,7 +106,7 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
 
         // TODO: Handle saved instance state ...
         binding?.recycleView?.layoutManager = LinearLayoutManager(context)
-        val snapHelper: SnapHelper = LinearSnapHelper()  // или PagerSnapHelper()
+        val snapHelper: SnapHelper = StartSnapHelper() // или PagerSnapHelper()
         binding?.recycleView?.let { snapHelper.attachToRecyclerView(binding?.recycleView) }
 
 
@@ -116,18 +121,22 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
                     }
                 }
                 is Outcome.Next -> {
+                    myAdapter.submitList(outcome.data)
+                    hideProgress()
                     myAdapter.repopulateAdapterData(outcome.data)
                 }
                 is Outcome.Failure -> {
                     showError(outcome.e.toString(), outcome.e)
                 }
                 is Outcome.Success -> {
+                    myAdapter.submitList(outcome.data)
+                    hideProgress()
                     myAdapter.repopulateAdapterData(outcome.data)
                 }
             }
         })
         mViewModel.getFilterLiveData().observe(viewLifecycleOwner, {
-            myAdapter.repopulateAdapterData(mViewModel.getFilteredDataFromCountriesLiveData())
+            myAdapter.submitList(mViewModel.getFilteredDataFromCountriesLiveData())
             Toast.makeText(this.requireActivity(), "Filter updated", Toast.LENGTH_SHORT).show()
         })
 
@@ -149,16 +158,37 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        activity?.actionBar?.title
+        activity?.actionBar?.subtitle
         inflater.inflate(R.menu.countries_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
+
+
+
+
+        mFilterButton = menu.findItem(R.id.menu_filter_button)
+        mMapsButton = menu.findItem(R.id.menu_maps_button)
+        mSortButton = menu.findItem(R.id.menu_sort_button)
+
         loadMenuSortIconState()
-//        loadMenuFilterIconState()
         initializeMenuSortIconSet(menu.findItem(R.id.menu_sort_button))
         initializeFilterIconSet(menu.findItem(R.id.menu_filter_button))
 
         //Initialize menu search button
         val menuSearchItem = menu.findItem(R.id.menu_search_button)
         val mSvMenu: SearchView = menuSearchItem.actionView as SearchView
+
+        mSvMenu.setOnSearchClickListener {
+            mFilterButton.isVisible = false
+            mMapsButton.isVisible = false
+            mSortButton.isVisible = false
+        }
+
+        mSvMenu.setOnCloseListener {
+            mFilterButton.isVisible = true
+            mMapsButton.isVisible = true
+            mSortButton.isVisible = true
+            false }
 
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -226,11 +256,16 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
             updateMenuSortIconView(item)
             saveMenuSortIconState()
             if (sortIconClipped) {
+                // TODO: 05.09.2021 SORT IN A GOOD WAY!
                 myAdapter.sortAscendingDataListInAdapter()
             } else {
                 myAdapter.sortDescendingDataListInAdapter()
             }
         }
+//        if (item.itemId == R.id.menu_search_button) {
+//            mFilterButton.isVisible = false
+//            Log.e("HZ", "MENU SEARCH BUTTON TAPPED")
+//        }
         return super.onOptionsItemSelected(item)
     }
 
@@ -340,7 +375,8 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
          * @return A new instance of fragment BlankFragmentRV.
          */
 
-        var myAdapter: CountryListAdapter = CountryListAdapter()
+        //var myAdapter: CountryListAdapter = CountryListAdapter()
+        var myAdapter: MvvmListAdapter = MvvmListAdapter()
 
         @JvmStatic
         fun newInstance(param1: String, param2: String) =

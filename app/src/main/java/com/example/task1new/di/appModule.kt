@@ -15,11 +15,11 @@ val appModule = module {
 
     //Model level
     single { com.example.data.room.DBInfo.init(get()) }
-    single { Retrofit.getCountriesApi() }
-    single { Retrofit.getCountriesCoroutinesApi() }
+    single <CountryService>{ Retrofit.getCountriesApi() }
+    single <CoroutinesCountryService>{ Retrofit.getCountriesCoroutinesApi() }
 
     //Data level
-    single <NetworkRepositoryCoroutines>{ NetworkRepositoryCoroutinesImpl(get(), get()) }
+    single <NetworkRepositoryCoroutines>{ NetworkRepositoryCoroutinesImpl(get(), get())}
     single <NetworkRepository>{ NetworkRepositoryImpl(get(), get())}
     single <DatabaseCommonInfoRepository>{ DatabaseCommonInfoRepositoryImpl(get())}
     single <DatabaseLanguageRepository>{ DatabaseLanguageRepositoryImpl(get())}
