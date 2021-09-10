@@ -122,16 +122,12 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
                 }
                 is Outcome.Next -> {
                     myAdapter.submitList(outcome.data)
-                    hideProgress()
-                    myAdapter.repopulateAdapterData(outcome.data)
                 }
                 is Outcome.Failure -> {
                     showError(outcome.e.toString(), outcome.e)
                 }
                 is Outcome.Success -> {
                     myAdapter.submitList(outcome.data)
-                    hideProgress()
-                    myAdapter.repopulateAdapterData(outcome.data)
                 }
             }
         })
