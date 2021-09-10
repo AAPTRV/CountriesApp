@@ -18,7 +18,6 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.SnapHelper
 import com.example.data.utils.*
 import com.example.task1new.*
@@ -114,18 +113,20 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
         mViewModel.getCountriesListLiveData().observe(viewLifecycleOwner, { outcome ->
             when (outcome) {
                 is Outcome.Progress -> {
-                    showProgress()
+                    if (outcome.loading) {
+                        showProgress()
+                    } else {
+                        hideProgress()
+                    }
                 }
                 is Outcome.Next -> {
                     myAdapter.submitList(outcome.data)
-                    hideProgress()
                 }
                 is Outcome.Failure -> {
-                    hideProgress()
+                    showError(outcome.e.toString(), outcome.e)
                 }
                 is Outcome.Success -> {
                     myAdapter.submitList(outcome.data)
-                    hideProgress()
                 }
             }
         })

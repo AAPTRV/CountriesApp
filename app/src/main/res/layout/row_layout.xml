@@ -95,14 +95,6 @@
                 app:layout_constraintStart_toStartOf="@+id/text_area"
                 app:layout_constraintTop_toBottomOf="@+id/text_area" />
 
-            <com.example.task1new.customViews.CustomLikeBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/text_distance"
-                android:layout_marginTop="10dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -23,7 +23,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
-
 private const val SHARED_PREFS: String = "sharedPrefs"
 private const val NOTE_TEXT_STATE = "Note text state"
 
@@ -35,7 +34,6 @@ class CountryDetailsFragment : ScopeFragment(), OnMapReadyCallback {
     private var mGoogleMap: GoogleMap? = null
     private var binding: FragmentCountryDetailsBinding? = null
     private val mViewModel: CountryDetailsViewModel by stateViewModel()
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,7 +54,6 @@ class CountryDetailsFragment : ScopeFragment(), OnMapReadyCallback {
         loadNoteTextState()
 
         mViewModel.getCountry(mCountryName)
-
 
         mViewModel.getCountryLiveData().observe(viewLifecycleOwner, {
             when (it) {
@@ -112,7 +109,6 @@ class CountryDetailsFragment : ScopeFragment(), OnMapReadyCallback {
             )
         }
     }
-
 
     override fun onStart() {
         super.onStart()
@@ -195,6 +191,4 @@ class CountryDetailsFragment : ScopeFragment(), OnMapReadyCallback {
     fun hideProgress() {
         binding?.progressDetails?.visibility = View.GONE
     }
-
-
 }
