@@ -2,6 +2,7 @@ package com.example.task1new
 
 import com.example.data.network.CoroutinesCountryService
 import com.example.data.network.CountryService
+import com.example.data.network.FlowCountryService
 import com.example.data.utils.NetConstants
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
@@ -34,12 +35,22 @@ object Retrofit {
         .client(okHttpClient)
         .build()
 
+    private val flowRetrofitBuilder = Retrofit.Builder()
+        .addConverterFactory(GsonConverterFactory.create())
+        .addCallAdapterFactory(CoroutineCallAdapterFactory.invoke())
+        .baseUrl(NetConstants.SERVER_API_BASE_URL)
+        .client(okHttpClient)
+        .build()
+
     private val COUNTRY_SERVICE: CountryService = retrofitBuilder.create(CountryService::class.java)
     private val COROUTINES_COUNTRY_SERVICE: CoroutinesCountryService =
         coroutinesRetrofitBuilder.create(CoroutinesCountryService::class.java)
+    private val FLOW_COUNTRY_SERVICE: FlowCountryService =
+        flowRetrofitBuilder.create(FlowCountryService::class.java)
 
     fun getCountriesApi(): CountryService = COUNTRY_SERVICE
     fun getCountriesCoroutinesApi(): CoroutinesCountryService = COROUTINES_COUNTRY_SERVICE
+    fun getCountriesFlowApi(): FlowCountryService = FLOW_COUNTRY_SERVICE
 
     init {
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
