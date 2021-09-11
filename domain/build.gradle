@@ -18,13 +18,13 @@ java {
 }
 
 def ioReactiveRxJava3RxJavaVersion = '3.0.13'
-
+def coroutines_version = "1.4.2"
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //RxJava
     api 'io.reactivex.rxjava3:rxjava:' + ioReactiveRxJava3RxJavaVersion
-//    api 'io.reactivex.rxjava3:rxandroid:' + ioReactiveRxJava3RxAndroid
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
 
 }
 

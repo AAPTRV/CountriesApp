@@ -254,11 +254,9 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
                 myAdapter.sortDescendingDataListInAdapter()
             }
         }
-//        if (item.itemId == R.id.menu_search_button) {
-//            mFilterButton.isVisible = false
-//            Log.e("HZ", "MENU SEARCH BUTTON TAPPED")
-//        }
+
         return super.onOptionsItemSelected(item)
+
     }
 
     private fun saveMenuFilterIconState() {
