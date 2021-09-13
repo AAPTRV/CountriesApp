@@ -11,7 +11,7 @@ class NetworkRepositoryFlowImpl (private val mFlowService: FlowCountryService) :
 
     NetworkRepositoryFlow {
 
-    override suspend fun getCapitalsListFlow(): Flow<List<SingleCapitalDto>> =
+    override fun getCapitalsListFlow(): Flow<List<SingleCapitalDto>> =
         mFlowService.getCapitalsFlow().map { it.convertToDto() }
 
 }

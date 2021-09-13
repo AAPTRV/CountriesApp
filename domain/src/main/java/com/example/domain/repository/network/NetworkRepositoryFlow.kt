@@ -5,6 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface NetworkRepositoryFlow {
 
-    suspend fun getCapitalsListFlow(): Flow<List<SingleCapitalDto>>
+    fun getCapitalsListFlow(): Flow<List<SingleCapitalDto>>
 
 }

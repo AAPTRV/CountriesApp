@@ -8,6 +8,6 @@ import retrofit2.http.GET
 interface FlowCountryService {
 
     @GET(NetConstants.GET_CAPITALS)
-    suspend fun getCapitalsFlow(): Flow<List<SingleCapitalModel>>
+    fun getCapitalsFlow(): Flow<List<SingleCapitalModel>>
 
 }

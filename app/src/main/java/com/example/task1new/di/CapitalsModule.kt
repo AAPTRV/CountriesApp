@@ -11,7 +11,7 @@ val capitalsModule = module {
     scope<CapitalsFragment> {
 
         viewModel { (handle: SavedStateHandle) ->
-            CapitalsViewModel(handle, get())
+            CapitalsViewModel(handle, get(), get())
         }
     }
 }

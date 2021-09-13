@@ -1,5 +1,6 @@
 package com.example.task1new
 
+import com.chenxyu.retrofit.adapter.FlowCallAdapterFactory
 import com.example.data.network.CoroutinesCountryService
 import com.example.data.network.CountryService
 import com.example.data.network.FlowCountryService
@@ -37,7 +38,7 @@ object Retrofit {
 
     private val flowRetrofitBuilder = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
-        .addCallAdapterFactory(CoroutineCallAdapterFactory.invoke())
+        .addCallAdapterFactory(FlowCallAdapterFactory())
         .baseUrl(NetConstants.SERVER_API_BASE_URL)
         .client(okHttpClient)
         .build()

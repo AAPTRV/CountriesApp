@@ -16,4 +16,8 @@ object NetConstants {
 
     const val GET_CAPITALS = "all?fields=capital"
 
+    const val SEARCH_DELAY_MILLIS: Long = 500
+
+    const val MIN_QUERY_LENGTH = 3
+
 }

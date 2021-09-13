@@ -22,9 +22,9 @@ class CapitalsFragment : ScopeFragment(R.layout.capitals_fragment), BaseMvvmView
         binding = CapitalsFragmentBinding.bind(view)
         binding?.rvCountryCapitals?.layoutManager = LinearLayoutManager(context)
         binding?.rvCountryCapitals?.adapter = myAdapter
-        mViewModel.getCapitalsCoroutines()
+//        mViewModel.getCapitalsCoroutines()
 
-        mViewModel.getCapitalsLiveData().observe(viewLifecycleOwner, { outcome ->
+        mViewModel.getCapitalsFlowLiveData().observe(viewLifecycleOwner, {outcome ->
             when(outcome){
                 is Outcome.Progress -> {
                     if (outcome.loading) {
@@ -43,6 +43,26 @@ class CapitalsFragment : ScopeFragment(R.layout.capitals_fragment), BaseMvvmView
                 }
             }
         })
+
+//        mViewModel.getCapitalsLiveData().observe(viewLifecycleOwner, { outcome ->
+//            when(outcome){
+//                is Outcome.Progress -> {
+//                    if (outcome.loading) {
+//                        showProgress()
+//                    } else {
+//                        hideProgress()
+//                    }
+//                }
+//                is Outcome.Next -> {
+//                }
+//                is Outcome.Success -> {
+//                    myAdapter.repopulateAdapterData(outcome.data)
+//                }
+//                is Outcome.Failure -> {
+//                    showError(outcome.e.toString(), outcome.e)
+//                }
+//            }
+//        })
     }
 
     override fun showError(error: String, throwable: Throwable) {
