@@ -15,7 +15,6 @@ import kotlinx.coroutines.launch
 
 class CapitalsViewModel(
     savedStateHandle: SavedStateHandle,
-    private val mNetworkRepositoryCoroutines: NetworkRepositoryCoroutines,
     private val mNetworkRepositoryFlow: NetworkRepositoryFlow
 ) : BaseViewModel(savedStateHandle) {
 
@@ -33,22 +32,20 @@ class CapitalsViewModel(
     fun getFlowCapitalsListFromApi(): Flow<Outcome<List<SingleCapitalDto>>> =
         mNetworkRepositoryFlow.getCapitalsListFlow().modifyFlowToOutcome()
 
-    fun getSearchItem() {
-        viewModelScope.launch {
+    suspend fun setUpSearchItem() =
             mSearchStateFlow
-                .filter { it.length >= MIN_QUERY_LENGTH }
+                .filter { it.length >= MIN_QUERY_LENGTH || it == "" }
                 .debounce(SEARCH_DELAY_MILLIS)
                 .distinctUntilChanged()
                 .flatMapLatest {
                     mNetworkRepositoryFlow.getCapitalsByNameFlow(it).modifyFlowToOutcome()
                 }
                 .flowOn(Dispatchers.IO)
-                .onEach {
-                    mCapitals.value = it as Outcome<List<SingleCapitalDto>>
-                    Log.e("HZ", "GET SEARCH ITEM END")
-                }
+//                .onEach {
+////                    mCapitals.value = it as Outcome<List<SingleCapitalDto>>
+//                    Log.e("HZ", "GET SEARCH ITEM END")
+//                }
                 .catch { emitAll(flowOf()) }
-                .collect {}
-        }
-    }
+
+
 }

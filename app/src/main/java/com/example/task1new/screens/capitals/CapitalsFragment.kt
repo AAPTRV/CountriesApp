@@ -6,13 +6,20 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.data.ext.showSimpleDialogNetworkError
 import com.example.task1new.R
 import com.example.task1new.base.mvvm.BaseMvvmView
 import com.example.task1new.base.mvvm.Outcome
 import com.example.task1new.databinding.CapitalsFragmentBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
@@ -69,49 +76,71 @@ class CapitalsFragment : ScopeFragment(R.layout.capitals_fragment), BaseMvvmView
         binding?.rvCountryCapitals?.adapter = myAdapter
 
         setHasOptionsMenu(true)
-        mViewModel.getSearchItem()
 
-        mViewModel.getFlowCapitalsListFromApi().asLiveData().observe(viewLifecycleOwner, { outcome ->
-            when (outcome) {
-                is Outcome.Progress -> {
-                    if (outcome.loading) {
-                        showProgress()
-                    } else {
-                        hideProgress()
+        mViewModel.getFlowCapitalsListFromApi().asLiveData()
+            .observe(viewLifecycleOwner, { outcome ->
+                when (outcome) {
+                    is Outcome.Progress -> {
+                        if (outcome.loading) {
+                            showProgress()
+                        } else {
+                            hideProgress()
+                        }
+                    }
+                    is Outcome.Next -> {
+                        myAdapter.repopulateAdapterData(outcome.data)
+                    }
+                    is Outcome.Success -> {
+                        myAdapter.repopulateAdapterData(outcome.data)
+                    }
+                    is Outcome.Failure -> {
+                        showError(outcome.e.toString(), outcome.e)
                     }
                 }
-                is Outcome.Next -> {
-                    myAdapter.repopulateAdapterData(outcome.data)
-                }
-                is Outcome.Success -> {
-                    myAdapter.repopulateAdapterData(outcome.data)
-                }
-                is Outcome.Failure -> {
-                    showError(outcome.e.toString(), outcome.e)
-                }
-            }
-        })
+            })
 
-        mViewModel.getCapitalsLiveData().observe(viewLifecycleOwner, { outcome ->
-            when (outcome) {
-                is Outcome.Progress -> {
-                    if (outcome.loading) {
-                        showProgress()
-                    } else {
-                        hideProgress()
+        CoroutineScope(lifecycleScope.coroutineContext).launch {
+            mViewModel.setUpSearchItem().asLiveData().observe(viewLifecycleOwner, { outcome ->
+                when (outcome) {
+                    is Outcome.Progress -> {
+                        if (outcome.loading) {
+                            showProgress()
+                        } else {
+                            hideProgress()
+                        }
+                    }
+                    is Outcome.Next -> {
+                        myAdapter.repopulateAdapterData(outcome.data)
+                    }
+                    is Outcome.Success -> {
+                        myAdapter.repopulateAdapterData(outcome.data)
+                    }
+                    is Outcome.Failure -> {
+                        showError(outcome.e.toString(), outcome.e)
                     }
                 }
-                is Outcome.Next -> {
-                    myAdapter.repopulateAdapterData(outcome.data)
-                }
-                is Outcome.Success -> {
-                    myAdapter.repopulateAdapterData(outcome.data)
-                }
-                is Outcome.Failure -> {
-                    showError(outcome.e.toString(), outcome.e)
-                }
-            }
-        })
+            })
+        }
+//        mViewModel.getCapitalsLiveData().observe(viewLifecycleOwner, { outcome ->
+//            when (outcome) {
+//                is Outcome.Progress -> {
+//                    if (outcome.loading) {
+//                        showProgress()
+//                    } else {
+//                        hideProgress()
+//                    }
+//                }
+//                is Outcome.Next -> {
+//                    myAdapter.repopulateAdapterData(outcome.data)
+//                }
+//                is Outcome.Success -> {
+//                    myAdapter.repopulateAdapterData(outcome.data)
+//                }
+//                is Outcome.Failure -> {
+//                    showError(outcome.e.toString(), outcome.e)
+//                }
+//            }
+//        })
     }
 
     override fun showError(error: String, throwable: Throwable) {
