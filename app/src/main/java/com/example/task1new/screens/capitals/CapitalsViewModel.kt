@@ -8,63 +8,47 @@ import com.example.domain.dto.SingleCapitalDto
 import com.example.domain.repository.network.NetworkRepositoryCoroutines
 import com.example.domain.repository.network.NetworkRepositoryFlow
 import com.example.task1new.base.mvvm.*
-import io.reactivex.rxjava3.core.Single
+import com.example.task1new.ext.modifyFlowToOutcome
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.lang.Exception
 
 class CapitalsViewModel(
     savedStateHandle: SavedStateHandle,
     private val mNetworkRepositoryCoroutines: NetworkRepositoryCoroutines,
     private val mNetworkRepositoryFlow: NetworkRepositoryFlow
 ) : BaseViewModel(savedStateHandle) {
-    private val mCapitalsListLiveData =
-        savedStateHandle.getLiveData<Outcome<List<SingleCapitalDto>>>("capitals")
 
-    fun getCapitalsFlowLiveData(): LiveData<Outcome<List<SingleCapitalDto>>>{
+    private val mSearchStateFlow = MutableStateFlow("")
+    private val mCapitals = MutableLiveData<Outcome<List<SingleCapitalDto>>>()
+
+    fun getCapitalsLiveData(): MutableLiveData<Outcome<List<SingleCapitalDto>>> {
         return mCapitals
     }
 
-    private val mCapitals: LiveData<Outcome<List<SingleCapitalDto>>> = mNetworkRepositoryFlow
-        .getCapitalsListFlow()
-        .map { list -> Outcome.success(list) }
-        .onStart { emit(Outcome.loading(true)) }
-        .onCompletion { emit(Outcome.loading(false)) }
-        .catch { exception ->
-            emit(Outcome.failure(exception))
-            println("SOME ERROR DURING GET CAPITALS LIST FLOW")
-        }
-        .asLiveData()
-
-
-    fun getCapitalsLiveData(): MutableLiveData<Outcome<List<SingleCapitalDto>>> {
-        return mCapitalsListLiveData
+    fun setValueInSearchStateFlow(value: String) {
+        mSearchStateFlow.value = value
     }
 
+    fun getFlowCapitalsListFromApi(): Flow<Outcome<List<SingleCapitalDto>>> =
+        mNetworkRepositoryFlow.getCapitalsListFlow().modifyFlowToOutcome()
 
-    fun getCapitalsCoroutines() {
-        Log.e("HZ", "We are in ${Thread.currentThread().name} thread ... (funGetCapitals)")
-        mCapitalsListLiveData.loading(true)
+    fun getSearchItem() {
         viewModelScope.launch {
-            try {
-                val capitalsList = withContext(Dispatchers.IO) {
-                    Log.e(
-                        "HZ",
-                        "We are in ${Thread.currentThread().name} thread ... (viewModelScope)"
-                    )
-                    mNetworkRepositoryCoroutines.getCapitalsListCoroutines()
+            mSearchStateFlow
+                .filter { it.length >= MIN_QUERY_LENGTH }
+                .debounce(SEARCH_DELAY_MILLIS)
+                .distinctUntilChanged()
+                .flatMapLatest {
+                    mNetworkRepositoryFlow.getCapitalsByNameFlow(it).modifyFlowToOutcome()
                 }
-                Log.e("HZ", "CAPITAL LIST SIZE = ${capitalsList.size}")
-                mCapitalsListLiveData.success(capitalsList)
-            } catch (exception: Exception) {
-                Log.e("HZ", "EXCEPTION: ${exception.toString()}")
-                mCapitalsListLiveData.failed(exception)
-            }
+                .flowOn(Dispatchers.IO)
+                .onEach {
+                    mCapitals.value = it as Outcome<List<SingleCapitalDto>>
+                    Log.e("HZ", "GET SEARCH ITEM END")
+                }
+                .catch { emitAll(flowOf()) }
+                .collect {}
         }
     }
 }

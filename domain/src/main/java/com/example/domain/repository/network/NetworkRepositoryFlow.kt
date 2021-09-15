@@ -7,4 +7,6 @@ interface NetworkRepositoryFlow {
 
     fun getCapitalsListFlow(): Flow<List<SingleCapitalDto>>
 
+    fun getCapitalsByNameFlow(name: String): Flow<List<SingleCapitalDto>>
+
 }

@@ -1,7 +1,12 @@
 package com.example.task1new.screens.capitals
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
+import android.widget.SearchView
+import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.data.ext.showSimpleDialogNetworkError
 import com.example.task1new.R
@@ -17,15 +22,57 @@ class CapitalsFragment : ScopeFragment(R.layout.capitals_fragment), BaseMvvmView
     private var binding: CapitalsFragmentBinding? = null
     private val mViewModel: CapitalsViewModel by stateViewModel()
 
+    private lateinit var mSearchButton: MenuItem
+    private lateinit var mMapsButton: MenuItem
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.capitals_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+
+        mSearchButton = menu.findItem(R.id.capitals_menu_search_button)
+        mMapsButton = menu.findItem(R.id.capitals_menu_maps_button)
+
+        val mSvMenu = mSearchButton.actionView as SearchView
+
+        mSvMenu.setOnSearchClickListener {
+            mMapsButton.isVisible = false
+        }
+
+        mSvMenu.setOnCloseListener {
+            mMapsButton.isVisible = true
+            false
+        }
+
+        mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let { mViewModel.setValueInSearchStateFlow(query) }
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let { mViewModel.setValueInSearchStateFlow(newText) }
+                return true
+            }
+        }
+        )
+
+        mSvMenu.setOnCloseListener {
+            mViewModel.getFlowCapitalsListFromApi()
+            false
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = CapitalsFragmentBinding.bind(view)
         binding?.rvCountryCapitals?.layoutManager = LinearLayoutManager(context)
         binding?.rvCountryCapitals?.adapter = myAdapter
-//        mViewModel.getCapitalsCoroutines()
 
-        mViewModel.getCapitalsFlowLiveData().observe(viewLifecycleOwner, {outcome ->
-            when(outcome){
+        setHasOptionsMenu(true)
+        mViewModel.getSearchItem()
+
+        mViewModel.getFlowCapitalsListFromApi().asLiveData().observe(viewLifecycleOwner, { outcome ->
+            when (outcome) {
                 is Outcome.Progress -> {
                     if (outcome.loading) {
                         showProgress()
@@ -34,6 +81,7 @@ class CapitalsFragment : ScopeFragment(R.layout.capitals_fragment), BaseMvvmView
                     }
                 }
                 is Outcome.Next -> {
+                    myAdapter.repopulateAdapterData(outcome.data)
                 }
                 is Outcome.Success -> {
                     myAdapter.repopulateAdapterData(outcome.data)
@@ -44,25 +92,26 @@ class CapitalsFragment : ScopeFragment(R.layout.capitals_fragment), BaseMvvmView
             }
         })
 
-//        mViewModel.getCapitalsLiveData().observe(viewLifecycleOwner, { outcome ->
-//            when(outcome){
-//                is Outcome.Progress -> {
-//                    if (outcome.loading) {
-//                        showProgress()
-//                    } else {
-//                        hideProgress()
-//                    }
-//                }
-//                is Outcome.Next -> {
-//                }
-//                is Outcome.Success -> {
-//                    myAdapter.repopulateAdapterData(outcome.data)
-//                }
-//                is Outcome.Failure -> {
-//                    showError(outcome.e.toString(), outcome.e)
-//                }
-//            }
-//        })
+        mViewModel.getCapitalsLiveData().observe(viewLifecycleOwner, { outcome ->
+            when (outcome) {
+                is Outcome.Progress -> {
+                    if (outcome.loading) {
+                        showProgress()
+                    } else {
+                        hideProgress()
+                    }
+                }
+                is Outcome.Next -> {
+                    myAdapter.repopulateAdapterData(outcome.data)
+                }
+                is Outcome.Success -> {
+                    myAdapter.repopulateAdapterData(outcome.data)
+                }
+                is Outcome.Failure -> {
+                    showError(outcome.e.toString(), outcome.e)
+                }
+            }
+        })
     }
 
     override fun showError(error: String, throwable: Throwable) {

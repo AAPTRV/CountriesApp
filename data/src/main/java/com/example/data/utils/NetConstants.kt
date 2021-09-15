@@ -20,4 +20,6 @@ object NetConstants {
 
     const val MIN_QUERY_LENGTH = 3
 
+    const val GET_CAPITAL_BY_NAME = "capital$PATH_URL"
+
 }

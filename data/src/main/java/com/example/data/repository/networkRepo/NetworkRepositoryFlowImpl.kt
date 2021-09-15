@@ -7,11 +7,14 @@ import com.example.domain.repository.network.NetworkRepositoryFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class NetworkRepositoryFlowImpl (private val mFlowService: FlowCountryService) :
+class NetworkRepositoryFlowImpl(private val mFlowService: FlowCountryService) :
 
     NetworkRepositoryFlow {
 
     override fun getCapitalsListFlow(): Flow<List<SingleCapitalDto>> =
         mFlowService.getCapitalsFlow().map { it.convertToDto() }
+
+    override fun getCapitalsByNameFlow(name: String): Flow<List<SingleCapitalDto>> =
+        mFlowService.getCapitalsByNameFlow(name).map { it.convertToDto() }
 
 }
