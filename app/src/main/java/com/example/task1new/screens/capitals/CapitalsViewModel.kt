@@ -5,7 +5,6 @@ import androidx.lifecycle.*
 import com.example.data.utils.NetConstants.MIN_QUERY_LENGTH
 import com.example.data.utils.NetConstants.SEARCH_DELAY_MILLIS
 import com.example.domain.dto.SingleCapitalDto
-import com.example.domain.repository.network.NetworkRepositoryCoroutines
 import com.example.domain.repository.network.NetworkRepositoryFlow
 import com.example.task1new.base.mvvm.*
 import com.example.task1new.ext.modifyFlowToOutcome
@@ -19,33 +18,27 @@ class CapitalsViewModel(
 ) : BaseViewModel(savedStateHandle) {
 
     private val mSearchStateFlow = MutableStateFlow("")
-    private val mCapitals = MutableLiveData<Outcome<List<SingleCapitalDto>>>()
+    val mNavigateSharedFlow: MutableSharedFlow<Long> = MutableSharedFlow()
 
-    fun getCapitalsLiveData(): MutableLiveData<Outcome<List<SingleCapitalDto>>> {
-        return mCapitals
-    }
-
-    fun setValueInSearchStateFlow(value: String) {
+    fun updateSearchStateFlow(value: String) {
         mSearchStateFlow.value = value
     }
 
-    fun getFlowCapitalsListFromApi(): Flow<Outcome<List<SingleCapitalDto>>> =
-        mNetworkRepositoryFlow.getCapitalsListFlow().modifyFlowToOutcome()
-
-    suspend fun setUpSearchItem() =
-            mSearchStateFlow
-                .filter { it.length >= MIN_QUERY_LENGTH || it == "" }
-                .debounce(SEARCH_DELAY_MILLIS)
-                .distinctUntilChanged()
-                .flatMapLatest {
+    fun getSearchLiveData() =
+        mSearchStateFlow
+            .filter { it.length >= MIN_QUERY_LENGTH || it == "" }
+            .debounce(SEARCH_DELAY_MILLIS)
+            .distinctUntilChanged()
+            .flatMapLatest {
+                if(it.isEmpty()){
+                    println("HZ before GetListFlow Current thread is ${Thread.currentThread()}")
+                    mNetworkRepositoryFlow.getCapitalsListFlow().modifyFlowToOutcome()
+                } else {
+                    println("HZ before GetListName Current thread is ${Thread.currentThread()}")
                     mNetworkRepositoryFlow.getCapitalsByNameFlow(it).modifyFlowToOutcome()
                 }
-                .flowOn(Dispatchers.IO)
-//                .onEach {
-////                    mCapitals.value = it as Outcome<List<SingleCapitalDto>>
-//                    Log.e("HZ", "GET SEARCH ITEM END")
-//                }
-                .catch { emitAll(flowOf()) }
-
-
+            }
+            .flowOn(Dispatchers.IO)
+            .catch { emitAll(flowOf()) }
+            .asLiveData()
 }
