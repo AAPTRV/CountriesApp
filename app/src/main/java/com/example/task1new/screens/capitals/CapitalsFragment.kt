@@ -17,7 +17,7 @@ import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
 class CapitalsFragment : ScopeFragment(R.layout.capitals_fragment), BaseMvvmView {
 
-    private var myAdapter = CapitalsAdapter()
+    private var myAdapter = CapitalsAdapterDiff()
     private var binding: CapitalsFragmentBinding? = null
     private val mViewModel: CapitalsViewModel by stateViewModel()
 
@@ -78,10 +78,10 @@ class CapitalsFragment : ScopeFragment(R.layout.capitals_fragment), BaseMvvmView
                     }
                 }
                 is Outcome.Next -> {
-                    myAdapter.repopulateAdapterData(outcome.data)
+                    myAdapter.submitList(outcome.data.toMutableList())
                 }
                 is Outcome.Success -> {
-                    myAdapter.repopulateAdapterData(outcome.data)
+                    myAdapter.submitList(outcome.data.toMutableList())
                 }
                 is Outcome.Failure -> {
                     showError(outcome.e.toString(), outcome.e)

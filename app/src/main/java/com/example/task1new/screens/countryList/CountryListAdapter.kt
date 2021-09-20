@@ -1,92 +1,112 @@
 package com.example.task1new.screens.countryList
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.task1new.R
-import com.example.task1new.base.adapter.BaseAdapter
+import com.example.data.ext.loadSvg
 import com.example.domain.dto.CountryDto
 import com.example.domain.dto.convertLanguagesDtoToString
-import com.example.data.ext.loadSvg
+import com.example.task1new.R
+import kotlinx.android.extensions.LayoutContainer
 
-class CountryListAdapter : BaseAdapter<CountryDto>() {
+class CountryListAdapter :
+    ListAdapter<CountryDto, CountryListAdapter.ListViewHolder>(DifferItemCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.row_layout, parent, false)
-        return CountryViewHolder(v)
+    private var mOnItemClickListener: ((CountryDto) -> Unit?)? = null
+
+    fun setItemClick(clickListener: (CountryDto) -> Unit){
+        mOnItemClickListener = clickListener
     }
-
-    override fun getItemCount(): Int {
-        return mDataListInAdapter.size
-    }
-
-    fun repopulateAdapterData(newItemsDto: List<CountryDto>) {
-        mDataListInAdapter.clear()
-        mDataListInAdapter.addAll(newItemsDto)
-        notifyDataSetChanged()
-    }
-
-    // TODO: Implement notifyItemChanged()
 
     fun sortAscendingDataListInAdapter() {
-        mDataListInAdapter.sortBy { it.population }
-        notifyDataSetChanged()
+        val list = mutableListOf<CountryDto>()
+        list.addAll(currentList)
+        list.sortBy { it.population }
+        submitList(null)
+        submitList(list)
     }
 
     fun sortDescendingDataListInAdapter() {
-        mDataListInAdapter.sortByDescending { it.population }
-        notifyDataSetChanged()
+        val list = mutableListOf<CountryDto>()
+        list.addAll(currentList)
+        list.sortByDescending { it.population }
+        submitList(null)
+        submitList(list)
     }
 
-    inner class CountryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var itemImage: ImageView = itemView.findViewById(R.id.cardIcon)
-        var itemName: TextView = itemView.findViewById(R.id.text_name_title)
-        var itemTitle: TextView = itemView.findViewById(R.id.text_title)
-        var itemDetail: TextView = itemView.findViewById(R.id.text_description)
-        var languages: TextView = itemView.findViewById(R.id.text_languages)
-        var area: TextView = itemView.findViewById(R.id.text_area)
-        var distance: TextView = itemView.findViewById(R.id.text_distance)
+    class DifferItemCallback : DiffUtil.ItemCallback<CountryDto>() {
+        @SuppressLint("DiffUtilEquals")
+        override fun areContentsTheSame(oldItem: CountryDto, newItem: CountryDto): Boolean {
+            return oldItem === newItem
+        }
+
+        override fun areItemsTheSame(oldItem: CountryDto, newItem: CountryDto): Boolean {
+            return oldItem == newItem
+        }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is CountryViewHolder) {
-            holder.itemName.text =
-                holder.itemName.context.getString(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
+        return ListViewHolder(
+            LayoutInflater.from(parent.context).inflate(R.layout.row_layout, parent, false)
+        )
+    }
+
+    override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
+
+    inner class ListViewHolder(override val containerView: View) :
+        RecyclerView.ViewHolder(containerView),
+        LayoutContainer {
+        private var itemImage: ImageView = containerView.findViewById(R.id.cardIcon)
+        private var itemName: TextView = containerView.findViewById(R.id.text_name_title)
+        private var itemTitle: TextView = containerView.findViewById(R.id.text_title)
+        private var itemDetail: TextView = containerView.findViewById(R.id.text_description)
+        private var languages: TextView = containerView.findViewById(R.id.text_languages)
+        private var area: TextView = containerView.findViewById(R.id.text_area)
+        private var distance: TextView = containerView.findViewById(R.id.text_distance)
+        fun bind(item: CountryDto) {
+            itemName.text =
+                itemName.context.getString(
                     R.string.adapter_name,
-                    mDataListInAdapter[position].name
+                    item.name
                 )
-            holder.itemTitle.text =
-                holder.itemView.context.getString(
+            itemTitle.text =
+                itemView.context.getString(
                     R.string.adapter_capital,
-                    mDataListInAdapter[position].capital
+                    item.capital
                 )
-            holder.itemDetail.text =
-                holder.itemView.context.getString(
+            itemDetail.text =
+                itemView.context.getString(
                     R.string.adapter_population,
-                    mDataListInAdapter[position].population
+                    item.population
                 )
-            holder.area.text =
-                holder.itemView.context.getString(
+            area.text =
+                itemView.context.getString(
                     R.string.adapter_area,
-                    mDataListInAdapter[position].area
+                    item.area
                 )
 
-            holder.languages.text =
-                holder.itemView.context.getString(
+            languages.text =
+                itemView.context.getString(
                     R.string.adapter_languages,
-                    mDataListInAdapter[position].languages.convertLanguagesDtoToString()
+                    item.languages.convertLanguagesDtoToString()
                 )
 
-            holder.distance.text = holder.itemName.context.getString(
+            distance.text = itemName.context.getString(
                 R.string.adapter_distance,
-                mDataListInAdapter[position].distance.toString()
+                item.distance
             )
-            holder.itemImage.loadSvg(mDataListInAdapter[position].flag)
-            holder.itemView.setOnClickListener { mOnItemClickListener?.invoke(mDataListInAdapter[position]) }
+            itemImage.loadSvg(item.flag)
+            itemView.setOnClickListener {
+                mOnItemClickListener?.invoke(item)
+            }
         }
     }
 }
-

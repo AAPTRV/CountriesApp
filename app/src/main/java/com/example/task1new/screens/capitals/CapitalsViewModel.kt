@@ -24,6 +24,13 @@ class CapitalsViewModel(
         mSearchStateFlow.value = value
     }
 
+    private fun getCapitalsListFlow() =
+        mNetworkRepositoryFlow.getCapitalsListFlow()
+            .modifyFlowToOutcome()
+
+    private fun getCapitalsByNameFlow(name: String) =
+        mNetworkRepositoryFlow.getCapitalsByNameFlow(name).modifyFlowToOutcome()
+
     fun getSearchLiveData() =
         mSearchStateFlow
             .filter { it.length >= MIN_QUERY_LENGTH || it == "" }
@@ -32,10 +39,10 @@ class CapitalsViewModel(
             .flatMapLatest {
                 if(it.isEmpty()){
                     println("HZ before GetListFlow Current thread is ${Thread.currentThread()}")
-                    mNetworkRepositoryFlow.getCapitalsListFlow().modifyFlowToOutcome()
+                    getCapitalsListFlow()
                 } else {
                     println("HZ before GetListName Current thread is ${Thread.currentThread()}")
-                    mNetworkRepositoryFlow.getCapitalsByNameFlow(it).modifyFlowToOutcome()
+                    getCapitalsByNameFlow(it)
                 }
             }
             .flowOn(Dispatchers.IO)

@@ -357,7 +357,7 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
 
     companion object {
 
-        var myAdapter: MvvmListAdapter = MvvmListAdapter()
+        var myAdapter: CountryListAdapter = CountryListAdapter()
 
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
