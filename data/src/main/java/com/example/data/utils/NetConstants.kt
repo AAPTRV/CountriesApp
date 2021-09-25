@@ -8,7 +8,7 @@ object NetConstants {
 
     const val PATH_URL = "/{$PATH_VARIABLE}"
 
-    const val SERVER_API_BASE_URL = "https://restcountries.eu/rest/v2/"
+    const val SERVER_API_BASE_URL = "https://restcountries.com/v2/"
 
     const val SERVER_API_POSTS_URL = "all"
 

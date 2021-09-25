@@ -20,15 +20,26 @@ fun CountryModel.convertCommonInfoAPIDatatoDBItem(): com.example.data.room.Count
     this.name?.let { mEntityName = this.name }
     this.capital?.let { mEntityCapital = this.capital }
     this.population?.let { mEntityPopulation = this.population }
-    if (this.languages.isNotEmpty()) {
-        mEntityLanguages = this.languages.convertToCountryNameList()
+
+    this.languages?.let { languages ->
+        if(languages.isNotEmpty()){
+            mEntityLanguages = languages.convertToCountryNameList()
+        }
     }
-    this.flag?.let { mEntityFlag = it }
+    this.flag?.let{flag ->
+        if(flag.isNotEmpty()){
+            flag[0]?.let {
+                mEntityFlag = it
+            }
+        }
+    }
+
     this.area?.let { mEntityArea = it }
 
-
-    if(this.latlng.isNotEmpty()){
-        mEntityLocation = this.latlng.convertCountryListToString()
+    this.latlng?.let { latlng ->
+        if(latlng.isNotEmpty()){
+            mEntityLocation = latlng.convertCountryListToString()
+        }
     }
 
     return com.example.data.room.CountryDatabaseCommonInfoEntity(
@@ -54,7 +65,7 @@ fun CountryDto.convertToCommonInfoDbItem(): com.example.data.room.CountryDatabas
     )
 }
 
-fun CountryDto.convertToLanguagesDbItem(): List<com.example.data.room.CountryDatabaseLanguageInfoEntity>{
+fun CountryDto.convertToLanguagesDbItem(): List<com.example.data.room.CountryDatabaseLanguageInfoEntity> {
     val result = mutableListOf<com.example.data.room.CountryDatabaseLanguageInfoEntity>()
 
     fun MutableList<String>.convertListToString(): String {
@@ -70,7 +81,7 @@ fun CountryDto.convertToLanguagesDbItem(): List<com.example.data.room.CountryDat
         return sb.toString()
     }
 
-    for(language in this.languages){
+    for (language in this.languages) {
         result.add(
             com.example.data.room.CountryDatabaseLanguageInfoEntity(
                 this.name,
@@ -111,18 +122,22 @@ fun CountryModel.convertLanguagesAPIDataToDBItem(): com.example.data.room.Countr
         mEntityCountryName = this.name
     }
 
-    for (LanguageModel in this.languages) {
-        if (!LanguageModel.iso639_1.isNullOrEmpty()) {
-            mEntityIso6391.add(LanguageModel.iso639_1)
-        }
-        if (!LanguageModel.iso639_2.isNullOrEmpty()) {
-            mEntityIso6392.add(LanguageModel.iso639_2)
-        }
-        if (!LanguageModel.name.isNullOrEmpty()) {
-            mEntityName.add(LanguageModel.name)
-        }
-        if (!LanguageModel.nativeName.isNullOrEmpty()) {
-            mEntityNativeName.add(LanguageModel.nativeName)
+    this.languages?.let { languages ->
+        for (LanguageModel in languages) {
+            LanguageModel?.let { model ->
+                model.iso639_1?.let {
+                    mEntityIso6391.add(it)
+                }
+                model.iso639_2?.let {
+                    mEntityIso6392.add(it)
+                }
+                model.name?.let {
+                    mEntityName.add(it)
+                }
+                model.nativeName?.let {
+                    mEntityNativeName.add(it)
+                }
+            }
         }
     }
 

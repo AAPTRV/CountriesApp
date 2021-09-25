@@ -341,7 +341,7 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
                         longitude = 126.19
                     })
                 }
-                mViewModel.getCountriesFromDbRx()
+//                mViewModel.getCountriesFromDbRx()
                 mViewModel.getCountriesFromAPI()
             }
         } else {

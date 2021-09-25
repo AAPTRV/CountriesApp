@@ -13,9 +13,13 @@ class MapsPresenter : BaseMvpPresenter<MapsView>() {
             ).subscribe({ response ->
                 val mRefinedLatLngDto: MutableList<LatLngDto> = mutableListOf()
                 for(model in response){
-                    if(model.latlng.isNotEmpty()){
-                        mRefinedLatLngDto.add(model.convertToLatLngDto()
-                        )
+                    model?.let { model ->
+                        model.latlng?.let { latlng ->
+                            if(latlng.isNotEmpty()){
+                                mRefinedLatLngDto.add(model.convertToLatLngDto()
+                                )
+                            }
+                        }
                     }
                 }
                 getView()?.showAllCountryMarkersOnMap(mRefinedLatLngDto)

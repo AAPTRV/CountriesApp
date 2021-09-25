@@ -251,11 +251,11 @@ class CountryListViewModel(
         }
 
         fun getCountriesInfoEntitiesFlowable(): Flowable<List<com.example.data.room.CountryDatabaseCommonInfoEntity>> {
-            return mGetCountriesCommonInfoUseCase.execute().map{it.convertInfoToEntity()}
+            return mGetCountriesCommonInfoUseCase.execute().map { it.convertInfoToEntity() }
         }
 
         fun getCountriesLanguageEntitiesFlowable(): Flowable<List<com.example.data.room.CountryDatabaseLanguageInfoEntity>> {
-            return mGetCountriesLanguagesInfoUseCase.execute().map{it.convertLanguageToEntity()}
+            return mGetCountriesLanguagesInfoUseCase.execute().map { it.convertLanguageToEntity() }
         }
         mCountriesListLiveData.loading(true)
         mCompositeDisposable.add(
@@ -271,7 +271,7 @@ class CountryListViewModel(
                 .map { addDistanceToCountriesDtoList(it) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { mCountriesListLiveData.success(it)})
+                .subscribe { mCountriesListLiveData.success(it) })
     }
 
     fun getCountriesFromAPI() {
@@ -281,7 +281,8 @@ class CountryListViewModel(
                 .doOnNext {
                     // DB inserting data
                     val mCountriesInfoFromAPI = it.toMutableList()
-                    val mCountriesInfoToDB = mutableListOf<com.example.data.room.CountryDatabaseCommonInfoEntity>()
+                    val mCountriesInfoToDB =
+                        mutableListOf<com.example.data.room.CountryDatabaseCommonInfoEntity>()
 
                     val mLanguagesFromApiToDB =
                         mutableListOf<com.example.data.room.CountryDatabaseLanguageInfoEntity>()
@@ -301,8 +302,12 @@ class CountryListViewModel(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                           mCountriesListLiveData.next(it)
-                }, { }, {
+                    println("GET COUNTRIES FROM API -NEXT-")
+                    mCountriesListLiveData.next(it)
+                }, {
+                    println("GET COUNTRIES FROM API -FAILURE-")
+                    mCountriesListLiveData.failed((mCountriesListLiveData.value as Outcome.Failure).e)
+                }, {
                     if (mCountriesListLiveData.value is Outcome.Next) {
                         mCountriesListLiveData.success((mCountriesListLiveData.value as Outcome.Next).data)
                     }
