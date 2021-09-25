@@ -59,5 +59,8 @@
     <string name="show_all_capitals">SHOW ALL CAPITALS</string>
     <string name="number">#</string>
     <string name="country_s_capital_name">Country\'s capital name</string>
+    <string name="custom_like_bar_default_distance">3299km</string>
+    <string name="custom_likebar_default_comments">4</string>
+    <string name="custom_likebar_default_likes">123</string>
 
 </resources>

@@ -1,0 +1,6 @@
+<resources>
+    <declare-styleable name="CustomLikeBar">
+        <attr name="customLikebarLikesText" format="integer" />
+        <attr name="customLikebarCommentsText" format="integer" />
+    </declare-styleable>
+</resources>

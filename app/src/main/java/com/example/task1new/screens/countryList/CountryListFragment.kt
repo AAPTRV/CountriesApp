@@ -180,7 +180,8 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
             mFilterButton.isVisible = true
             mMapsButton.isVisible = true
             mSortButton.isVisible = true
-            false }
+            false
+        }
 
         mSvMenu.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -341,7 +342,7 @@ class CountryListFragment : ScopeFragment(), BaseMvvmView {
                         longitude = 126.19
                     })
                 }
-//                mViewModel.getCountriesFromDbRx()
+                mViewModel.getCountriesFromDbRx()
                 mViewModel.getCountriesFromAPI()
             }
         } else {
