@@ -62,5 +62,8 @@
     <string name="custom_like_bar_default_distance">3299km</string>
     <string name="custom_likebar_default_comments">4</string>
     <string name="custom_likebar_default_likes">123</string>
+    <string name="foreground_channel_name">channel_name</string>
+    <string name="foreground_channel_id">id</string>
+    <string name="foreground_notification_name">name</string>
 
 </resources>
